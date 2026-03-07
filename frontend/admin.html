@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MN Base Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#07070e;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;}
+.container{max-width:1000px;margin:0 auto;padding:24px;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;}
+.logo{font-size:24px;font-weight:800;background:linear-gradient(135deg,#1652f0,#7c3aed);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.stat-card{background:#1a1a2e;border-radius:16px;padding:20px;}
+.stat-label{font-size:12px;opacity:0.5;text-transform:uppercase;margin-bottom:8px;}
+.stat-value{font-size:28px;font-weight:800;color:#1652f0;}
+.card{background:#1a1a2e;border-radius:16px;padding:24px;margin-bottom:24px;}
+.card-title{font-size:16px;font-weight:700;margin-bottom:20px;opacity:0.8;}
+input,select{width:100%;padding:12px;background:#0d0d1a;border:1px solid #333;border-radius:12px;color:#fff;font-size:14px;margin:6px 0;}
+.btn{padding:12px 20px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;}
+.btn-primary{background:linear-gradient(135deg,#1652f0,#7c3aed);color:#fff;}
+.btn-success{background:#00d4aa20;color:#00d4aa;border:1px solid #00d4aa40;}
+.btn-danger{background:#ff444420;color:#ff4444;border:1px solid #ff444440;}
+.btn-sm{padding:8px 14px;font-size:12px;}
+.user-table{width:100%;border-collapse:collapse;}
+.user-table th{text-align:left;padding:12px;font-size:12px;opacity:0.5;text-transform:uppercase;border-bottom:1px solid #333;}
+.user-table td{padding:12px;border-bottom:1px solid #1a1a2e;font-size:14px;}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-active{background:#00d4aa20;color:#00d4aa;}
+.badge-inactive{background:#ff444420;color:#ff4444;}
+.badge-admin{background:#1652f020;color:#1652f0;}
+.row{display:flex;gap:12px;align-items:flex-end;}
+.row input,.row select{margin:0;}
+.notification{position:fixed;top:20px;right:20px;background:#1652f0;color:#fff;padding:14px 24px;border-radius:14px;font-size:14px;font-weight:600;opacity:0;transition:opacity 0.3s;z-index:100;}
+.notification.show{opacity:1;}
+.login-box{max-width:400px;margin:100px auto;background:#1a1a2e;border-radius:20px;padding:32px;}
+</style>
+</head>
+<body>
+
+<div id="loginBox" class="login-box">
+  <div class="logo" style="text-align:center;margin-bottom:24px;font-size:28px">MN Base Admin</div>
+  <input type="text" id="adminUser" placeholder="Username">
+  <input type="password" id="adminPass" placeholder="Password">
+  <div id="loginErr" style="color:#ff4444;font-size:13px;margin:8px 0"></div>
+  <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="adminLogin()">Login</button>
+</div>
+
+<div id="dashboard" style="display:none">
+<div class="container">
+  <div class="header">
+    <div class="logo">MN Base Admin</div>
+    <button class="btn btn-danger btn-sm" onclick="adminLogout()">Logout</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value" id="statUsers">0</div></div>
+    <div class="stat-card"><div class="stat-label">Total Balance</div><div class="stat-value" id="statBalance">$0</div></div>
+    <div class="stat-card"><div class="stat-label">Transactions</div><div class="stat-value" id="statTxns">0</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">➕ Create User</div>
+    <div class="row">
+      <input type="text" id="newUsername" placeholder="Username">
+      <input type="password" id="newPassword" placeholder="Password">
+      <select id="newRole"><option value="user">User</option><option value="admin">Admin</option></select>
+      <button class="btn btn-primary" onclick="createUser()">Create</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💰 Fund User</div>
+    <div class="row">
+      <input type="text" id="fundUsername" placeholder="Username">
+      <select id="fundNet">
+        <option value="btc">BTC</option><option value="eth">ETH</option>
+        <option value="sol">SOL</option><option value="bnb">BNB</option>
+        <option value="matic">MATIC</option><option value="avax">AVAX</option>
+        <option value="arb">ARB</option><option value="op">OP</option>
+        <option value="usdt">USDT</option><option value="xrp">XRP</option>
+      </select>
+      <select id="fundType">
+        <option value="add">Add</option>
+        <option value="sub">Subtract</option>
+        <option value="set">Set</option>
+      </select>
+      <input type="number" id="fundAmount" placeholder="Amount" style="width:120px">
+      <input type="text" id="fundNote" placeholder="Note (optional)">
+      <button class="btn btn-primary" onclick="fundUser()">Fund</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👥 All Users</div>
+    <table class="user-table">
+      <thead><tr>
+        <th>Username</th><th>Role</th><th>Balance</th><th>Txns</th><th>Card</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="userTable"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+const API = 'https://mnbase-production.up.railway.app/api';
+let token = localStorage.getItem('mnbase_admin_token');
+
+function notify(msg, color) {
+  const n = document.getElementById('notification');
+  n.textContent = msg;
+  n.style.background = color || '#1652f0';
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+async function adminLogin() {
+  const username = document.getElementById('adminUser').value;
+  const password = document.getElementById('adminPass').value;
+  try {
+    const r = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const d = await r.json();
+    if (!d.success) { document.getElementById('loginErr').textContent = d.message; return; }
+    if (d.user.role !== 'admin') { document.getElementById('loginErr').textContent = 'Not an admin account'; return; }
+    token = d.token;
+    localStorage.setItem('mnbase_admin_token', token);
+    showDashboard();
+  } catch(e) { document.getElementById('loginErr').textContent = 'Connection error'; }
+}
+
+function adminLogout() {
+  localStorage.removeItem('mnbase_admin_token');
+  token = null;
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginBox').style.display = 'block';
+}
+
+async function showDashboard() {
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadStats();
+  loadUsers();
+}
+
+async function loadStats() {
+  const r = await fetch(API+'/admin/stats',{headers:{'Authorization':'Bearer '+token}});
+  const d = await r.json();
+  if (!d.success) return;
+  document.getElementById('statUsers').textContent = d.userCount;
+  document.getElementById('statBalance').textContent = '$'+d.totalBalance.toFixed(2);
+  document.getElementById('statTxns').textContent = d.txnCount;
+}
+
+async function loadUsers() {
+  const r = await fetch(API+'/admin/users',{headers:{'Authorization':'Bearer '+token}});
+  const d = await r.json();
+  if (!d.success) return;
+  const tbody = document.getElementById('userTable');
+  tbody.innerHTML = d.users.map(u => `
+    <tr>
+      <td><strong>${u.username}</strong></td>
+      <td><span class="badge ${u.role==='admin'?'badge-admin':'badge-inactive'}">${u.role}</span></td>
+      <td>$${u.total.toFixed(2)}</td>
+      <td>${u.txnCount}</td>
+      <td><span class="badge ${u.cardActivated?'badge-active':'badge-inactive'}">${u.cardActivated?'Active':'Inactive'}</span></td>
+      <td style="display:flex;gap:8px">
+        ${!u.cardActivated ? `<button class="btn btn-success btn-sm" onclick="activateCard('${u.username}')">Activate Card</button>` : `<button class="btn btn-danger btn-sm" onclick="deactivateCard('${u.username}')">Deactivate</button>`}
+      </td>
+    </tr>`).join('');
+}
+
+async function createUser() {
+  const username = document.getElementById('newUsername').value;
+  const password = document.getElementById('newPassword').value;
+  const role = document.getElementById('newRole').value;
+  const r = await fetch(API+'/admin/users',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username,password,role})});
+  const d = await r.json();
+  notify(d.message, d.success ? '#00d4aa' : '#ff4444');
+  if (d.success) { loadUsers(); loadStats(); }
+}
+
+async function fundUser() {
+  const username = document.getElementById('fundUsername').value;
+  const netKey = document.getElementById('fundNet').value;
+  const type = document.getElementById('fundType').value;
+  const amount = parseFloat(document.getElementById('fundAmount').value);
+  const note = document.getElementById('fundNote').value;
+  const r = await fetch(API+'/admin/fund',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username,netKey,type,amount,note})});
+  const d = await r.json();
+  notify(d.message, d.success ? '#00d4aa' : '#ff4444');
+  if (d.success) loadUsers();
+}
+
+async function activateCard(username) {
+  const r = await fetch(API+'/admin/activate-card',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username})});
+  const d = await r.json();
+  notify(d.message, '#00d4aa');
+  loadUsers();
+}
+
+async function deactivateCard(username) {
+  const r = await fetch(API+'/admin/deactivate-card',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username})});
+  const d = await r.json();
+  notify(d.message, '#ff4444');
+  loadUsers();
+}
+
+if (token) showDashboard();
+</script>
+</body>
+</html>

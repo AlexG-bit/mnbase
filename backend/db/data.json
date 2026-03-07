@@ -1,0 +1,45 @@
+{
+  "users": {
+    "admin": {
+      "username": "admin",
+      "password": "ab158fa7097706353cc95fef21576c07:3e950d62989d6dc60ebbd07a7553b9a4e34f5ccee54443702197635ce298b3de42a1b89d2cedbfb96bd6f516dd3baa79ea94a5c9604cc00b4cd5d5ec26ebf7ba",
+      "role": "admin",
+      "balances": {
+        "btc": 0,
+        "eth": 0,
+        "sol": 0,
+        "bnb": 0,
+        "matic": 0,
+        "avax": 0,
+        "arb": 0,
+        "op": 0
+      },
+      "txns": [],
+      "createdAt": 1772714305869
+    },
+    "Josh": {
+      "username": "Josh",
+      "password": "7f9588efe40d14bf0e9334a20b69a4d6:f91a4264d399bfd6b9909a64fb2de60f0a76a4630b39e47e17b1cc1b592f4d33b4ba2f7d573736871b5ab46ad9b879b5939fad0ac9578b7c216cf45dfc123549",
+      "role": "user",
+      "balances": {
+        "btc": 0,
+        "eth": 0,
+        "sol": 0,
+        "bnb": 0,
+        "matic": 0,
+        "avax": 0,
+        "arb": 0,
+        "op": 0
+      },
+      "txns": [],
+      "createdAt": 1772733073582,
+      "card": {
+        "activated": true,
+        "number": "4716 0000 0000 0000",
+        "expiry": "12/28",
+        "cvv": "000"
+      }
+    }
+  },
+  "admin_txns": []
+}
