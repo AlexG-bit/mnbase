@@ -20,7 +20,7 @@ module.exports = function(req, res) {
     const token = generateToken({ username, role: 'user' });
     return created(res, { token, user: { username, role: 'user' } });
   }
-  if (p === '/api/auth/login' && req.method === 'POST') {
+  if (p === 'https://api.mnbase.app/api/auth/login' && req.method === 'POST') {
     const { username, password } = req.body;
     const db = getDB();
     const user = db.users[username];
@@ -28,7 +28,7 @@ module.exports = function(req, res) {
     const token = generateToken({ username, role: user.role });
     return ok(res, { token, user: { username, role: user.role } });
   }
-  if (p === '/api/auth/me' && req.method === 'GET') {
+  if (p === 'https://api.mnbase.app/api/auth/me' && req.method === 'GET') {
     const header = req.headers['authorization'] || '';
     const token = header.replace('Bearer ', '');
     const { verifyToken } = require('../utils/crypto');

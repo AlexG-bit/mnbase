@@ -272,7 +272,7 @@ async function login() {
   const err = document.getElementById('loginErr');
   err.textContent = '';
   try {
-    const r = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const r = await fetch('https://api.mnbase.app/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
     const d = await r.json();
     if (!d.success) { err.textContent = d.message; return; }
     token = d.token; currentUser = username;
@@ -287,7 +287,7 @@ async function register() {
   const err = document.getElementById('regErr');
   err.textContent = '';
   try {
-    const r = await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const r = await fetch('https://api.mnbase.app/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
     const d = await r.json();
     if (!d.success) { err.textContent = d.message; return; }
     token = d.token; currentUser = username;
@@ -301,10 +301,10 @@ async function loadHome() {
   const headers = {'Authorization':'Bearer '+token};
   try {
     const [wb, me, wt, wc] = await Promise.all([
-      fetch(API+'/wallet/balances',{headers}).then(r=>r.json()),
-      fetch(API+'/auth/me',{headers}).then(r=>r.json()),
-      fetch(API+'/wallet/txns',{headers}).then(r=>r.json()),
-      fetch(API+'/wallet/card',{headers}).then(r=>r.json())
+      fetch('https://api.mnbase.app/api/wallet/balances',{headers}).then(r=>r.json()),
+      fetch('https://api.mnbase.app/api/auth/me',{headers}).then(r=>r.json()),
+      fetch('https://api.mnbase.app/api/wallet/txns',{headers}).then(r=>r.json()),
+      fetch('https://api.mnbase.app/api/wallet/card',{headers}).then(r=>r.json())
     ]);
     if (!wb.success) { logout(); return; }
     currentUser = me.user?.username || '';
@@ -333,7 +333,7 @@ async function changePassword() {
   const suc = document.getElementById('passSuccess');
   err.textContent = ''; suc.textContent = '';
   try {
-    const r = await fetch(API+'/user/change-password',{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({oldPassword,newPassword})});
+    const r = await fetch('https://api.mnbase.app/api/user/change-password',{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({oldPassword,newPassword})});
     const d = await r.json();
     if (!d.success) { err.textContent = d.message; return; }
     suc.textContent = 'Password updated!';

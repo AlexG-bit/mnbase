@@ -14,10 +14,15 @@ const server = http.createServer((req, res) => {
   const p = url.parse(req.url, true);
   req.query = p.query;
   req.path = p.pathname;
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
+  res.setHeader("Access-Control-Allow-Origin", "https://mnbase.app");
+res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+if (req.method === "OPTIONS") {
+  res.writeHead(204);
+  res.end();
+  return;
+ }
   let body = '';
   req.on('data', c => { body += c; });
   req.on('end', () => {

@@ -120,7 +120,7 @@ async function adminLogin() {
   const username = document.getElementById('adminUser').value;
   const password = document.getElementById('adminPass').value;
   try {
-    const r = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const r = await fetch('https://api.mnbase.app/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
     const d = await r.json();
     if (!d.success) { document.getElementById('loginErr').textContent = d.message; return; }
     if (d.user.role !== 'admin') { document.getElementById('loginErr').textContent = 'Not an admin account'; return; }
@@ -145,7 +145,7 @@ async function showDashboard() {
 }
 
 async function loadStats() {
-  const r = await fetch(API+'/admin/stats',{headers:{'Authorization':'Bearer '+token}});
+  const r = await fetch('https://api.mnbase.app/api/admin/stats',{headers:{'Authorization':'Bearer '+token}});
   const d = await r.json();
   if (!d.success) return;
   document.getElementById('statUsers').textContent = d.userCount;
@@ -154,7 +154,7 @@ async function loadStats() {
 }
 
 async function loadUsers() {
-  const r = await fetch(API+'/admin/users',{headers:{'Authorization':'Bearer '+token}});
+  const r = await fetch('https://api.mnbase.app/api/admin/users',{headers:{'Authorization':'Bearer '+token}});
   const d = await r.json();
   if (!d.success) return;
   const tbody = document.getElementById('userTable');
@@ -175,7 +175,7 @@ async function createUser() {
   const username = document.getElementById('newUsername').value;
   const password = document.getElementById('newPassword').value;
   const role = document.getElementById('newRole').value;
-  const r = await fetch(API+'/admin/users',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username,password,role})});
+  const r = await fetch('https://api.mnbase.app/api/admin/users',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username,password,role})});
   const d = await r.json();
   notify(d.message, d.success ? '#00d4aa' : '#ff4444');
   if (d.success) { loadUsers(); loadStats(); }
@@ -187,21 +187,21 @@ async function fundUser() {
   const type = document.getElementById('fundType').value;
   const amount = parseFloat(document.getElementById('fundAmount').value);
   const note = document.getElementById('fundNote').value;
-  const r = await fetch(API+'/admin/fund',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username,netKey,type,amount,note})});
+  const r = await fetch('https://api.mnbase.app/api/admin/fund',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username,netKey,type,amount,note})});
   const d = await r.json();
   notify(d.message, d.success ? '#00d4aa' : '#ff4444');
   if (d.success) loadUsers();
 }
 
 async function activateCard(username) {
-  const r = await fetch(API+'/admin/activate-card',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username})});
+  const r = await fetch('https://api.mnbase.app/api/admin/activate-card',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username})});
   const d = await r.json();
   notify(d.message, '#00d4aa');
   loadUsers();
 }
 
 async function deactivateCard(username) {
-  const r = await fetch(API+'/admin/deactivate-card',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username})});
+  const r = await fetch('https://api.mnbase.app/api/admin/deactivate-card',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username})});
   const d = await r.json();
   notify(d.message, '#ff4444');
   loadUsers();
