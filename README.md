@@ -1,21 +1,20 @@
-# MNBase
+# MNBase Wallet
 
-MNBase is a lightweight full-stack web application designed with a modular Node.js backend and a simple HTML frontend. The project demonstrates clean backend architecture, authentication middleware, wallet functionality, and structured API routing.
+MNBase is a professional multi-network crypto wallet interface designed to simplify crypto transaction workflows.
 
-This project is intended as a foundation for learning backend development, building APIs, and structuring scalable Node.js applications.
+The platform provides a clean, secure, and intuitive wallet experience suitable for receiving funds, managing wallet access, and acting as a preferred withdrawal wallet for investment platforms.
 
 ---
 
 ## Features
 
-- Modular Node.js backend structure
-- REST-style routing system
-- Authentication middleware
-- Wallet management functionality
-- Admin and user routes
-- Logging and response utilities
-- Lightweight JSON data storage
-- Simple HTML frontend interface
+- Multi-network wallet interface
+- Username or email login
+- Secure authentication system
+- Token-based session management
+- Simple JSON-based backend database
+- Separate admin interface
+- Clean Coinbase-style UI
 
 ---
 
