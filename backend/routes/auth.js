@@ -1,36 +1,11 @@
-const fs = require("fs");
-const path = require("path");
 const crypto = require("crypto");
+const { readDB, writeDB } = require("../db/store");
 
-const DATA_FILE = path.join(__dirname, "..", "db", "data.json");
 const JWT_SECRET = process.env.JWT_SECRET || "mnbase-dev-secret-change-me";
 
 function sendJson(res, statusCode, data) {
   res.writeHead(statusCode, { "Content-Type": "application/json" });
   res.end(JSON.stringify(data));
-}
-
-function readDb() {
-  try {
-    if (!fs.existsSync(DATA_FILE)) {
-      return { users: [] };
-    }
-
-    const raw = fs.readFileSync(DATA_FILE, "utf8");
-    const db = raw ? JSON.parse(raw) : {};
-
-    if (!Array.isArray(db.users)) {
-      db.users = [];
-    }
-
-    return db;
-  } catch {
-    return { users: [] };
-  }
-}
-
-function writeDb(db) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(db, null, 2), "utf8");
 }
 
 function parseBody(req) {
@@ -59,20 +34,6 @@ function normalize(value) {
 
 function hashPassword(password) {
   return crypto.createHash("sha256").update(String(password)).digest("hex");
-}
-
-function isPasswordValid(user, password) {
-  const incomingHash = hashPassword(password);
-
-  if (user.passwordHash) {
-    return user.passwordHash === incomingHash;
-  }
-
-  if (user.password) {
-    return user.password === password || user.password === incomingHash;
-  }
-
-  return false;
 }
 
 function signToken(payload) {
@@ -126,7 +87,7 @@ async function authRoute(req, res, pathname) {
         return true;
       }
 
-      const db = readDb();
+      const db = readDB();
 
       const usernameTaken = db.users.some((u) => String(u.username).toLowerCase() === username);
       if (usernameTaken) {
@@ -150,7 +111,7 @@ async function authRoute(req, res, pathname) {
       };
 
       db.users.push(user);
-      writeDb(db);
+      writeDB(db);
 
       sendJson(res, 201, {
         message: "Account created successfully.",
@@ -179,7 +140,7 @@ async function authRoute(req, res, pathname) {
         return true;
       }
 
-      const db = readDb();
+      const db = readDB();
 
       const user = db.users.find(
         (u) =>
@@ -187,7 +148,7 @@ async function authRoute(req, res, pathname) {
           String(u.email || "").toLowerCase() === identifier
       );
 
-      if (!user || !isPasswordValid(user, password)) {
+      if (!user || user.passwordHash !== hashPassword(password)) {
         sendJson(res, 401, { error: "Invalid username/email or password." });
         return true;
       }
@@ -196,7 +157,7 @@ async function authRoute(req, res, pathname) {
         sub: user.id,
         username: user.username,
         email: user.email,
-        role: user.role || "user",
+        role: user.role,
         exp: Date.now() + 7 * 24 * 60 * 60 * 1000
       });
 
@@ -207,7 +168,7 @@ async function authRoute(req, res, pathname) {
           id: user.id,
           username: user.username,
           email: user.email,
-          role: user.role || "user"
+          role: user.role
         }
       });
       return true;
@@ -219,7 +180,6 @@ async function authRoute(req, res, pathname) {
 
   if (pathname === "/api/auth/me" && req.method === "GET") {
     const token = getBearerToken(req);
-
     if (!token) {
       sendJson(res, 401, { error: "Missing authorization token." });
       return true;
@@ -231,7 +191,7 @@ async function authRoute(req, res, pathname) {
       return true;
     }
 
-    const db = readDb();
+    const db = readDB();
     const user = db.users.find((u) => u.id === payload.sub);
 
     if (!user) {
@@ -243,7 +203,7 @@ async function authRoute(req, res, pathname) {
       id: user.id,
       username: user.username,
       email: user.email,
-      role: user.role || "user"
+      role: user.role
     });
     return true;
   }

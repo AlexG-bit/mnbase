@@ -1,4 +1,5 @@
 function log(message) {
-  console.log('[' + new Date().toISOString() + '] ' + message);
+  console.log(message);
 }
-module.exports = { log };
+
+module.exports = log;

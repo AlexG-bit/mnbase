@@ -1,26 +1,24 @@
 const http = require("http");
 const url = require("url");
 
-const { router } = require("./routes/index");
+const { router } = require("./routes");
 const log = require("./utils/logger");
-const { initDB } = require("./db/store");
-const { seedAdmin } = require("./db/seed");
+const { initDB, seedAdmin } = require("./db/store");
 
 const PORT = process.env.PORT || 8080;
 const HOST = "0.0.0.0";
 
 const allowedOrigins = [
   "https://mnbase.app",
-  "https://www.mnbase.app",
   "https://admin.mnbase.app",
+  "https://www.mnbase.app",
   "http://127.0.0.1:5500",
   "http://localhost:5500",
   "http://localhost:3000"
 ];
 
-function setCorsHeaders(req, res) {
+function applyCors(req, res) {
   const origin = req.headers.origin;
-
   if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
   }
@@ -34,7 +32,7 @@ initDB();
 seedAdmin();
 
 const server = http.createServer(async (req, res) => {
-  setCorsHeaders(req, res);
+  applyCors(req, res);
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -46,11 +44,13 @@ const server = http.createServer(async (req, res) => {
 
   if (parsedUrl.pathname === "/") {
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({
-      name: "MNBase API",
-      status: "ok",
-      message: "Server is running"
-    }));
+    res.end(
+      JSON.stringify({
+        name: "MNBase API",
+        status: "ok",
+        message: "Server is running"
+      })
+    );
     return;
   }
 
@@ -62,14 +62,12 @@ const server = http.createServer(async (req, res) => {
 
   try {
     const handled = await router(req, res, parsedUrl);
-
     if (!handled && !res.writableEnded) {
       res.writeHead(404, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Not found" }));
     }
-  } catch (error) {
-    console.error("Server error:", error);
-
+  } catch (err) {
+    console.error("SERVER ERROR:", err);
     if (!res.writableEnded) {
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Internal server error" }));

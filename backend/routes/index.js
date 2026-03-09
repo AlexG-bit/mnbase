@@ -1,19 +1,12 @@
 const authRoute = require("./auth");
 
-function router(req, res, parsedUrl) {
+async function router(req, res, parsedUrl) {
   const pathname = parsedUrl.pathname;
 
-  const handled = authRoute(req, res, pathname);
-  if (handled !== false) {
-    return;
-  }
+  const authHandled = await authRoute(req, res, pathname);
+  if (authHandled) return true;
 
-  res.writeHead(404, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify({
-      error: "Not found"
-    })
-  );
+  return false;
 }
 
 module.exports = { router };
