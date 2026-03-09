@@ -1,16 +1,19 @@
-const authRoutes = require('./auth');
-const walletRoutes = require('./wallet');
-const userRoutes = require('./users');
-const adminRoutes = require('./admin');
+const authRoute = require("./auth");
 
-function router(req, res) {
-  const p = req.path;
-  if (p.startsWith('/api/auth')) return authRoutes(req, res);
-  if (p.startsWith('/api/wallet')) return walletRoutes(req, res);
-  if (p.startsWith('/api/user')) return userRoutes(req, res);
-  if (p.startsWith('/api/admin')) return adminRoutes(req, res);
-  if (p === '/api/health') { res.writeHead(200); res.end(JSON.stringify({status:'ok'})); return; }
-  res.writeHead(404); res.end(JSON.stringify({message:'Not found'}));
+function router(req, res, parsedUrl) {
+  const pathname = parsedUrl.pathname;
+
+  const handled = authRoute(req, res, pathname);
+  if (handled !== false) {
+    return;
+  }
+
+  res.writeHead(404, { "Content-Type": "application/json" });
+  res.end(
+    JSON.stringify({
+      error: "Not found"
+    })
+  );
 }
 
 module.exports = { router };
