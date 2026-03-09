@@ -4,7 +4,7 @@ const { ok, created, badRequest, unauthorized } = require('../utils/response');
 
 module.exports = function(req, res) {
   const p = req.path;
-  if (p === '/api/auth/register' && req.method === 'POST') {
+  if (p === 'https://api.mnbase.app/api/auth/register' && req.method === 'POST') {
     const { username, password } = req.body;
     if (!username || !password) return badRequest(res, 'Username and password required');
     if (username.length < 3) return badRequest(res, 'Username must be at least 3 characters');
@@ -21,12 +21,12 @@ module.exports = function(req, res) {
     return created(res, { token, user: { username, role: 'user' } });
   }
   if (p === 'https://api.mnbase.app/api/auth/login' && req.method === 'POST') {
-    const { username, password } = req.body;
+    const { identifier, password } = req.body;
     const db = getDB();
-    const user = db.users[username];
+    const user = db.users[identifier];
     if (!user || !verifyPassword(password, user.password)) return unauthorized(res, 'Invalid credentials');
-    const token = generateToken({ username, role: user.role });
-    return ok(res, { token, user: { username, role: user.role } });
+    const token = generateToken({ username: user.username, role: user.role });
+    return ok(res, { token, user: { username: user.username, role: user.role } });
   }
   if (p === 'https://api.mnbase.app/api/auth/me' && req.method === 'GET') {
     const header = req.headers['authorization'] || '';

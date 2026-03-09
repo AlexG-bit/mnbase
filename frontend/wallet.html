@@ -272,10 +272,27 @@ async function login() {
   const err = document.getElementById('loginErr');
   err.textContent = '';
   try {
-    const r = await fetch('https://api.mnbase.app/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
-    const d = await r.json();
-    if (!d.success) { err.textContent = d.message; return; }
-    token = d.token; currentUser = username;
+    const r = await fetch("https://api.mnbase.app/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        identifier,
+        password
+      })
+    });
+    const text = await r.text();
+    console.log("STATUS:", r.status);
+    console.log("RESPONSE:", text);
+    if (!r.ok) {
+      alert("Login failed: " + text);
+      return;
+    }
+    const data = JSON.parse(text);
+    console.log(data);
+    token = data.token;
+    currentUser = username;
     localStorage.setItem('mnbase_token', token);
     loadHome();
   } catch(e) { err.textContent = 'Cannot connect to server'; }
