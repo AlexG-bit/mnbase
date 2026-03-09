@@ -1,375 +1,973 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MN Base Wallet</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:#07070e;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;justify-content:center;min-height:100vh;}
-.phone{width:390px;min-height:844px;background:#0d0d1a;position:relative;}
-.screen{padding:24px;display:none;}
-.screen.active{display:block;}
-.header{text-align:center;padding:16px 0 20px;}
-.logo{font-size:26px;font-weight:800;background:linear-gradient(135deg,#1652f0,#7c3aed);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-.balance-card{background:linear-gradient(135deg,#1652f0,#7c3aed);border-radius:24px;padding:28px;margin:0 0 20px;text-align:center;}
-.balance-label{font-size:13px;opacity:0.8;margin-bottom:6px;}
-.balance-amount{font-size:38px;font-weight:800;}
-.action-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
-.action-btn{background:#1a1a2e;border-radius:16px;padding:14px 8px;text-align:center;cursor:pointer;border:none;color:#fff;}
-.action-btn span{display:block;font-size:22px;margin-bottom:4px;}
-.action-btn p{font-size:11px;opacity:0.6;}
-.section-title{font-size:14px;font-weight:700;opacity:0.5;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-.networks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
-.net-card{background:#1a1a2e;border-radius:16px;padding:14px;}
-.net-name{font-size:11px;opacity:0.5;text-transform:uppercase;}
-.net-bal{font-size:17px;font-weight:700;color:#1652f0;}
-.virtual-card{background:linear-gradient(135deg,#1a1a3e,#2d1b69);border-radius:20px;padding:24px;margin-bottom:20px;position:relative;overflow:hidden;border:1px solid #333;}
-.virtual-card.active{background:linear-gradient(135deg,#1652f0,#7c3aed);}
-.virtual-card.inactive{background:#1a1a2e;border:2px dashed #333;}
-.card-chip{width:36px;height:28px;background:linear-gradient(135deg,#ffd700,#ffaa00);border-radius:6px;margin-bottom:20px;}
-.card-number{font-size:16px;letter-spacing:3px;font-weight:600;margin-bottom:16px;font-family:monospace;}
-.card-info{display:flex;justify-content:space-between;align-items:flex-end;}
-.card-label{font-size:10px;opacity:0.6;text-transform:uppercase;}
-.card-value{font-size:14px;font-weight:600;}
-.card-logo{font-size:24px;font-weight:900;opacity:0.9;}
-.locked-card{text-align:center;padding:20px;}
-.locked-icon{font-size:40px;margin-bottom:12px;}
-.locked-text{font-size:14px;opacity:0.6;margin-bottom:4px;}
-.locked-sub{font-size:12px;opacity:0.4;}
-input{width:100%;padding:14px;background:#1a1a2e;border:1px solid #333;border-radius:14px;color:#fff;font-size:15px;margin:6px 0;}
-.btn{width:100%;padding:15px;border-radius:14px;border:none;font-size:15px;font-weight:700;cursor:pointer;margin:6px 0;}
-.btn-primary{background:linear-gradient(135deg,#1652f0,#7c3aed);color:#fff;}
-.btn-secondary{background:#1a1a2e;color:#fff;}
-.btn-danger{background:#ff444420;color:#ff4444;border:1px solid #ff444440;}
-.error{color:#ff4444;font-size:13px;margin:6px 0;}
-.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:#000000cc;display:none;justify-content:center;align-items:flex-end;z-index:100;}
-.modal.open{display:flex;}
-.modal-content{background:#0d0d1a;border-radius:30px 30px 0 0;padding:28px;width:100%;max-width:390px;max-height:80vh;overflow-y:auto;}
-.modal-title{font-size:18px;font-weight:700;margin-bottom:20px;}
-.txn-item{background:#1a1a2e;border-radius:14px;padding:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-.txn-label{font-size:14px;font-weight:600;}
-.txn-time{font-size:11px;opacity:0.4;margin-top:2px;}
-.txn-amount{font-size:15px;font-weight:700;}
-.txn-amount.add{color:#00d4aa;}
-.txn-amount.sub{color:#ff4444;}
-.notification{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1652f0;color:#fff;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:600;z-index:200;opacity:0;transition:opacity 0.3s;white-space:nowrap;}
-.notification.show{opacity:1;}
-.currency-row{display:flex;gap:8px;margin-bottom:16px;}
-.currency-pill{background:#1a1a2e;border-radius:20px;padding:6px 14px;font-size:12px;cursor:pointer;border:1px solid #333;}
-.currency-pill.active{background:#1652f0;border-color:#1652f0;}
-.bottom-nav{position:sticky;bottom:0;background:#0d0d1a;border-top:1px solid #1a1a2e;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 0;}
-.nav-btn{text-align:center;cursor:pointer;padding:8px;border:none;background:none;color:#fff;}
-.nav-btn span{display:block;font-size:18px;}
-.nav-btn p{font-size:9px;opacity:0.4;}
-.nav-btn.active p{opacity:1;color:#1652f0;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MNBase Wallet</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #111317;
+      --panel-2: #171a20;
+      --soft: #1f242d;
+      --line: rgba(255,255,255,0.08);
+      --text: #f5f7fb;
+      --muted: #9aa4b2;
+      --accent: #2f6bff;
+      --accent-2: #5b8cff;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --shadow: 0 20px 40px rgba(0,0,0,0.35);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(47,107,255,0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(91,140,255,0.10), transparent 24%),
+        linear-gradient(180deg, #0a0b0d 0%, #0d1015 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .splash {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, #090a0d 0%, #10131a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: splashFade 0.7s ease 2.2s forwards;
+    }
+
+    .splash-inner {
+      text-align: center;
+      transform: translateY(12px);
+      animation: floatIn 0.8s ease forwards;
+    }
+
+    .logo-mark {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 40px rgba(47,107,255,0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-mark::before {
+      content: "";
+      position: absolute;
+      width: 160%;
+      height: 160%;
+      background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,0.22) 50%, transparent 65%);
+      transform: rotate(20deg) translateX(-120%);
+      animation: shine 1.8s ease 0.3s 1;
+    }
+
+    .logo-mark span {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .splash h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .splash p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+
+    @keyframes splashFade {
+      to {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+    }
+
+    @keyframes floatIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shine {
+      to {
+        transform: rotate(20deg) translateX(120%);
+      }
+    }
+
+    .page {
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(10,11,13,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-mini {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(47,107,255,0.25);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hero {
+      padding: 72px 0 40px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-copy h1 {
+      margin: 0 0 18px;
+      font-size: clamp(38px, 5vw, 62px);
+      line-height: 1.02;
+      letter-spacing: -1.8px;
+    }
+
+    .hero-copy h1 .accent {
+      color: #dce7ff;
+    }
+
+    .hero-copy p {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 14px 30px rgba(47,107,255,0.25);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .trust-line {
+      color: #c8d1dc;
+      font-size: 13px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      opacity: 0.92;
+    }
+
+    .hero-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: -40% auto auto -10%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(47,107,255,0.25), transparent 65%);
+      pointer-events: none;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .balance-card {
+      background: linear-gradient(135deg, #0f1420, #192235);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+
+    .balance-label {
+      color: #b7c2cf;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .balance-value {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .balance-meta {
+      color: #8fa4c5;
+      font-size: 13px;
+    }
+
+    .network-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .network-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .network-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .network-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .section {
+      padding: 28px 0 18px;
+    }
+
+    .section h2 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      letter-spacing: -0.8px;
+    }
+
+    .section-lead {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 740px;
+      margin-bottom: 24px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .feature-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .auth-shell {
+      padding: 50px 0 80px;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .auth-copy,
+    .auth-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .auth-copy {
+      padding: 28px;
+    }
+
+    .auth-copy h3 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+
+    .auth-copy p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0 0 18px;
+    }
+
+    .auth-points {
+      display: grid;
+      gap: 12px;
+    }
+
+    .auth-point {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 15px;
+    }
+
+    .auth-point strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .auth-point span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .auth-card {
+      padding: 26px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: #d7deea;
+      padding: 12px 14px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 12px 24px rgba(47,107,255,0.24);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: #c9d2de;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      outline: none;
+      background: #0f1319;
+      color: white;
+      font-size: 15px;
+    }
+
+    .field input:focus {
+      border-color: rgba(91,140,255,0.65);
+      box-shadow: 0 0 0 4px rgba(47,107,255,0.14);
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .msg {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .msg.error {
+      display: block;
+      background: rgba(220,38,38,0.12);
+      color: #ffb5b5;
+      border: 1px solid rgba(220,38,38,0.22);
+    }
+
+    .msg.success {
+      display: block;
+      background: rgba(22,163,74,0.12);
+      color: #b6f4c6;
+      border: 1px solid rgba(22,163,74,0.22);
+    }
+
+    .dashboard {
+      display: none;
+      padding: 14px 0 80px;
+    }
+
+    .dashboard.active {
+      display: block;
+    }
+
+    .dashboard-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard-card h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .dashboard-card p {
+      color: var(--muted);
+      margin: 0 0 18px;
+      line-height: 1.7;
+    }
+
+    .profile-box {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      margin: 12px 0 18px;
+    }
+
+    .footer {
+      padding: 24px 0 40px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .auth-shell,
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 44px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="phone">
-
-<div class="screen active" id="loginScreen">
-  <div class="header"><div class="logo">MN Base</div><p style="opacity:0.5;margin-top:6px;font-size:13px">Your Crypto Wallet</p></div>
-  <h2 style="margin-bottom:16px">Welcome Back</h2>
-  <input type="text" id="loginUser" placeholder="Username">
-  <input type="password" id="loginPass" placeholder="Password">
-  <div class="error" id="loginErr"></div>
-  <button class="btn btn-primary" onclick="login()">Login</button>
-  <button class="btn btn-secondary" onclick="showScreen('registerScreen')">Create Account</button>
-</div>
-
-<div class="screen" id="registerScreen">
-  <div class="header"><div class="logo">MN Base</div></div>
-  <h2 style="margin-bottom:16px">Create Account</h2>
-  <input type="text" id="regUser" placeholder="Username (min 3 chars)">
-  <input type="password" id="regPass" placeholder="Password (min 6 chars)">
-  <div class="error" id="regErr"></div>
-  <button class="btn btn-primary" onclick="register()">Create Account</button>
-  <button class="btn btn-secondary" onclick="showScreen('loginScreen')">Back to Login</button>
-</div>
-
-<div class="screen" id="homeScreen">
-  <div class="header">
-    <div class="logo">MN Base</div>
-    <div style="font-size:12px;opacity:0.4" id="welcomeUser"></div>
-  </div>
-  <div class="currency-row">
-    <div class="currency-pill active" onclick="setCurrency('USD')" id="pill-USD">USD</div>
-    <div class="currency-pill" onclick="setCurrency('EUR')" id="pill-EUR">EUR</div>
-    <div class="currency-pill" onclick="setCurrency('GBP')" id="pill-GBP">GBP</div>
-    <div class="currency-pill" onclick="setCurrency('NGN')" id="pill-NGN">NGN</div>
-    <div class="currency-pill" onclick="setCurrency('GHS')" id="pill-GHS">GHS</div>
-  </div>
-  <div class="balance-card">
-    <div class="balance-label">Total Balance</div>
-    <div class="balance-amount" id="totalBalance">$0.00</div>
-    <div style="font-size:12px;opacity:0.7;margin-top:8px" id="txnCount"></div>
-  </div>
-  <div class="action-row">
-    <button class="action-btn" onclick="openModal('receiveModal')"><span>📥</span><p>Receive</p></button>
-    <button class="action-btn" onclick="handleSend()"><span>📤</span><p>Send</p></button>
-    <button class="action-btn" onclick="openModal('historyModal')"><span>📋</span><p>History</p></button>
-  </div>
-  <div class="section-title">Your Assets</div>
-  <div class="networks" id="networkGrid"></div>
-  <div class="section-title">Virtual Card</div>
-  <div id="cardSection"></div>
-  <button class="btn btn-danger" onclick="logout()" style="margin-top:10px;margin-bottom:80px">Logout</button>
-</div>
-
-<div class="screen" id="settingsScreen">
-  <div class="header"><div class="logo">MN Base</div></div>
-  <h2 style="margin-bottom:20px">Settings</h2>
-  <div style="background:#1a1a2e;border-radius:16px;padding:16px;margin-bottom:12px">
-    <div style="font-size:13px;opacity:0.5">Logged in as</div>
-    <div style="font-size:16px;font-weight:700" id="settingsUser"></div>
-  </div>
-  <div style="background:#1a1a2e;border-radius:16px;padding:16px;margin-bottom:12px">
-    <div style="font-size:13px;opacity:0.5;margin-bottom:12px">Change Password</div>
-    <input type="password" id="oldPass" placeholder="Current password">
-    <input type="password" id="newPass" placeholder="New password">
-    <div class="error" id="passErr"></div>
-    <div style="color:#00d4aa;font-size:13px;margin:6px 0" id="passSuccess"></div>
-    <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
-  </div>
-  <button class="btn btn-danger" onclick="logout()">Logout</button>
-</div>
-
-</div>
-
-<!-- Modals -->
-<div class="modal" id="receiveModal">
-  <div class="modal-content">
-    <div class="modal-title">📥 Receive Crypto</div>
-    <p style="opacity:0.6;font-size:14px;margin-bottom:16px">Share your username to receive funds.</p>
-    <div style="background:#1a1a2e;border-radius:14px;padding:16px;text-align:center;">
-      <div style="font-size:13px;opacity:0.5;margin-bottom:8px">Your Username</div>
-      <div style="font-size:22px;font-weight:800" id="receiveUsername"></div>
+  <div class="splash" id="splash">
+    <div class="splash-inner">
+      <div class="logo-mark"><span>MN</span></div>
+      <h1>MNBase</h1>
+      <p>Multi-network crypto wallet infrastructure</p>
     </div>
-    <button class="btn btn-primary" style="margin-top:16px" onclick="copyUsername()">Copy Username</button>
-    <button class="btn btn-secondary" onclick="closeModal('receiveModal')">Close</button>
   </div>
-</div>
 
-<div class="modal" id="sendModal">
-  <div class="modal-content">
-    <div class="modal-title">🔒 Card Required</div>
-    <div style="text-align:center;padding:20px">
-      <div style="font-size:50px;margin-bottom:16px">💳</div>
-      <p style="font-size:15px;font-weight:600;margin-bottom:8px">Activate Your Card First</p>
-      <p style="font-size:13px;opacity:0.5;margin-bottom:20px">To send funds, you need an activated virtual card. Contact support to activate your card.</p>
-    </div>
-    <button class="btn btn-secondary" onclick="closeModal('sendModal')">Close</button>
-  </div>
-</div>
-
-<div class="modal" id="historyModal">
-  <div class="modal-content">
-    <div class="modal-title">📋 Transaction History</div>
-    <div id="txnHistory"></div>
-    <button class="btn btn-secondary" style="margin-top:12px" onclick="closeModal('historyModal')">Close</button>
-  </div>
-</div>
-
-<div class="notification" id="notification"></div>
-
-<script>
-const API = 'https://mnbase-production.up.railway.app/api';
-let token = localStorage.getItem('mnbase_token');
-let currentUser = '';
-let balances = {};
-let txns = [];
-let cardData = null;
-let currency = 'USD';
-
-const rates = { USD:1, EUR:0.92, GBP:0.79, NGN:1580, GHS:12.5 };
-const symbols = { USD:'$', EUR:'€', GBP:'£', NGN:'₦', GHS:'₵' };
-
-function setCurrency(c) {
-  currency = c;
-  document.querySelectorAll('.currency-pill').forEach(p => p.classList.remove('active'));
-  document.getElementById('pill-'+c).classList.add('active');
-  updateBalanceDisplay();
-}
-
-function convertAmount(usd) {
-  return (usd * rates[currency]).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-}
-
-function updateBalanceDisplay() {
-  const total = Object.values(balances).reduce((a,b)=>a+b,0);
-  document.getElementById('totalBalance').textContent = symbols[currency] + convertAmount(total);
-  const grid = document.getElementById('networkGrid');
-  grid.innerHTML = Object.entries(balances).map(([k,v])=>`
-    <div class="net-card">
-      <div class="net-name">${k.toUpperCase()}</div>
-      <div class="net-bal">${symbols[currency]}${convertAmount(v)}</div>
-    </div>`).join('');
-}
-
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function notify(msg) {
-  const n = document.getElementById('notification');
-  n.textContent = msg;
-  n.classList.add('show');
-  setTimeout(() => n.classList.remove('show'), 2500);
-}
-
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function handleSend() {
-  if (cardData && cardData.activated) {
-    openModal('sendModal');
-  } else {
-    openModal('sendModal');
-  }
-}
-
-function renderCard() {
-  const section = document.getElementById('cardSection');
-  if (!cardData || !cardData.activated) {
-    section.innerHTML = `
-      <div class="virtual-card inactive">
-        <div class="locked-card">
-          <div class="locked-icon">🔒</div>
-          <div class="locked-text">Virtual Card Inactive</div>
-          <div class="locked-sub">Contact support to activate your card</div>
+  <div class="page">
+    <nav class="nav">
+      <div class="container nav-inner">
+        <div class="brand">
+          <div class="brand-mini">MN</div>
+          <span>MNBase Wallet</span>
         </div>
-      </div>`;
-  } else {
-    section.innerHTML = `
-      <div class="virtual-card active">
-        <div class="card-chip"></div>
-        <div class="card-number">${cardData.number || '#### #### #### ####'}</div>
-        <div class="card-info">
-          <div>
-            <div class="card-label">Card Holder</div>
-            <div class="card-value">${currentUser.toUpperCase()}</div>
-          </div>
-          <div>
-            <div class="card-label">Expires</div>
-            <div class="card-value">${cardData.expiry || '12/28'}</div>
-          </div>
-          <div class="card-logo">MN</div>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#access">Access Wallet</a>
+          <a href="/admin.html">Admin</a>
         </div>
       </div>
-      <div style="background:#1a1a2e;border-radius:14px;padding:14px;margin-top:8px;display:flex;justify-content:space-between">
-        <div><div style="font-size:11px;opacity:0.5">CVV</div><div style="font-weight:700">${cardData.cvv||'***'}</div></div>
-        <div><div style="font-size:11px;opacity:0.5">Status</div><div style="color:#00d4aa;font-weight:700">Active ✓</div></div>
-        <div><div style="font-size:11px;opacity:0.5">Type</div><div style="font-weight:700">Virtual</div></div>
-      </div>`;
-  }
-}
+    </nav>
 
-async function login() {
-  const username = document.getElementById('loginUser').value.trim();
-  const password = document.getElementById('loginPass').value;
-  const err = document.getElementById('loginErr');
-  err.textContent = '';
-  try {
-    const r = await fetch("https://api.mnbase.app/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        identifier,
-        password
-      })
-    });
-    const text = await r.text();
-    console.log("STATUS:", r.status);
-    console.log("RESPONSE:", text);
-    if (!r.ok) {
-      alert("Login failed: " + text);
-      return;
+    <main class="container">
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h1>
+              Your <span class="accent">multi-network base</span> for simpler crypto transactions.
+            </h1>
+            <p>
+              MNBase is a professional wallet platform built to make digital asset movement easier across networks.
+              Manage transactions more smoothly, convert crypto into local currencies with more convenience,
+              and use MNBase as your preferred wallet destination for withdrawals from investment platforms.
+            </p>
+            <div class="hero-actions">
+              <a href="#access"><button class="btn btn-primary">Get Started</button></a>
+              <a href="#features"><button class="btn btn-secondary">Explore Features</button></a>
+            </div>
+            <div class="trust-line">
+              <span>Multi-network ready</span>
+              <span>•</span>
+              <span>Built for streamlined withdrawals</span>
+              <span>•</span>
+              <span>Professional wallet access</span>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <div class="panel-title">
+              <span>Live wallet experience</span>
+              <span>Secure access</span>
+            </div>
+            <div class="balance-card">
+              <div class="balance-label">Portfolio overview</div>
+              <div class="balance-value">$24,850.00</div>
+              <div class="balance-meta">Optimized for multi-network transaction flow and easier withdrawal processing.</div>
+            </div>
+            <div class="network-grid">
+              <div class="network-card">
+                <strong>Multi-Network Access</strong>
+                <span>Support a broader crypto movement experience across preferred wallet routes.</span>
+              </div>
+              <div class="network-card">
+                <strong>Local Currency Conversion</strong>
+                <span>Position your wallet for easier conversion workflows into local currencies.</span>
+              </div>
+              <div class="network-card">
+                <strong>Withdrawal Friendly</strong>
+                <span>Ideal as a receiving wallet from investment and earning platforms.</span>
+              </div>
+              <div class="network-card">
+                <strong>Professional Experience</strong>
+                <span>Designed with a clean, modern interface that feels secure and premium.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <h2>Built for users who want a smoother crypto wallet experience</h2>
+        <p class="section-lead">
+          MNBase combines a clean access experience with wallet-focused utility, giving users a professional environment
+          for handling transactions, withdrawal destinations, and account access with greater confidence.
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>Multi-network wallet access</h3>
+            <p>
+              Use a wallet environment designed to support broader crypto transaction activity with a more organized experience.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>Crypto to local currency flow</h3>
+            <p>
+              Position your wallet for easier off-ramp and local currency conversion workflows within your transaction process.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>Preferred withdrawal destination</h3>
+            <p>
+              MNBase is designed to feel like a reliable destination wallet for users withdrawing from online earning and investment platforms.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="auth-shell" id="access">
+        <div class="auth-copy">
+          <h3>Access your wallet professionally</h3>
+          <p>
+            Create an account or sign in with your username or email. The interface is structured to feel intuitive,
+            trustworthy, and ready for real wallet usage.
+          </p>
+
+          <div class="auth-points">
+            <div class="auth-point">
+              <strong>Professional onboarding</strong>
+              <span>Create your wallet access profile with a clean and simple registration flow.</span>
+            </div>
+            <div class="auth-point">
+              <strong>Flexible login</strong>
+              <span>Use either your username or email to sign in quickly and securely.</span>
+            </div>
+            <div class="auth-point">
+              <strong>Built for serious use</strong>
+              <span>Designed to support a more premium wallet experience for transactions and withdrawal activity.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-card">
+          <div class="tabs">
+            <button class="tab-btn active" id="registerTabBtn" onclick="switchTab('register')">Create Account</button>
+            <button class="tab-btn" id="loginTabBtn" onclick="switchTab('login')">Login</button>
+          </div>
+
+          <div class="tab-panel active" id="registerPanel">
+            <div class="field">
+              <label for="registerUsername">Username</label>
+              <input id="registerUsername" type="text" placeholder="Choose a username" />
+            </div>
+            <div class="field">
+              <label for="registerEmail">Email</label>
+              <input id="registerEmail" type="email" placeholder="Enter your email" />
+            </div>
+            <div class="field">
+              <label for="registerPassword">Password</label>
+              <input id="registerPassword" type="password" placeholder="Create a secure password" />
+            </div>
+            <button class="btn btn-primary submit-btn" onclick="register()">Create Account</button>
+            <div id="registerMsg" class="msg"></div>
+          </div>
+
+          <div class="tab-panel" id="loginPanel">
+            <div class="field">
+              <label for="loginIdentifier">Username or Email</label>
+              <input id="loginIdentifier" type="text" placeholder="Enter username or email" />
+            </div>
+            <div class="field">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="password" placeholder="Enter your password" />
+            </div>
+            <button class="btn btn-primary submit-btn" onclick="login()">Login</button>
+            <div id="loginMsg" class="msg"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard" id="dashboard">
+        <div class="dashboard-card">
+          <h3>Wallet access confirmed</h3>
+          <p>
+            Your account is active. This dashboard area can be extended into your full wallet interface, transaction view,
+            withdrawal management, or account summary experience.
+          </p>
+
+          <div class="profile-box">
+            <strong>Active user:</strong>
+            <span id="currentUser">-</span>
+          </div>
+
+          <button class="btn btn-secondary" onclick="loadMe()">Refresh Profile</button>
+          <button class="btn btn-primary" onclick="logout()">Logout</button>
+          <div id="walletMsg" class="msg"></div>
+        </div>
+      </section>
+
+      <div class="footer">
+        MNBase Wallet • Multi-network crypto access with a cleaner transaction experience.
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const API = "https://api.mnbase.app/api";
+
+    function switchTab(tab) {
+      const registerBtn = document.getElementById("registerTabBtn");
+      const loginBtn = document.getElementById("loginTabBtn");
+      const registerPanel = document.getElementById("registerPanel");
+      const loginPanel = document.getElementById("loginPanel");
+
+      if (tab === "register") {
+        registerBtn.classList.add("active");
+        loginBtn.classList.remove("active");
+        registerPanel.classList.add("active");
+        loginPanel.classList.remove("active");
+      } else {
+        loginBtn.classList.add("active");
+        registerBtn.classList.remove("active");
+        loginPanel.classList.add("active");
+        registerPanel.classList.remove("active");
+      }
     }
-    const data = JSON.parse(text);
-    console.log(data);
-    token = data.token;
-    currentUser = username;
-    localStorage.setItem('mnbase_token', token);
-    loadHome();
-  } catch(e) { err.textContent = 'Cannot connect to server'; }
-}
 
-async function register() {
-  const username = document.getElementById('regUser').value.trim();
-  const password = document.getElementById('regPass').value;
-  const err = document.getElementById('regErr');
-  err.textContent = '';
-  try {
-    const r = await fetch('https://api.mnbase.app/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
-    const d = await r.json();
-    if (!d.success) { err.textContent = d.message; return; }
-    token = d.token; currentUser = username;
-    localStorage.setItem('mnbase_token', token);
-    loadHome();
-  } catch(e) { err.textContent = 'Cannot connect to server'; }
-}
+    function showMessage(id, text, type = "error") {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = `msg ${type}`;
+    }
 
-async function loadHome() {
-  showScreen('homeScreen');
-  const headers = {'Authorization':'Bearer '+token};
-  try {
-    const [wb, me, wt, wc] = await Promise.all([
-      fetch('https://api.mnbase.app/api/wallet/balances',{headers}).then(r=>r.json()),
-      fetch('https://api.mnbase.app/api/auth/me',{headers}).then(r=>r.json()),
-      fetch('https://api.mnbase.app/api/wallet/txns',{headers}).then(r=>r.json()),
-      fetch('https://api.mnbase.app/api/wallet/card',{headers}).then(r=>r.json())
-    ]);
-    if (!wb.success) { logout(); return; }
-    currentUser = me.user?.username || '';
-    balances = wb.balances;
-    txns = wt.txns || [];
-    cardData = wc.card || null;
-    document.getElementById('welcomeUser').textContent = currentUser;
-    document.getElementById('settingsUser').textContent = currentUser;
-    document.getElementById('receiveUsername').textContent = currentUser;
-    document.getElementById('txnCount').textContent = txns.length + ' transactions';
-    updateBalanceDisplay();
-    renderCard();
-    const hist = document.getElementById('txnHistory');
-    hist.innerHTML = txns.length ? txns.map(t=>`
-      <div class="txn-item">
-        <div><div class="txn-label">${t.netKey?.toUpperCase()} — ${t.label||t.type}</div><div class="txn-time">${t.time||''}</div></div>
-        <div class="txn-amount ${t.type}">${t.type==='add'?'+':t.type==='sub'?'-':''}${symbols[currency]}${convertAmount(t.amount||0)}</div>
-      </div>`).join('') : '<p style="opacity:0.4;text-align:center;padding:20px">No transactions yet</p>';
-  } catch(e) { logout(); }
-}
+    function clearMessage(id) {
+      const el = document.getElementById(id);
+      el.textContent = "";
+      el.className = "msg";
+    }
 
-async function changePassword() {
-  const oldPassword = document.getElementById('oldPass').value;
-  const newPassword = document.getElementById('newPass').value;
-  const err = document.getElementById('passErr');
-  const suc = document.getElementById('passSuccess');
-  err.textContent = ''; suc.textContent = '';
-  try {
-    const r = await fetch('https://api.mnbase.app/api/user/change-password',{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({oldPassword,newPassword})});
-    const d = await r.json();
-    if (!d.success) { err.textContent = d.message; return; }
-    suc.textContent = 'Password updated!';
-  } catch(e) { err.textContent = 'Error'; }
-}
+    function saveToken(token) {
+      localStorage.setItem("mnbase_token", token);
+    }
 
-function copyUsername() {
-  navigator.clipboard.writeText(currentUser);
-  notify('Username copied!');
-}
+    function getToken() {
+      return localStorage.getItem("mnbase_token");
+    }
 
-function logout() {
-  localStorage.removeItem('mnbase_token');
-  token = null; currentUser = '';
-  showScreen('loginScreen');
-}
+    function clearToken() {
+      localStorage.removeItem("mnbase_token");
+    }
 
-if (token) loadHome(); else showScreen('loginScreen');
-setInterval(() => { if (token) loadHome(); }, 15000);
-</script>
+    async function register() {
+      clearMessage("registerMsg");
+
+      const username = document.getElementById("registerUsername").value.trim();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value;
+
+      if (!username || !email || !password) {
+        showMessage("registerMsg", "Please complete all registration fields.");
+        return;
+      }
+
+      try {
+        const r = await fetch(`${API}/auth/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, email, password })
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMessage("registerMsg", `Account creation failed: ${text}`);
+          return;
+        }
+
+        showMessage("registerMsg", "Account created successfully. You can now log in.", "success");
+        switchTab("login");
+        document.getElementById("loginIdentifier").value = username;
+      } catch (err) {
+        showMessage("registerMsg", `Cannot connect to server: ${err.message}`);
+      }
+    }
+
+    async function login() {
+      clearMessage("loginMsg");
+
+      const identifier = document.getElementById("loginIdentifier").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      if (!identifier || !password) {
+        showMessage("loginMsg", "Please enter your username/email and password.");
+        return;
+      }
+
+      try {
+        const r = await fetch(`${API}/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ identifier, password })
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMessage("loginMsg", `Login failed: ${text}`);
+          return;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          showMessage("loginMsg", "Login failed: invalid server response.");
+          return;
+        }
+
+        const token = data.token || data.accessToken || data.jwt || null;
+
+        if (!token) {
+          showMessage("loginMsg", "Login failed: token not returned by server.");
+          return;
+        }
+
+        saveToken(token);
+        showMessage("loginMsg", "Login successful.", "success");
+        document.getElementById("dashboard").classList.add("active");
+        await loadMe();
+      } catch (err) {
+        showMessage("loginMsg", `Cannot connect to server: ${err.message}`);
+      }
+    }
+
+    async function loadMe() {
+      clearMessage("walletMsg");
+
+      const token = getToken();
+      if (!token) {
+        showMessage("walletMsg", "No active session found.");
+        return;
+      }
+
+      try {
+        const r = await fetch(`${API}/auth/me`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMessage("walletMsg", `Profile load failed: ${text}`);
+          return;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          showMessage("walletMsg", "Profile load failed: invalid server response.");
+          return;
+        }
+
+        document.getElementById("currentUser").textContent =
+          data.username || data.email || "Authenticated User";
+      } catch (err) {
+        showMessage("walletMsg", `Cannot connect to server: ${err.message}`);
+      }
+    }
+
+    function logout() {
+      clearToken();
+      document.getElementById("dashboard").classList.remove("active");
+      document.getElementById("currentUser").textContent = "-";
+      showMessage("walletMsg", "You have been logged out.", "success");
+    }
+
+    window.addEventListener("load", async () => {
+      setTimeout(() => {
+        const splash = document.getElementById("splash");
+        if (splash) splash.style.display = "none";
+      }, 2900);
+
+      if (getToken()) {
+        document.getElementById("dashboard").classList.add("active");
+        await loadMe();
+      }
+    });
+  </script>
 </body>
 </html>

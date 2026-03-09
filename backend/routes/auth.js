@@ -1,39 +1,44 @@
-const { getDB, saveDB } = require('../db/store');
-const { hashPassword, verifyPassword, generateToken } = require('../utils/crypto');
-const { ok, created, badRequest, unauthorized } = require('../utils/response');
+if (pathname === "/api/auth/login" && req.method === "POST") {
 
-module.exports = function(req, res) {
-  const p = req.path;
-  if (p === 'https://api.mnbase.app/api/auth/register' && req.method === 'POST') {
-    const { username, password } = req.body;
-    if (!username || !password) return badRequest(res, 'Username and password required');
-    if (username.length < 3) return badRequest(res, 'Username must be at least 3 characters');
-    if (password.length < 6) return badRequest(res, 'Password must be at least 6 characters');
-    const db = getDB();
-    if (db.users[username]) return badRequest(res, 'Username already taken');
-    db.users[username] = {
-      username, password: hashPassword(password), role: 'user',
-      balances: { btc:0, eth:0, sol:0, bnb:0, matic:0, avax:0, arb:0, op:0 },
-      txns: [], createdAt: Date.now()
-    };
-    saveDB();
-    const token = generateToken({ username, role: 'user' });
-    return created(res, { token, user: { username, role: 'user' } });
-  }
-  if (p === 'https://api.mnbase.app/api/auth/login' && req.method === 'POST') {
-    const { identifier, password } = req.body;
-    const db = getDB();
-    const user = db.users[identifier];
-    if (!user || !verifyPassword(password, user.password)) return unauthorized(res, 'Invalid credentials');
-    const token = generateToken({ username: user.username, role: user.role });
-    return ok(res, { token, user: { username: user.username, role: user.role } });
-  }
-  if (p === 'https://api.mnbase.app/api/auth/me' && req.method === 'GET') {
-    const header = req.headers['authorization'] || '';
-    const token = header.replace('Bearer ', '');
-    const { verifyToken } = require('../utils/crypto');
-    const payload = verifyToken(token);
-    if (!payload) return unauthorized(res);
-    return ok(res, { user: payload });
-  }
-};
+  let body = "";
+
+  req.on("data", chunk => {
+    body += chunk.toString();
+  });
+
+  req.on("end", () => {
+    try {
+
+      const { identifier, password } = JSON.parse(body);
+
+      if (!identifier || !password) {
+        return sendJson(res, 400, { error: "Missing credentials" });
+      }
+
+      const user = users.find(
+        u => u.username === identifier || u.email === identifier
+      );
+
+      if (!user) {
+        return sendJson(res, 401, { error: "Invalid username/email or password" });
+      }
+
+      if (user.password !== password) {
+        return sendJson(res, 401, { error: "Invalid username/email or password" });
+      }
+
+      const token = generateToken(user);
+
+      return sendJson(res, 200, {
+        token,
+        username: user.username,
+        email: user.email
+      });
+
+    } catch (err) {
+      return sendJson(res, 500, { error: "Login failed" });
+    }
+  });
+
+  return;
+}
