@@ -24,7 +24,7 @@ function readDb() {
     }
 
     return db;
-  } catch (err) {
+  } catch {
     return { users: [] };
   }
 }
@@ -44,7 +44,7 @@ function parseBody(req) {
     req.on("end", () => {
       try {
         resolve(body ? JSON.parse(body) : {});
-      } catch (err) {
+      } catch {
         reject(new Error("Invalid JSON body"));
       }
     });
@@ -89,25 +89,17 @@ function signToken(payload) {
 function verifyToken(token) {
   try {
     const [header, body, signature] = String(token || "").split(".");
-
-    if (!header || !body || !signature) {
-      return null;
-    }
+    if (!header || !body || !signature) return null;
 
     const expected = crypto
       .createHmac("sha256", JWT_SECRET)
       .update(`${header}.${body}`)
       .digest("base64url");
 
-    if (expected !== signature) {
-      return null;
-    }
+    if (expected !== signature) return null;
 
     const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
-
-    if (payload.exp && Date.now() > payload.exp) {
-      return null;
-    }
+    if (payload.exp && Date.now() > payload.exp) return null;
 
     return payload;
   } catch {
@@ -117,9 +109,7 @@ function verifyToken(token) {
 
 function getBearerToken(req) {
   const auth = req.headers.authorization || "";
-  if (!auth.startsWith("Bearer ")) {
-    return null;
-  }
+  if (!auth.startsWith("Bearer ")) return null;
   return auth.slice(7).trim();
 }
 
@@ -132,19 +122,22 @@ async function authRoute(req, res, pathname) {
       const password = normalize(body.password);
 
       if (!username || !email || !password) {
-        return sendJson(res, 400, { error: "Username, email, and password are required." });
+        sendJson(res, 400, { error: "Username, email, and password are required." });
+        return true;
       }
 
       const db = readDb();
 
       const usernameTaken = db.users.some((u) => String(u.username).toLowerCase() === username);
       if (usernameTaken) {
-        return sendJson(res, 409, { error: "Username already exists." });
+        sendJson(res, 409, { error: "Username already exists." });
+        return true;
       }
 
       const emailTaken = db.users.some((u) => String(u.email).toLowerCase() === email);
       if (emailTaken) {
-        return sendJson(res, 409, { error: "Email already exists." });
+        sendJson(res, 409, { error: "Email already exists." });
+        return true;
       }
 
       const user = {
@@ -159,7 +152,7 @@ async function authRoute(req, res, pathname) {
       db.users.push(user);
       writeDb(db);
 
-      return sendJson(res, 201, {
+      sendJson(res, 201, {
         message: "Account created successfully.",
         user: {
           id: user.id,
@@ -168,8 +161,10 @@ async function authRoute(req, res, pathname) {
           role: user.role
         }
       });
+      return true;
     } catch (err) {
-      return sendJson(res, 400, { error: err.message || "Registration failed." });
+      sendJson(res, 400, { error: err.message || "Registration failed." });
+      return true;
     }
   }
 
@@ -180,7 +175,8 @@ async function authRoute(req, res, pathname) {
       const password = normalize(body.password);
 
       if (!identifier || !password) {
-        return sendJson(res, 400, { error: "Identifier and password are required." });
+        sendJson(res, 400, { error: "Identifier and password are required." });
+        return true;
       }
 
       const db = readDb();
@@ -192,7 +188,8 @@ async function authRoute(req, res, pathname) {
       );
 
       if (!user || !isPasswordValid(user, password)) {
-        return sendJson(res, 401, { error: "Invalid username/email or password." });
+        sendJson(res, 401, { error: "Invalid username/email or password." });
+        return true;
       }
 
       const token = signToken({
@@ -203,7 +200,7 @@ async function authRoute(req, res, pathname) {
         exp: Date.now() + 7 * 24 * 60 * 60 * 1000
       });
 
-      return sendJson(res, 200, {
+      sendJson(res, 200, {
         message: "Login successful.",
         token,
         user: {
@@ -213,8 +210,10 @@ async function authRoute(req, res, pathname) {
           role: user.role || "user"
         }
       });
+      return true;
     } catch (err) {
-      return sendJson(res, 400, { error: err.message || "Login failed." });
+      sendJson(res, 400, { error: err.message || "Login failed." });
+      return true;
     }
   }
 
@@ -222,27 +221,31 @@ async function authRoute(req, res, pathname) {
     const token = getBearerToken(req);
 
     if (!token) {
-      return sendJson(res, 401, { error: "Missing authorization token." });
+      sendJson(res, 401, { error: "Missing authorization token." });
+      return true;
     }
 
     const payload = verifyToken(token);
     if (!payload) {
-      return sendJson(res, 401, { error: "Invalid or expired token." });
+      sendJson(res, 401, { error: "Invalid or expired token." });
+      return true;
     }
 
     const db = readDb();
     const user = db.users.find((u) => u.id === payload.sub);
 
     if (!user) {
-      return sendJson(res, 404, { error: "User not found." });
+      sendJson(res, 404, { error: "User not found." });
+      return true;
     }
 
-    return sendJson(res, 200, {
+    sendJson(res, 200, {
       id: user.id,
       username: user.username,
       email: user.email,
       role: user.role || "user"
     });
+    return true;
   }
 
   return false;

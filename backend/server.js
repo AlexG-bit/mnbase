@@ -11,6 +11,7 @@ const HOST = "0.0.0.0";
 
 const allowedOrigins = [
   "https://mnbase.app",
+  "https://www.mnbase.app",
   "https://admin.mnbase.app",
   "http://127.0.0.1:5500",
   "http://localhost:5500",
@@ -32,7 +33,7 @@ function setCorsHeaders(req, res) {
 initDB();
 seedAdmin();
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") {
@@ -45,36 +46,34 @@ const server = http.createServer((req, res) => {
 
   if (parsedUrl.pathname === "/") {
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        name: "MNBase API",
-        status: "ok",
-        message: "Server is running"
-      })
-    );
+    res.end(JSON.stringify({
+      name: "MNBase API",
+      status: "ok",
+      message: "Server is running"
+    }));
     return;
   }
 
   if (parsedUrl.pathname === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        status: "healthy"
-      })
-    );
+    res.end(JSON.stringify({ status: "healthy" }));
     return;
   }
 
   try {
-    router(req, res, parsedUrl);
+    const handled = await router(req, res, parsedUrl);
+
+    if (!handled && !res.writableEnded) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Not found" }));
+    }
   } catch (error) {
     console.error("Server error:", error);
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        error: "Internal server error"
-      })
-    );
+
+    if (!res.writableEnded) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Internal server error" }));
+    }
   }
 });
 
