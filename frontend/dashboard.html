@@ -21,7 +21,6 @@
     }
 
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -31,15 +30,12 @@
       color: var(--text);
     }
 
-    .container {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
+    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
 
     .nav {
       background: rgba(255,255,255,.88);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(15,23,42,.05);
+      border-bottom: 1px solid rgba(15, 23, 42, .05);
       position: sticky;
       top: 0;
       z-index: 50;
@@ -70,13 +66,9 @@
       justify-content: center;
       color: white;
       font-weight: 800;
-      box-shadow: 0 12px 28px rgba(22, 82, 240, 0.18);
     }
 
-    .nav-actions {
-      display: flex;
-      gap: 10px;
-    }
+    .nav-actions { display: flex; gap: 10px; }
 
     .btn {
       border: 0;
@@ -85,17 +77,11 @@
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: .18s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
     }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
       color: white;
-      box-shadow: 0 14px 30px rgba(22, 82, 240, 0.18);
     }
 
     .btn-secondary {
@@ -130,35 +116,12 @@
       justify-content: space-between;
     }
 
-    .balance-card small {
-      display: block;
-      opacity: .9;
-      margin-bottom: 8px;
-    }
+    .balance-card h1 { margin: 0; font-size: 42px; }
+    .balance-card p { margin: 10px 0 0; opacity: .92; line-height: 1.6; font-size: 14px; }
+    .balance-card small { display: block; opacity: .9; margin-bottom: 8px; }
 
-    .balance-card h1 {
-      margin: 0;
-      font-size: 42px;
-      letter-spacing: -1px;
-    }
-
-    .balance-card p {
-      margin: 10px 0 0;
-      opacity: .92;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .profile-card h2,
-    .section-title {
-      margin: 0 0 12px;
-      font-size: 24px;
-    }
-
-    .muted {
-      color: var(--muted);
-      line-height: 1.7;
-    }
+    .section-title { margin: 0 0 12px; font-size: 24px; }
+    .muted { color: var(--muted); line-height: 1.7; }
 
     .user-box {
       background: var(--panel-2);
@@ -170,7 +133,7 @@
 
     .action-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
       padding: 8px 0 26px;
     }
@@ -181,11 +144,8 @@
       border-radius: 20px;
       box-shadow: var(--shadow);
       padding: 20px;
-      min-height: 150px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
       cursor: pointer;
+      min-height: 150px;
     }
 
     .action-icon {
@@ -199,20 +159,11 @@
       justify-content: center;
       font-weight: 800;
       font-size: 18px;
-      box-shadow: 0 12px 24px rgba(22,82,240,.14);
+      margin-bottom: 12px;
     }
 
-    .action-card h3 {
-      margin: 14px 0 8px;
-      font-size: 18px;
-    }
-
-    .action-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.65;
-    }
+    .action-card h3 { margin: 0 0 8px; font-size: 18px; }
+    .action-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
 
     .bottom-grid {
       display: grid;
@@ -237,17 +188,6 @@
       padding: 14px 16px;
     }
 
-    .list-item strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 14px;
-    }
-
-    .list-item span {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
     .badge {
       padding: 8px 12px;
       border-radius: 999px;
@@ -257,45 +197,54 @@
       font-weight: 700;
     }
 
-    .modal {
+    .msg {
       display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+    }
+
+    .msg.error {
+      display: block;
+      color: #991b1b;
+      background: rgba(220,38,38,.08);
+      border: 1px solid rgba(220,38,38,.18);
+    }
+
+    .msg.success {
+      display: block;
+      color: #166534;
+      background: rgba(22,163,74,.08);
+      border: 1px solid rgba(22,163,74,.18);
+    }
+
+    .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.45);
-      z-index: 1000;
+      background: rgba(15,23,42,.45);
+      display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      z-index: 100;
+      padding: 16px;
     }
 
-    .modal.active {
-      display: flex;
-    }
+    .modal-backdrop.active { display: flex; }
 
-    .modal-card {
+    .modal {
       width: min(560px, 100%);
       background: white;
       border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 30px 60px rgba(15,23,42,.18);
       border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 24px;
     }
 
-    .modal-card h3 {
-      margin: 0 0 12px;
-      font-size: 24px;
-    }
+    .modal h3 { margin: 0 0 10px; font-size: 24px; }
+    .modal p { margin: 0 0 16px; color: var(--muted); line-height: 1.7; }
 
-    .modal-card p {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
+    .field { margin-bottom: 14px; }
     .field label {
       display: block;
       margin-bottom: 8px;
@@ -304,8 +253,7 @@
       font-weight: 500;
     }
 
-    .field select,
-    .field input {
+    .field select {
       width: 100%;
       padding: 14px 15px;
       border-radius: 14px;
@@ -313,51 +261,20 @@
       background: white;
       color: var(--text);
       font-size: 15px;
-      outline: none;
     }
 
-    .field select:focus,
-    .field input:focus {
-      border-color: rgba(22,82,240,.55);
-      box-shadow: 0 0 0 4px rgba(22,82,240,.12);
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      margin-top: 18px;
-    }
-
-    .msg {
-      display: none;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
+    .address-box {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      word-break: break-all;
       font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .msg.error {
-      display: block;
-      color: #991b1b;
-      background: rgba(220, 38, 38, .08);
-      border: 1px solid rgba(220, 38, 38, .18);
-    }
-
-    .msg.success {
-      display: block;
-      color: #166534;
-      background: rgba(22, 163, 74, .08);
-      border: 1px solid rgba(22, 163, 74, .18);
+      color: #0f172a;
     }
 
     @media (max-width: 980px) {
-      .hero,
-      .bottom-grid,
-      .action-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero, .bottom-grid, .action-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -368,9 +285,8 @@
         <div class="brand-box">MN</div>
         <span>MNBase Dashboard</span>
       </div>
-
       <div class="nav-actions">
-        <button class="btn btn-secondary" onclick="loadMe()">Refresh</button>
+        <button class="btn btn-secondary" onclick="loadWallet()">Refresh</button>
         <button class="btn btn-primary" onclick="logout()">Logout</button>
       </div>
     </div>
@@ -381,11 +297,8 @@
       <div class="balance-card">
         <div>
           <small>Total Wallet Value</small>
-          <h1 id="usdBalance">$0.00</h1>
-          <p>
-            A cleaner wallet dashboard for receiving, account access, asset conversion,
-            and card-enabled transaction workflows.
-          </p>
+          <h1 id="walletBalance">$0.00</h1>
+          <p>Your main wallet dashboard for balances, receiving assets, virtual card access, and conversion workflows.</p>
         </div>
         <div>
           <small>Primary account</small>
@@ -393,16 +306,14 @@
         </div>
       </div>
 
-      <div class="card profile-card">
-        <h2>Welcome to your dashboard</h2>
-        <p class="muted">
-          This is your main wallet environment. From here you can access receiving details,
-          conversion options, virtual card tools, and other professional wallet actions.
-        </p>
+      <div class="card">
+        <h2 class="section-title">Welcome to your dashboard</h2>
+        <p class="muted">This is your active wallet environment. Use the quick actions below to navigate your professional MNBase experience.</p>
 
         <div class="user-box">
           <strong>User profile</strong>
           <p class="muted" id="userMeta" style="margin:8px 0 0;">Loading profile...</p>
+          <p class="muted" id="cardStatus" style="margin:8px 0 0;">Loading card status...</p>
         </div>
 
         <div id="dashboardMsg" class="msg"></div>
@@ -412,44 +323,34 @@
     <section>
       <h2 class="section-title">Quick actions</h2>
       <div class="action-grid">
-        <div class="action-card" onclick="blockedCardAction('Send')">
+        <div class="action-card" onclick="showActivationPopup('send')">
           <div class="action-icon">↑</div>
-          <div>
-            <h3>Send</h3>
-            <p>Send assets to another wallet after card activation is completed.</p>
-          </div>
+          <h3>Send</h3>
+          <p>Transfer crypto assets with a cleaner transaction workflow.</p>
         </div>
 
-        <div class="action-card" onclick="openReceive()">
+        <div class="action-card" onclick="openReceiveModal()">
           <div class="action-icon">↓</div>
-          <div>
-            <h3>Receive</h3>
-            <p>View supported assets and copy the address for the one you want to receive.</p>
-          </div>
+          <h3>Receive</h3>
+          <p>Select an asset and view the deposit address for receiving funds.</p>
         </div>
 
-        <div class="action-card" onclick="openConvert()">
+        <div class="action-card" onclick="openConvertModal()">
           <div class="action-icon">⇄</div>
-          <div>
-            <h3>Convert</h3>
-            <p>Explore supported assets that can be converted into local currencies.</p>
-          </div>
+          <h3>Convert</h3>
+          <p>View different crypto assets and local currency conversion options.</p>
         </div>
 
-        <div class="action-card" onclick="goToCard()">
+        <div class="action-card" onclick="window.location.href='/card.html'">
           <div class="action-icon">VC</div>
-          <div>
-            <h3>Virtual Card</h3>
-            <p>Access your MNBase virtual card page and view card balance and status.</p>
-          </div>
+          <h3>Virtual Card</h3>
+          <p>Open your virtual card page and view card status and balance.</p>
         </div>
 
-        <div class="action-card" onclick="blockedCardAction('Withdraw')">
-          <div class="action-icon">W</div>
-          <div>
-            <h3>Withdraw</h3>
-            <p>Withdrawals require card activation before they can be processed.</p>
-          </div>
+        <div class="action-card" onclick="showActivationPopup('withdraw')">
+          <div class="action-icon">⇣</div>
+          <h3>Withdraw</h3>
+          <p>Withdrawals require an active MNBase card before use.</p>
         </div>
       </div>
     </section>
@@ -457,153 +358,251 @@
     <section class="bottom-grid">
       <div class="card">
         <h2 class="section-title">Recent activity</h2>
-        <div class="list">
-          <div class="list-item">
-            <div>
-              <strong>Incoming transfer</strong>
-              <span>Investment platform withdrawal</span>
-            </div>
-            <div class="badge">Pending</div>
-          </div>
-
-          <div class="list-item">
-            <div>
-              <strong>Asset conversion</strong>
-              <span>Crypto to local currency workflow</span>
-            </div>
-            <div class="badge">Completed</div>
-          </div>
-
-          <div class="list-item">
-            <div>
-              <strong>Wallet session</strong>
-              <span>Secure dashboard access</span>
-            </div>
-            <div class="badge">Active</div>
-          </div>
-        </div>
+        <div class="list" id="activityList"></div>
       </div>
 
       <div class="card">
         <h2 class="section-title">Platform overview</h2>
         <p class="muted">
-          MNBase is built to feel like a more professional wallet destination for users who want
-          easier crypto access, cleaner transaction structure, and a more polished fintech-style experience.
+          MNBase is structured as a more credible wallet environment for receiving, managing, and preparing crypto assets for future movement and conversion.
         </p>
       </div>
     </section>
   </main>
 
-  <div class="modal" id="mainModal">
-    <div class="modal-card">
-      <h3 id="modalTitle">Action</h3>
-      <p id="modalText"></p>
-      <div id="modalContent"></div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+  <div class="modal-backdrop" id="activationModal">
+    <div class="modal">
+      <h3>Card activation required</h3>
+      <p id="activationText">Please contact support to activate your MNBase card before using this feature.</p>
+      <button class="btn btn-primary" onclick="closeModal('activationModal')">Close</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="receiveModal">
+    <div class="modal">
+      <h3>Receive assets</h3>
+      <p>Select the asset you want to receive and view its deposit address.</p>
+
+      <div class="field">
+        <label for="receiveAsset">Asset</label>
+        <select id="receiveAsset" onchange="renderReceiveAddress()"></select>
+      </div>
+
+      <div class="address-box" id="receiveAddress">Loading address...</div>
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="closeModal('receiveModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="convertModal">
+    <div class="modal">
+      <h3>Convert assets</h3>
+      <p>Review supported crypto assets and local currency targets available for conversion workflows.</p>
+
+      <div class="field">
+        <label for="convertAsset">Crypto Asset</label>
+        <select id="convertAsset"></select>
+      </div>
+
+      <div class="field">
+        <label for="convertCurrency">Local Currency</label>
+        <select id="convertCurrency"></select>
+      </div>
+
+      <div class="address-box" id="convertInfo">Conversion route preview ready.</div>
+
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="closeModal('convertModal')">Close</button>
       </div>
     </div>
   </div>
 
   <script>
-  const API = "https://api.mnbase.app/api";
+    const API = "https://api.mnbase.app/api";
+    let receiveAssets = [];
 
-  function getToken() {
-    return localStorage.getItem("mnbase_token");
-  }
-
-  function clearToken() {
-    localStorage.removeItem("mnbase_token");
-  }
-
-  function showMsg(id, text, ok = false) {
-    const el = document.getElementById(id);
-    el.textContent = text;
-    el.className = ok ? "msg success" : "msg error";
-  }
-
-  function formatMoney(value) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD"
-    }).format(Number(value || 0));
-  }
-
-  async function loadWallet() {
-    const token = getToken();
-
-    if (!token) {
-      showMsg("dashboardMsg", "No active session found. Please log in again.");
-      return;
+    function getToken() {
+      return localStorage.getItem("mnbase_token");
     }
 
-    try {
-      const r = await fetch(`${API}/wallet/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        }
-      });
+    function clearToken() {
+      localStorage.removeItem("mnbase_token");
+    }
 
-      const text = await r.text();
+    function showMsg(id, text, ok = false) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = ok ? "msg success" : "msg error";
+    }
 
-      if (!r.ok) {
-        showMsg("dashboardMsg", `Session error: ${text}`);
+    function openModal(id) {
+      document.getElementById(id).classList.add("active");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function logout() {
+      clearToken();
+      window.location.href = "/wallet.html";
+    }
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD"
+      }).format(Number(value || 0));
+    }
+
+    function showActivationPopup(type) {
+      const text = type === "withdraw"
+        ? "Please contact support to activate your MNBase card before using withdraw."
+        : "Please contact support to activate your MNBase card before using send.";
+
+      document.getElementById("activationText").textContent = text;
+      openModal("activationModal");
+    }
+
+    async function loadWallet() {
+      const token = getToken();
+
+      if (!token) {
+        showMsg("dashboardMsg", "No active session found. Please log in again.");
         return;
       }
 
-      const data = JSON.parse(text);
+      try {
+        const r = await fetch(`${API}/wallet/me`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
 
-      document.getElementById("currentUser").textContent =
-        data.username || data.email || "User";
+        const text = await r.text();
 
-      document.getElementById("walletBalance").textContent =
-        formatMoney(data.balance || 0);
+        if (!r.ok) {
+          showMsg("dashboardMsg", `Session error: ${text}`);
+          return;
+        }
 
-      document.getElementById("userMeta").textContent =
-        `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
+        const data = JSON.parse(text);
 
-      document.getElementById("cardStatus").textContent =
-        data.cardActivated
-          ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
-          : "Virtual card status: Not activated";
+        document.getElementById("currentUser").textContent = data.username || data.email || "User";
+        document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
+        document.getElementById("userMeta").textContent =
+          `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
 
-      const txs = Array.isArray(data.transactions) ? data.transactions : [];
-      const activity = document.getElementById("activityList");
+        document.getElementById("cardStatus").textContent =
+          data.cardActivated
+            ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
+            : "Virtual card status: Not activated";
 
-      if (!txs.length) {
-        activity.innerHTML = `
-          <div class="list-item">
-            <div>
-              <strong>No recent activity yet</strong>
-              <span>Your funded or card-related activity will appear here.</span>
+        const txs = Array.isArray(data.transactions) ? data.transactions : [];
+        const activity = document.getElementById("activityList");
+
+        if (!txs.length) {
+          activity.innerHTML = `
+            <div class="list-item">
+              <div>
+                <strong>No recent activity yet</strong>
+                <span>Your funded or card-related activity will appear here.</span>
+              </div>
+              <div class="badge">New</div>
             </div>
-            <div class="badge">New</div>
-          </div>
-        `;
-      } else {
-        activity.innerHTML = txs.slice(0, 6).map((tx) => `
-          <div class="list-item">
-            <div>
-              <strong>${tx.type || "Activity"}</strong>
-              <span>${tx.createdAt || ""}</span>
+          `;
+        } else {
+          activity.innerHTML = txs.slice(0, 6).map((tx) => `
+            <div class="list-item">
+              <div>
+                <strong>${tx.type || "Activity"}</strong>
+                <span>${tx.createdAt || ""}</span>
+              </div>
+              <div class="badge">${tx.amount ? "$" + tx.amount : "Logged"}</div>
             </div>
-            <div class="badge">${tx.amount ? "$" + tx.amount : "Logged"}</div>
-          </div>
-        `).join("");
+          `).join("");
+        }
+      } catch (err) {
+        showMsg("dashboardMsg", `Failed to fetch profile: ${err.message}`);
       }
-    } catch (err) {
-      showMsg("dashboardMsg", `Failed to fetch profile: ${err.message}`);
     }
-  }
 
-  function logout() {
-    clearToken();
-    window.location.href = "/wallet.html";
-  }
+    async function openReceiveModal() {
+      const token = getToken();
 
-  window.addEventListener("load", loadWallet);
+      try {
+        const r = await fetch(`${API}/wallet/receive-assets`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+        if (!r.ok) {
+          showMsg("dashboardMsg", text);
+          return;
+        }
+
+        const data = JSON.parse(text);
+        receiveAssets = data.assets || [];
+
+        const select = document.getElementById("receiveAsset");
+        select.innerHTML = receiveAssets.map((a) =>
+          `<option value="${a.symbol}">${a.name} (${a.symbol})</option>`
+        ).join("");
+
+        renderReceiveAddress();
+        openModal("receiveModal");
+      } catch (err) {
+        showMsg("dashboardMsg", `Failed to fetch receive assets: ${err.message}`);
+      }
+    }
+
+    function renderReceiveAddress() {
+      const symbol = document.getElementById("receiveAsset").value;
+      const asset = receiveAssets.find((a) => a.symbol === symbol);
+      document.getElementById("receiveAddress").textContent = asset
+        ? `${asset.name} Address: ${asset.address}`
+        : "Address unavailable.";
+    }
+
+    async function openConvertModal() {
+      const token = getToken();
+
+      try {
+        const r = await fetch(`${API}/wallet/convert-options`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+        if (!r.ok) {
+          showMsg("dashboardMsg", text);
+          return;
+        }
+
+        const data = JSON.parse(text);
+        document.getElementById("convertAsset").innerHTML =
+          (data.assets || []).map((a) => `<option value="${a}">${a}</option>`).join("");
+
+        document.getElementById("convertCurrency").innerHTML =
+          (data.localCurrencies || []).map((c) => `<option value="${c}">${c}</option>`).join("");
+
+        document.getElementById("convertInfo").textContent =
+          "You can prepare supported assets for conversion into selected local currencies.";
+        openModal("convertModal");
+      } catch (err) {
+        showMsg("dashboardMsg", `Failed to fetch conversion options: ${err.message}`);
+      }
+    }
+
+    window.addEventListener("load", loadWallet);
   </script>
 </body>
 </html>
