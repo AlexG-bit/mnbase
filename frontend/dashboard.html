@@ -506,166 +506,104 @@
   </div>
 
   <script>
-    const API = "https://api.mnbase.app/api";
-    let currentUser = null;
+  const API = "https://api.mnbase.app/api";
 
-    function getToken() {
-      return localStorage.getItem("mnbase_token");
+  function getToken() {
+    return localStorage.getItem("mnbase_token");
+  }
+
+  function clearToken() {
+    localStorage.removeItem("mnbase_token");
+  }
+
+  function showMsg(id, text, ok = false) {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = ok ? "msg success" : "msg error";
+  }
+
+  function formatMoney(value) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD"
+    }).format(Number(value || 0));
+  }
+
+  async function loadWallet() {
+    const token = getToken();
+
+    if (!token) {
+      showMsg("dashboardMsg", "No active session found. Please log in again.");
+      return;
     }
 
-    function clearToken() {
-      localStorage.removeItem("mnbase_token");
-    }
+    try {
+      const r = await fetch(`${API}/wallet/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
 
-    function openModal(title, text, contentHtml = "") {
-      document.getElementById("modalTitle").textContent = title;
-      document.getElementById("modalText").textContent = text;
-      document.getElementById("modalContent").innerHTML = contentHtml;
-      document.getElementById("mainModal").classList.add("active");
-    }
+      const text = await r.text();
 
-    function closeModal() {
-      document.getElementById("mainModal").classList.remove("active");
-    }
-
-    function formatMoney(value) {
-      return `$${Number(value || 0).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`;
-    }
-
-    function blockedCardAction(actionName) {
-      openModal(
-        `${actionName} Unavailable`,
-        `To use ${actionName.toLowerCase()} on MNBase, please contact support to activate your MNBase card first. This requirement helps us maintain a more secure and professionally managed transaction process.`,
-        `<div class="msg success" style="display:block;">Support contact required before ${actionName.toLowerCase()} can be enabled.</div>`
-      );
-    }
-
-    async function loadMe() {
-      const token = getToken();
-
-      if (!token) {
-        window.location.href = "/wallet.html";
+      if (!r.ok) {
+        showMsg("dashboardMsg", `Session error: ${text}`);
         return;
       }
 
-      try {
-        const r = await fetch(`${API}/auth/me`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
+      const data = JSON.parse(text);
 
-        const text = await r.text();
+      document.getElementById("currentUser").textContent =
+        data.username || data.email || "User";
 
-        if (!r.ok) {
-          clearToken();
-          window.location.href = "/wallet.html";
-          return;
-        }
+      document.getElementById("walletBalance").textContent =
+        formatMoney(data.balance || 0);
 
-        const data = JSON.parse(text);
-        currentUser = data;
+      document.getElementById("userMeta").textContent =
+        `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
 
-        document.getElementById("currentUser").textContent = data.username || data.email || "User";
-        document.getElementById("userMeta").textContent =
-          `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
+      document.getElementById("cardStatus").textContent =
+        data.cardActivated
+          ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
+          : "Virtual card status: Not activated";
 
-        document.getElementById("usdBalance").textContent = formatMoney(data.wallet?.usdBalance || 0);
-      } catch (err) {
-        document.getElementById("dashboardMsg").textContent = `Failed to fetch profile: ${err.message}`;
-        document.getElementById("dashboardMsg").className = "msg error";
-      }
-    }
+      const txs = Array.isArray(data.transactions) ? data.transactions : [];
+      const activity = document.getElementById("activityList");
 
-    async function openReceive() {
-      const token = getToken();
-
-      try {
-        const r = await fetch(`${API}/wallet/receive`, {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        const text = await r.text();
-        if (!r.ok) {
-          openModal("Receive", text || "Failed to load assets.");
-          return;
-        }
-
-        const data = JSON.parse(text);
-        const assets = data.assets || {};
-
-        const html = Object.entries(assets).map(([asset, info]) => `
-          <div class="field">
-            <label>${asset} Address</label>
-            <input type="text" value="${info.address}" readonly />
+      if (!txs.length) {
+        activity.innerHTML = `
+          <div class="list-item">
+            <div>
+              <strong>No recent activity yet</strong>
+              <span>Your funded or card-related activity will appear here.</span>
+            </div>
+            <div class="badge">New</div>
+          </div>
+        `;
+      } else {
+        activity.innerHTML = txs.slice(0, 6).map((tx) => `
+          <div class="list-item">
+            <div>
+              <strong>${tx.type || "Activity"}</strong>
+              <span>${tx.createdAt || ""}</span>
+            </div>
+            <div class="badge">${tx.amount ? "$" + tx.amount : "Logged"}</div>
           </div>
         `).join("");
-
-        openModal(
-          "Receive Assets",
-          "Select the asset you want to receive and use the corresponding wallet address below.",
-          html
-        );
-      } catch (err) {
-        openModal("Receive", `Failed to fetch: ${err.message}`);
       }
+    } catch (err) {
+      showMsg("dashboardMsg", `Failed to fetch profile: ${err.message}`);
     }
+  }
 
-    async function openConvert() {
-      const token = getToken();
+  function logout() {
+    clearToken();
+    window.location.href = "/wallet.html";
+  }
 
-      try {
-        const r = await fetch(`${API}/wallet/convert-options`, {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        const text = await r.text();
-        if (!r.ok) {
-          openModal("Convert", text || "Failed to load conversion options.");
-          return;
-        }
-
-        const data = JSON.parse(text);
-        const pairs = data.pairs || [];
-
-        const html = pairs.map((pair) => `
-          <div class="field">
-            <label>${pair.asset}</label>
-            <input type="text" value="Convertible to: ${pair.currencies.join(", ")}" readonly />
-          </div>
-        `).join("");
-
-        openModal(
-          "Convert Assets",
-          "These assets are currently available for conversion into supported local currencies.",
-          html
-        );
-      } catch (err) {
-        openModal("Convert", `Failed to fetch: ${err.message}`);
-      }
-    }
-
-    function goToCard() {
-      window.location.href = "/virtual-card.html";
-    }
-
-    function logout() {
-      clearToken();
-      window.location.href = "/wallet.html";
-    }
-
-    window.addEventListener("load", loadMe);
+  window.addEventListener("load", loadWallet);
   </script>
 </body>
 </html>
