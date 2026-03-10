@@ -11,11 +11,13 @@
       --text: #0f172a;
       --muted: #64748b;
       --blue: #1652f0;
-      --blue-2: #2f6bff;
+      --blue2: #2f6bff;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -24,17 +26,20 @@
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
+
     .container {
-      width: min(920px, calc(100% - 32px));
+      width: min(980px, calc(100% - 32px));
       margin: 0 auto;
       padding: 34px 0 50px;
     }
+
     .nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 26px;
     }
+
     .btn {
       border: 0;
       border-radius: 14px;
@@ -43,14 +48,24 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
-    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
 
-    .card-page {
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .grid {
       display: grid;
       grid-template-columns: 1.1fr .9fr;
       gap: 22px;
     }
+
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -58,20 +73,103 @@
       box-shadow: var(--shadow);
       padding: 24px;
     }
+
     .virtual-card {
-      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      min-height: 260px;
+      border-radius: 28px;
+      padding: 28px;
       color: white;
-      border-radius: 24px;
-      padding: 26px;
-      min-height: 240px;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.18), transparent 20%),
+        linear-gradient(135deg, #0f172a 0%, #1d4ed8 55%, #2f6bff 100%);
+      box-shadow: 0 28px 60px rgba(29, 78, 216, .22);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      position: relative;
+      overflow: hidden;
     }
-    .virtual-card h2 { margin: 0; font-size: 28px; }
-    .small { opacity: .85; font-size: 13px; }
-    .card-balance { font-size: 34px; font-weight: 800; }
-    .meta { color: var(--muted); line-height: 1.7; }
+
+    .virtual-card::after {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      right: -40px;
+      bottom: -40px;
+      background: rgba(255,255,255,.08);
+    }
+
+    .chip {
+      width: 58px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #f8d66d, #c99618);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,.35);
+    }
+
+    .brand {
+      font-size: 14px;
+      letter-spacing: 1px;
+      opacity: .9;
+      font-weight: 700;
+    }
+
+    .number {
+      font-size: 26px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      margin: 18px 0;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+    }
+
+    .meta-label {
+      font-size: 11px;
+      opacity: .78;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+    }
+
+    .meta-value {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .card-balance {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-top: 8px;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(22,163,74,.08);
+      color: #166534;
+    }
+
+    .badge.inactive {
+      background: rgba(220,38,38,.08);
+      color: #991b1b;
+    }
+
     .msg {
       display: none;
       margin-top: 14px;
@@ -79,13 +177,17 @@
       border-radius: 14px;
       font-size: 14px;
     }
+
     .msg.error {
       display: block;
       color: #991b1b;
       background: rgba(220,38,38,.08);
       border: 1px solid rgba(220,38,38,.18);
     }
-    @media (max-width: 900px) { .card-page { grid-template-columns: 1fr; } }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -95,28 +197,45 @@
       <button class="btn btn-primary" onclick="logout()">Logout</button>
     </div>
 
-    <div class="card-page">
+    <div class="grid">
       <div class="virtual-card">
-        <div>
-          <div class="small">MNBase Virtual Card</div>
-          <h2 id="cardUser">User</h2>
+        <div style="display:flex;justify-content:space-between;align-items:start;">
+          <div class="brand">MNBASE VIRTUAL CARD</div>
+          <div class="chip"></div>
         </div>
 
-        <div>
-          <div class="small">Card Balance</div>
-          <div class="card-balance" id="cardBalance">$0.00</div>
-        </div>
+        <div class="number" id="cardNumber">5399 8821 4403 2204</div>
 
-        <div class="small" id="cardStatus">Card status ready</div>
+        <div class="row">
+          <div>
+            <div class="meta-label">Card Holder</div>
+            <div class="meta-value" id="cardUser">USER NAME</div>
+          </div>
+
+          <div>
+            <div class="meta-label">Expires</div>
+            <div class="meta-value" id="cardExpiry">12/29</div>
+          </div>
+
+          <div>
+            <div class="meta-label">CVV</div>
+            <div class="meta-value" id="cardCvv">482</div>
+          </div>
+        </div>
       </div>
 
       <div class="panel">
         <h2 style="margin-top:0;">Card overview</h2>
-        <p class="meta">
-          Your MNBase virtual card page displays activation status and card balance in a more professional, standard card-style layout.
+        <p class="muted">
+          Your MNBase virtual card is presented in a professional format with card holder details,
+          expiration date, CVV, activation status, and available card balance.
         </p>
 
-        <div class="meta" id="cardMeta">Waiting for card information...</div>
+        <p style="margin:18px 0 8px;"><strong>Status:</strong> <span id="cardStatusBadge" class="badge">Loading...</span></p>
+        <p style="margin:10px 0;"><strong>Card Balance:</strong> <span id="cardBalance">$0.00</span></p>
+        <p style="margin:10px 0;"><strong>Wallet Balance:</strong> <span id="walletBalance">$0.00</span></p>
+        <p class="muted" id="cardMeta">Loading card information...</p>
+
         <div id="cardMsg" class="msg"></div>
       </div>
     </div>
@@ -151,8 +270,24 @@
       window.location.href = "/wallet.html";
     }
 
+    function makeCardNumber(username) {
+      const seed = (username || "MNBASEUSER").toUpperCase().replace(/[^A-Z0-9]/g, "");
+      let sum = 0;
+      for (let i = 0; i < seed.length; i++) sum += seed.charCodeAt(i);
+      const a = String(1000 + (sum % 9000));
+      const b = String(1000 + ((sum * 3) % 9000));
+      const c = String(1000 + ((sum * 7) % 9000));
+      return `5399 ${a} ${b} ${c}`;
+    }
+
+    function makeCvv(username) {
+      const seed = (username || "MNBASE").length * 137;
+      return String(100 + (seed % 900));
+    }
+
     async function loadCard() {
       const token = getToken();
+
       if (!token) {
         showMsg("cardMsg", "No active session found. Please log in again.");
         return;
@@ -175,15 +310,24 @@
 
       const data = JSON.parse(text);
 
-      document.getElementById("cardUser").textContent = data.username || data.email || "User";
+      document.getElementById("cardUser").textContent = (data.username || data.email || "USER").toUpperCase();
+      document.getElementById("cardNumber").textContent = makeCardNumber(data.username || data.email || "MNBASE");
+      document.getElementById("cardCvv").textContent = makeCvv(data.username || data.email || "MNBASE");
       document.getElementById("cardBalance").textContent = formatMoney(data.cardBalance || 0);
-      document.getElementById("cardStatus").textContent =
-        data.cardActivated ? "Card status: Active" : "Card status: Not activated";
+      document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
 
-      document.getElementById("cardMeta").textContent =
-        data.cardActivated
-          ? "Your card is active and ready for supported wallet-linked actions."
-          : "Your card has not yet been activated. Please contact support or wait for admin activation.";
+      const badge = document.getElementById("cardStatusBadge");
+      if (data.cardActivated) {
+        badge.textContent = "Active";
+        badge.className = "badge";
+        document.getElementById("cardMeta").textContent =
+          "Your virtual card is active and ready for supported wallet-linked actions.";
+      } else {
+        badge.textContent = "Not Activated";
+        badge.className = "badge inactive";
+        document.getElementById("cardMeta").textContent =
+          "Your virtual card has not yet been activated. Please contact support or wait for admin activation.";
+      }
     }
 
     window.addEventListener("load", loadCard);

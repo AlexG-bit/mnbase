@@ -15,7 +15,9 @@
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -24,11 +26,13 @@
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
+
     .container {
-      width: min(1100px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
       padding: 34px 0 50px;
     }
+
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -37,7 +41,15 @@
       padding: 24px;
       margin-bottom: 22px;
     }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
     .field { margin-bottom: 14px; }
+
     .field label {
       display: block;
       margin-bottom: 8px;
@@ -45,7 +57,8 @@
       font-size: 13px;
       font-weight: 500;
     }
-    .field input {
+
+    .field input, .field textarea {
       width: 100%;
       padding: 14px 15px;
       border-radius: 14px;
@@ -54,7 +67,14 @@
       color: var(--text);
       font-size: 15px;
       outline: none;
+      font-family: inherit;
     }
+
+    .field textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
     .btn {
       border: 0;
       border-radius: 14px;
@@ -63,13 +83,16 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
-    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--line);
     }
 
     .msg {
@@ -80,12 +103,14 @@
       font-size: 14px;
       line-height: 1.5;
     }
+
     .msg.error {
       display: block;
       color: #991b1b;
       background: rgba(220, 38, 38, .08);
       border: 1px solid rgba(220, 38, 38, .18);
     }
+
     .msg.success {
       display: block;
       color: #166534;
@@ -100,6 +125,7 @@
       border-collapse: collapse;
       margin-top: 14px;
     }
+
     th, td {
       text-align: left;
       padding: 12px;
@@ -115,8 +141,8 @@
 <body>
   <div class="container">
     <div class="card" id="loginCard">
-      <h1 style="margin-top:0;">MNBase Admin</h1>
-      <p style="color:#64748b;">Professional admin session for user management, balance control, and card control.</p>
+      <h1 style="margin-top:0;">MNBase Admin Session</h1>
+      <p style="color:#64748b;">Structured control center for users, balances, and virtual card management.</p>
 
       <div class="field">
         <label for="adminIdentifier">Admin username or email</label>
@@ -144,6 +170,10 @@
             <label>Amount</label>
             <input id="fundAmount" type="number" />
           </div>
+          <div class="field">
+            <label>Activity Message</label>
+            <textarea id="fundMessage" placeholder="Message the user will see in recent activity"></textarea>
+          </div>
           <button class="btn btn-primary" onclick="fundWallet()">Fund Wallet</button>
           <div id="fundMsg" class="msg"></div>
         </div>
@@ -157,6 +187,10 @@
           <div class="field">
             <label>Amount</label>
             <input id="removeAmount" type="number" />
+          </div>
+          <div class="field">
+            <label>Activity Message</label>
+            <textarea id="removeMessage" placeholder="Message the user will see in recent activity"></textarea>
           </div>
           <button class="btn btn-primary" onclick="removeBalance()">Remove Balance</button>
           <div id="removeMsg" class="msg"></div>
@@ -192,7 +226,9 @@
           <h2 style="margin:0;">Users</h2>
           <button class="btn btn-secondary" onclick="loadUsers()">Refresh Users</button>
         </div>
+
         <div id="usersMsg" class="msg"></div>
+
         <table>
           <thead>
             <tr>
@@ -249,7 +285,6 @@
 
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("adminPanel").classList.remove("hidden");
-
       loadUsers();
     }
 
@@ -277,14 +312,16 @@
     function fundWallet() {
       adminPost("/admin/fund", {
         identifier: document.getElementById("fundIdentifier").value.trim(),
-        amount: document.getElementById("fundAmount").value
+        amount: document.getElementById("fundAmount").value,
+        message: document.getElementById("fundMessage").value.trim()
       }, "fundMsg", "Wallet funded successfully.");
     }
 
     function removeBalance() {
       adminPost("/admin/remove-balance", {
         identifier: document.getElementById("removeIdentifier").value.trim(),
-        amount: document.getElementById("removeAmount").value
+        amount: document.getElementById("removeAmount").value,
+        message: document.getElementById("removeMessage").value.trim()
       }, "removeMsg", "Balance removed successfully.");
     }
 

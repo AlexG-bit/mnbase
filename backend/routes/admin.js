@@ -55,6 +55,7 @@ async function adminRoute(req, res, pathname) {
     const body = await parseBody(req);
     const identifier = String(body.identifier || "").trim().toLowerCase();
     const amount = Number(body.amount || 0);
+    const message = String(body.message || "").trim();
 
     if (!identifier || amount <= 0) {
       sendJson(res, 400, { error: "Identifier and valid amount are required." });
@@ -77,6 +78,7 @@ async function adminRoute(req, res, pathname) {
     target.transactions.unshift({
       type: "fund",
       amount,
+      message: message || "Wallet funded by admin.",
       createdAt: new Date().toISOString()
     });
 
@@ -95,6 +97,7 @@ async function adminRoute(req, res, pathname) {
     const body = await parseBody(req);
     const identifier = String(body.identifier || "").trim().toLowerCase();
     const amount = Number(body.amount || 0);
+    const message = String(body.message || "").trim();
 
     if (!identifier || amount <= 0) {
       sendJson(res, 400, { error: "Identifier and valid amount are required." });
@@ -117,6 +120,7 @@ async function adminRoute(req, res, pathname) {
     target.transactions.unshift({
       type: "balance_removed",
       amount,
+      message: message || "Balance deducted by admin.",
       createdAt: new Date().toISOString()
     });
 
@@ -153,6 +157,7 @@ async function adminRoute(req, res, pathname) {
     target.transactions.unshift({
       type: "card_activated",
       amount: target.cardBalance,
+      message: "Virtual card activated by admin.",
       createdAt: new Date().toISOString()
     });
 
@@ -187,6 +192,7 @@ async function adminRoute(req, res, pathname) {
     target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
     target.transactions.unshift({
       type: "card_deactivated",
+      message: "Virtual card deactivated by admin.",
       createdAt: new Date().toISOString()
     });
 

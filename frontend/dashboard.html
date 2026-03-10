@@ -408,7 +408,7 @@
           <div class="list-item">
             <div>
               <strong>${tx.type || "Activity"}</strong>
-              <span>${tx.createdAt || ""}</span>
+              <span>${tx.message || tx.createdAt || ""}</span>
             </div>
             <div class="badge">${tx.amount ? "$" + tx.amount : "Logged"}</div>
           </div>
