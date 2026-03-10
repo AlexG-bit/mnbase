@@ -6,7 +6,6 @@
   <title>MNBase Admin</title>
   <style>
     :root {
-      --bg: #f7f9fc;
       --panel: #ffffff;
       --line: #e2e8f0;
       --text: #0f172a;
@@ -16,9 +15,7 @@
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -27,13 +24,11 @@
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
-
     .container {
-      width: min(980px, calc(100% - 32px));
+      width: min(1100px, calc(100% - 32px));
       margin: 0 auto;
       padding: 34px 0 50px;
     }
-
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -42,11 +37,7 @@
       padding: 24px;
       margin-bottom: 22px;
     }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
+    .field { margin-bottom: 14px; }
     .field label {
       display: block;
       margin-bottom: 8px;
@@ -54,7 +45,6 @@
       font-size: 13px;
       font-weight: 500;
     }
-
     .field input {
       width: 100%;
       padding: 14px 15px;
@@ -65,7 +55,6 @@
       font-size: 15px;
       outline: none;
     }
-
     .btn {
       border: 0;
       border-radius: 14px;
@@ -74,11 +63,8 @@
       font-weight: 600;
       cursor: pointer;
     }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      color: white;
-    }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
+    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
 
     .grid {
       display: grid;
@@ -94,14 +80,12 @@
       font-size: 14px;
       line-height: 1.5;
     }
-
     .msg.error {
       display: block;
       color: #991b1b;
       background: rgba(220, 38, 38, .08);
       border: 1px solid rgba(220, 38, 38, .18);
     }
-
     .msg.success {
       display: block;
       color: #166534;
@@ -110,6 +94,18 @@
     }
 
     .hidden { display: none; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
 
     @media (max-width: 900px) {
       .grid { grid-template-columns: 1fr; }
@@ -120,7 +116,7 @@
   <div class="container">
     <div class="card" id="loginCard">
       <h1 style="margin-top:0;">MNBase Admin</h1>
-      <p style="color:#64748b;">Login with your admin credentials to manage wallet funding and card activation.</p>
+      <p style="color:#64748b;">Professional admin session for user management, balance control, and card control.</p>
 
       <div class="field">
         <label for="adminIdentifier">Admin username or email</label>
@@ -136,37 +132,80 @@
       <div id="loginMsg" class="msg"></div>
     </div>
 
-    <div class="grid hidden" id="adminPanel">
-      <div class="card">
-        <h2 style="margin-top:0;">Fund wallet</h2>
-        <div class="field">
-          <label for="fundIdentifier">Username or Email</label>
-          <input id="fundIdentifier" type="text" placeholder="Enter user identifier" />
+    <div id="adminPanel" class="hidden">
+      <div class="grid">
+        <div class="card">
+          <h2 style="margin-top:0;">Fund wallet</h2>
+          <div class="field">
+            <label>Username or Email</label>
+            <input id="fundIdentifier" type="text" />
+          </div>
+          <div class="field">
+            <label>Amount</label>
+            <input id="fundAmount" type="number" />
+          </div>
+          <button class="btn btn-primary" onclick="fundWallet()">Fund Wallet</button>
+          <div id="fundMsg" class="msg"></div>
         </div>
 
-        <div class="field">
-          <label for="fundAmount">Amount</label>
-          <input id="fundAmount" type="number" placeholder="Enter amount" />
+        <div class="card">
+          <h2 style="margin-top:0;">Remove balance</h2>
+          <div class="field">
+            <label>Username or Email</label>
+            <input id="removeIdentifier" type="text" />
+          </div>
+          <div class="field">
+            <label>Amount</label>
+            <input id="removeAmount" type="number" />
+          </div>
+          <button class="btn btn-primary" onclick="removeBalance()">Remove Balance</button>
+          <div id="removeMsg" class="msg"></div>
         </div>
 
-        <button class="btn btn-primary" onclick="fundWallet()">Fund Wallet</button>
-        <div id="fundMsg" class="msg"></div>
+        <div class="card">
+          <h2 style="margin-top:0;">Activate card</h2>
+          <div class="field">
+            <label>Username or Email</label>
+            <input id="activateIdentifier" type="text" />
+          </div>
+          <div class="field">
+            <label>Opening Card Balance</label>
+            <input id="activateBalance" type="number" />
+          </div>
+          <button class="btn btn-primary" onclick="activateCard()">Activate Card</button>
+          <div id="activateMsg" class="msg"></div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin-top:0;">Deactivate card</h2>
+          <div class="field">
+            <label>Username or Email</label>
+            <input id="deactivateIdentifier" type="text" />
+          </div>
+          <button class="btn btn-primary" onclick="deactivateCard()">Deactivate Card</button>
+          <div id="deactivateMsg" class="msg"></div>
+        </div>
       </div>
 
       <div class="card">
-        <h2 style="margin-top:0;">Activate card</h2>
-        <div class="field">
-          <label for="cardIdentifier">Username or Email</label>
-          <input id="cardIdentifier" type="text" placeholder="Enter user identifier" />
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h2 style="margin:0;">Users</h2>
+          <button class="btn btn-secondary" onclick="loadUsers()">Refresh Users</button>
         </div>
-
-        <div class="field">
-          <label for="cardBalance">Card Balance</label>
-          <input id="cardBalance" type="number" placeholder="Enter opening card balance" />
-        </div>
-
-        <button class="btn btn-primary" onclick="activateCard()">Activate Card</button>
-        <div id="cardMsg" class="msg"></div>
+        <div id="usersMsg" class="msg"></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Balance</th>
+              <th>Card</th>
+              <th>Card Balance</th>
+            </tr>
+          </thead>
+          <tbody id="usersTable"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -174,12 +213,12 @@
   <script>
     const API = "https://api.mnbase.app/api";
 
-    function getToken() {
-      return localStorage.getItem("mnbase_admin_token");
+    function saveAdminToken(token) {
+      localStorage.setItem("mnbase_admin_token", token);
     }
 
-    function saveToken(token) {
-      localStorage.setItem("mnbase_admin_token", token);
+    function getAdminToken() {
+      return localStorage.getItem("mnbase_admin_token");
     }
 
     function showMsg(id, text, ok = false) {
@@ -192,80 +231,104 @@
       const identifier = document.getElementById("adminIdentifier").value.trim();
       const password = document.getElementById("adminPassword").value;
 
-      try {
-        const r = await fetch(`${API}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ identifier, password })
-        });
+      const r = await fetch(`${API}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier, password })
+      });
 
-        const text = await r.text();
+      const text = await r.text();
 
-        if (!r.ok) {
-          showMsg("loginMsg", text);
-          return;
-        }
-
-        const data = JSON.parse(text);
-        saveToken(data.token || "");
-
-        document.getElementById("loginCard").classList.add("hidden");
-        document.getElementById("adminPanel").classList.remove("hidden");
-      } catch (err) {
-        showMsg("loginMsg", `Failed to fetch: ${err.message}`);
+      if (!r.ok) {
+        showMsg("loginMsg", text);
+        return;
       }
+
+      const data = JSON.parse(text);
+      saveAdminToken(data.token || "");
+
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("adminPanel").classList.remove("hidden");
+
+      loadUsers();
     }
 
-    async function fundWallet() {
-      const identifier = document.getElementById("fundIdentifier").value.trim();
-      const amount = document.getElementById("fundAmount").value;
+    async function adminPost(path, body, msgId, successText) {
+      const r = await fetch(`${API}${path}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getAdminToken()}`
+        },
+        body: JSON.stringify(body)
+      });
 
-      try {
-        const r = await fetch(`${API}/admin/fund`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${getToken()}`
-          },
-          body: JSON.stringify({ identifier, amount })
-        });
+      const text = await r.text();
 
-        const text = await r.text();
-        if (!r.ok) {
-          showMsg("fundMsg", text);
-          return;
-        }
-
-        showMsg("fundMsg", text, true);
-      } catch (err) {
-        showMsg("fundMsg", `Failed to fetch: ${err.message}`);
+      if (!r.ok) {
+        showMsg(msgId, text);
+        return;
       }
+
+      showMsg(msgId, successText, true);
+      loadUsers();
     }
 
-    async function activateCard() {
-      const identifier = document.getElementById("cardIdentifier").value.trim();
-      const cardBalance = document.getElementById("cardBalance").value;
+    function fundWallet() {
+      adminPost("/admin/fund", {
+        identifier: document.getElementById("fundIdentifier").value.trim(),
+        amount: document.getElementById("fundAmount").value
+      }, "fundMsg", "Wallet funded successfully.");
+    }
 
-      try {
-        const r = await fetch(`${API}/admin/card/activate`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${getToken()}`
-          },
-          body: JSON.stringify({ identifier, cardBalance })
-        });
+    function removeBalance() {
+      adminPost("/admin/remove-balance", {
+        identifier: document.getElementById("removeIdentifier").value.trim(),
+        amount: document.getElementById("removeAmount").value
+      }, "removeMsg", "Balance removed successfully.");
+    }
 
-        const text = await r.text();
-        if (!r.ok) {
-          showMsg("cardMsg", text);
-          return;
+    function activateCard() {
+      adminPost("/admin/card/activate", {
+        identifier: document.getElementById("activateIdentifier").value.trim(),
+        cardBalance: document.getElementById("activateBalance").value
+      }, "activateMsg", "Card activated successfully.");
+    }
+
+    function deactivateCard() {
+      adminPost("/admin/card/deactivate", {
+        identifier: document.getElementById("deactivateIdentifier").value.trim()
+      }, "deactivateMsg", "Card deactivated successfully.");
+    }
+
+    async function loadUsers() {
+      const r = await fetch(`${API}/admin/users`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getAdminToken()}`
         }
+      });
 
-        showMsg("cardMsg", text, true);
-      } catch (err) {
-        showMsg("cardMsg", `Failed to fetch: ${err.message}`);
+      const text = await r.text();
+
+      if (!r.ok) {
+        showMsg("usersMsg", text);
+        return;
       }
+
+      const data = JSON.parse(text);
+      const tbody = document.getElementById("usersTable");
+
+      tbody.innerHTML = (data.users || []).map((u) => `
+        <tr>
+          <td>${u.username || ""}</td>
+          <td>${u.email || ""}</td>
+          <td>${u.role || ""}</td>
+          <td>$${Number(u.balance || 0).toFixed(2)}</td>
+          <td>${u.cardActivated ? "Active" : "Inactive"}</td>
+          <td>$${Number(u.cardBalance || 0).toFixed(2)}</td>
+        </tr>
+      `).join("");
     }
   </script>
 </body>

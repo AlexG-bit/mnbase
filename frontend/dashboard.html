@@ -69,8 +69,8 @@
       min-height: 220px; display: flex; flex-direction: column; justify-content: space-between;
     }
     .balance-card h1 { margin: 0; font-size: 42px; }
-    .balance-card p { margin: 10px 0 0; opacity: .92; line-height: 1.6; font-size: 14px; }
     .balance-card small { display: block; opacity: .9; margin-bottom: 8px; }
+    .balance-card p { margin: 10px 0 0; opacity: .92; line-height: 1.6; font-size: 14px; }
 
     .section-title { margin: 0 0 12px; font-size: 24px; }
     .muted { color: var(--muted); line-height: 1.7; }
@@ -350,11 +350,10 @@
     }
 
     function showActivationPopup(type) {
-      const text = type === "withdraw"
-        ? "Please contact support to activate your MNBase card before using withdraw."
-        : "Please contact support to activate your MNBase card before using send.";
-
-      document.getElementById("activationText").textContent = text;
+      document.getElementById("activationText").textContent =
+        type === "withdraw"
+          ? "Please contact support to activate your MNBase card before using withdraw."
+          : "Please contact support to activate your MNBase card before using send.";
       openModal("activationModal");
     }
 
@@ -386,7 +385,6 @@
       document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
       document.getElementById("userMeta").textContent =
         `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
-
       document.getElementById("cardStatus").textContent =
         data.cardActivated
           ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
@@ -482,7 +480,7 @@
         (data.localCurrencies || []).map((c) => `<option value="${c}">${c}</option>`).join("");
 
       document.getElementById("convertInfo").textContent =
-        "You can prepare supported assets for conversion into selected local currencies.";
+        "Supported crypto assets can be prepared for conversion into selected local currencies.";
 
       openModal("convertModal");
     }

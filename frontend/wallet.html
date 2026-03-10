@@ -6,7 +6,6 @@
   <title>MNBase Wallet</title>
   <style>
     :root {
-      --bg: #f7f9fc;
       --panel: #ffffff;
       --panel-2: #f8fafc;
       --line: #e2e8f0;
@@ -14,20 +13,16 @@
       --muted: #64748b;
       --blue: #1652f0;
       --blue-2: #2f6bff;
-      --green: #16a34a;
-      --red: #dc2626;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(22, 82, 240, 0.08), transparent 30%),
+        radial-gradient(circle at top left, rgba(22,82,240,.08), transparent 30%),
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
@@ -58,18 +53,6 @@
       font-size: 32px;
       font-weight: 800;
       box-shadow: 0 20px 45px rgba(22, 82, 240, 0.28);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .logo-box::before {
-      content: "";
-      position: absolute;
-      width: 180%;
-      height: 180%;
-      background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.35) 50%, transparent 65%);
-      transform: rotate(20deg) translateX(-120%);
-      animation: shine 1.8s ease .2s 1;
     }
 
     .splash h1 { margin: 0; font-size: 28px; }
@@ -83,10 +66,6 @@
       }
     }
 
-    @keyframes shine {
-      to { transform: rotate(20deg) translateX(120%); }
-    }
-
     .container {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
@@ -95,9 +74,9 @@
     .nav {
       position: sticky;
       top: 0;
-      background: rgba(255,255,255,.86);
+      background: rgba(255,255,255,.88);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+      border-bottom: 1px solid rgba(15,23,42,.05);
       z-index: 50;
     }
 
@@ -126,7 +105,6 @@
       justify-content: center;
       color: white;
       font-weight: 800;
-      box-shadow: 0 12px 28px rgba(22, 82, 240, 0.2);
     }
 
     .hero {
@@ -169,26 +147,17 @@
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: .18s ease;
     }
-
-    .btn:hover { transform: translateY(-1px); }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
       color: white;
-      box-shadow: 0 14px 30px rgba(22, 82, 240, 0.2);
     }
 
     .btn-secondary {
       background: white;
       color: var(--text);
       border: 1px solid var(--line);
-    }
-
-    .trust-line {
-      color: var(--muted);
-      font-size: 13px;
     }
 
     .hero-panel,
@@ -211,23 +180,9 @@
       margin-bottom: 16px;
     }
 
-    .mini-balance small {
-      display: block;
-      opacity: .9;
-      margin-bottom: 10px;
-    }
-
     .mini-balance h3 {
       margin: 0 0 12px;
       font-size: 36px;
-      letter-spacing: -1px;
-    }
-
-    .mini-balance p {
-      margin: 0;
-      font-size: 13px;
-      opacity: .92;
-      line-height: 1.6;
     }
 
     .info-grid {
@@ -262,7 +217,6 @@
     .section h2 {
       margin: 0 0 12px;
       font-size: 30px;
-      letter-spacing: -.8px;
     }
 
     .section-lead {
@@ -302,17 +256,6 @@
     .auth-copy,
     .auth-card {
       padding: 26px;
-    }
-
-    .auth-copy h3 {
-      margin: 0 0 12px;
-      font-size: 24px;
-    }
-
-    .auth-copy p {
-      margin: 0 0 18px;
-      color: var(--muted);
-      line-height: 1.75;
     }
 
     .point {
@@ -356,7 +299,6 @@
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
       color: white;
       border-color: transparent;
-      box-shadow: 0 12px 24px rgba(22, 82, 240, 0.18);
     }
 
     .tab-panel { display: none; }
@@ -381,11 +323,6 @@
       color: var(--text);
       font-size: 15px;
       outline: none;
-    }
-
-    .field input:focus {
-      border-color: rgba(22, 82, 240, .55);
-      box-shadow: 0 0 0 4px rgba(22, 82, 240, .12);
     }
 
     .submit-btn {
@@ -466,20 +403,13 @@
             <a href="#access"><button class="btn btn-primary">Get Started</button></a>
             <a href="#features"><button class="btn btn-secondary">Explore Features</button></a>
           </div>
-
-          <div class="trust-line">
-            Multi-network access • Cleaner wallet experience • Professional account flow
-          </div>
         </div>
 
         <div class="hero-panel">
           <div class="mini-balance">
             <small>Wallet overview</small>
             <h3>$24,850.00</h3>
-            <p>
-              A more professional wallet experience built for receiving funds, managing access,
-              and supporting a smoother crypto transaction journey.
-            </p>
+            <p>A more professional wallet experience built for receiving funds and smoother crypto transactions.</p>
           </div>
 
           <div class="info-grid">
@@ -690,7 +620,6 @@
           return;
         }
 
-        showMsg("registerMsg", "Account created successfully. Redirecting...", true);
         await loginAndRedirect(username, password);
       } catch (err) {
         showMsg("registerMsg", err.message || "Failed to fetch.");

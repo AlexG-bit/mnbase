@@ -43,15 +43,9 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      color: white;
-    }
-    .btn-secondary {
-      background: white;
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
+    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
+
     .card-page {
       display: grid;
       grid-template-columns: 1.1fr .9fr;
@@ -76,14 +70,18 @@
     }
     .virtual-card h2 { margin: 0; font-size: 28px; }
     .small { opacity: .85; font-size: 13px; }
-    .card-balance { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
+    .card-balance { font-size: 34px; font-weight: 800; }
     .meta { color: var(--muted); line-height: 1.7; }
     .msg {
-      display: none; margin-top: 14px; padding: 12px 14px;
-      border-radius: 14px; font-size: 14px;
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
     }
     .msg.error {
-      display: block; color: #991b1b;
+      display: block;
+      color: #991b1b;
       background: rgba(220,38,38,.08);
       border: 1px solid rgba(220,38,38,.18);
     }
@@ -155,42 +153,37 @@
 
     async function loadCard() {
       const token = getToken();
-
       if (!token) {
         showMsg("cardMsg", "No active session found. Please log in again.");
         return;
       }
 
-      try {
-        const r = await fetch(`${API}/wallet/me`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        const text = await r.text();
-
-        if (!r.ok) {
-          showMsg("cardMsg", `Card session error: ${text}`);
-          return;
+      const r = await fetch(`${API}/wallet/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         }
+      });
 
-        const data = JSON.parse(text);
+      const text = await r.text();
 
-        document.getElementById("cardUser").textContent = data.username || data.email || "User";
-        document.getElementById("cardBalance").textContent = formatMoney(data.cardBalance || 0);
-        document.getElementById("cardStatus").textContent =
-          data.cardActivated ? "Card status: Active" : "Card status: Not activated";
-
-        document.getElementById("cardMeta").textContent =
-          data.cardActivated
-            ? "Your card is active and ready for supported wallet-linked actions."
-            : "Your card has not yet been activated. Please contact support or wait for admin activation.";
-      } catch (err) {
-        showMsg("cardMsg", `Failed to fetch card data: ${err.message}`);
+      if (!r.ok) {
+        showMsg("cardMsg", `Card session error: ${text}`);
+        return;
       }
+
+      const data = JSON.parse(text);
+
+      document.getElementById("cardUser").textContent = data.username || data.email || "User";
+      document.getElementById("cardBalance").textContent = formatMoney(data.cardBalance || 0);
+      document.getElementById("cardStatus").textContent =
+        data.cardActivated ? "Card status: Active" : "Card status: Not activated";
+
+      document.getElementById("cardMeta").textContent =
+        data.cardActivated
+          ? "Your card is active and ready for supported wallet-linked actions."
+          : "Your card has not yet been activated. Please contact support or wait for admin activation.";
     }
 
     window.addEventListener("load", loadCard);
