@@ -14,13 +14,12 @@
       --muted: #64748b;
       --blue: #1652f0;
       --blue-2: #2f6bff;
-      --green: #16a34a;
-      --red: #dc2626;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -30,7 +29,10 @@
       color: var(--text);
     }
 
-    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
 
     .nav {
       background: rgba(255,255,255,.88);
@@ -68,7 +70,10 @@
       font-weight: 800;
     }
 
-    .nav-actions { display: flex; gap: 10px; }
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+    }
 
     .btn {
       border: 0;
@@ -302,7 +307,7 @@
         </div>
         <div>
           <small>Primary account</small>
-          <strong id="currentUser">Loading...</strong>
+          <strong id="currentUser">User</strong>
         </div>
       </div>
 
@@ -312,8 +317,8 @@
 
         <div class="user-box">
           <strong>User profile</strong>
-          <p class="muted" id="userMeta" style="margin:8px 0 0;">Loading profile...</p>
-          <p class="muted" id="cardStatus" style="margin:8px 0 0;">Loading card status...</p>
+          <p class="muted" id="userMeta" style="margin:8px 0 0;">Profile ready</p>
+          <p class="muted" id="cardStatus" style="margin:8px 0 0;">Card status ready</p>
         </div>
 
         <div id="dashboardMsg" class="msg"></div>
