@@ -12,6 +12,7 @@ function initDB() {
 
 function readDB() {
   initDB();
+
   const raw = fs.readFileSync(DB_PATH, "utf8");
   const db = raw ? JSON.parse(raw) : { users: [] };
 
@@ -29,7 +30,10 @@ function writeDB(data) {
 function seedAdmin() {
   const db = readDB();
   const hasAdmin = db.users.some((u) => u.role === "admin");
-  if (hasAdmin) return;
+
+  if (hasAdmin) {
+    return;
+  }
 
   const passwordHash = crypto
     .createHash("sha256")

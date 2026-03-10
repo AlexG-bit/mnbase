@@ -37,8 +37,12 @@ function hashPassword(password) {
 }
 
 function signToken(payload) {
-  const header = Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url");
+  const header = Buffer.from(
+    JSON.stringify({ alg: "HS256", typ: "JWT" })
+  ).toString("base64url");
+
   const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+
   const signature = crypto
     .createHmac("sha256", JWT_SECRET)
     .update(`${header}.${body}`)
@@ -50,17 +54,27 @@ function signToken(payload) {
 function verifyToken(token) {
   try {
     const [header, body, signature] = String(token || "").split(".");
-    if (!header || !body || !signature) return null;
+
+    if (!header || !body || !signature) {
+      return null;
+    }
 
     const expected = crypto
       .createHmac("sha256", JWT_SECRET)
       .update(`${header}.${body}`)
       .digest("base64url");
 
-    if (expected !== signature) return null;
+    if (expected !== signature) {
+      return null;
+    }
 
-    const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
-    if (payload.exp && Date.now() > payload.exp) return null;
+    const payload = JSON.parse(
+      Buffer.from(body, "base64url").toString("utf8")
+    );
+
+    if (payload.exp && Date.now() > payload.exp) {
+      return null;
+    }
 
     return payload;
   } catch {
@@ -70,7 +84,9 @@ function verifyToken(token) {
 
 function getBearerToken(req) {
   const auth = req.headers.authorization || "";
-  if (!auth.startsWith("Bearer ")) return null;
+  if (!auth.startsWith("Bearer ")) {
+    return null;
+  }
   return auth.slice(7).trim();
 }
 
@@ -78,24 +94,33 @@ async function authRoute(req, res, pathname) {
   if (pathname === "/api/auth/register" && req.method === "POST") {
     try {
       const body = await parseBody(req);
+
       const username = normalize(body.username).toLowerCase();
       const email = normalize(body.email).toLowerCase();
       const password = normalize(body.password);
 
       if (!username || !email || !password) {
-        sendJson(res, 400, { error: "Username, email, and password are required." });
+        sendJson(res, 400, {
+          error: "Username, email, and password are required."
+        });
         return true;
       }
 
       const db = readDB();
 
-      const usernameTaken = db.users.some((u) => String(u.username).toLowerCase() === username);
+      const usernameTaken = db.users.some(
+        (u) => String(u.username).toLowerCase() === username
+      );
+
       if (usernameTaken) {
         sendJson(res, 409, { error: "Username already exists." });
         return true;
       }
 
-      const emailTaken = db.users.some((u) => String(u.email).toLowerCase() === email);
+      const emailTaken = db.users.some(
+        (u) => String(u.email).toLowerCase() === email
+      );
+
       if (emailTaken) {
         sendJson(res, 409, { error: "Email already exists." });
         return true;
@@ -132,11 +157,14 @@ async function authRoute(req, res, pathname) {
   if (pathname === "/api/auth/login" && req.method === "POST") {
     try {
       const body = await parseBody(req);
+
       const identifier = normalize(body.identifier).toLowerCase();
       const password = normalize(body.password);
 
       if (!identifier || !password) {
-        sendJson(res, 400, { error: "Identifier and password are required." });
+        sendJson(res, 400, {
+          error: "Identifier and password are required."
+        });
         return true;
       }
 
@@ -149,7 +177,9 @@ async function authRoute(req, res, pathname) {
       );
 
       if (!user || user.passwordHash !== hashPassword(password)) {
-        sendJson(res, 401, { error: "Invalid username/email or password." });
+        sendJson(res, 401, {
+          error: "Invalid username/email or password."
+        });
         return true;
       }
 
@@ -180,12 +210,14 @@ async function authRoute(req, res, pathname) {
 
   if (pathname === "/api/auth/me" && req.method === "GET") {
     const token = getBearerToken(req);
+
     if (!token) {
       sendJson(res, 401, { error: "Missing authorization token." });
       return true;
     }
 
     const payload = verifyToken(token);
+
     if (!payload) {
       sendJson(res, 401, { error: "Invalid or expired token." });
       return true;
