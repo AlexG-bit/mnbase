@@ -18,7 +18,7 @@ function getCurrentUser(req) {
 
   if (!user) return { error: "User not found." };
 
-  return { db, user, payload };
+  return { db, user };
 }
 
 async function walletRoute(req, res, pathname) {
@@ -35,11 +35,11 @@ async function walletRoute(req, res, pathname) {
       username: user.username,
       email: user.email,
       role: user.role,
-      balance: user.balance || 0,
+      balance: Number(user.balance || 0),
       cardActivated: !!user.cardActivated,
-      cardBalance: user.cardBalance || 0,
+      cardBalance: Number(user.cardBalance || 0),
       wallets: user.wallets || {},
-      transactions: user.transactions || []
+      transactions: Array.isArray(user.transactions) ? user.transactions : []
     });
     return true;
   }
@@ -55,15 +55,33 @@ async function walletRoute(req, res, pathname) {
 
     sendJson(res, 200, {
       assets: [
-        { symbol: "BTC", name: "Bitcoin", address: user.wallets?.BTC || "" },
-        { symbol: "ETH", name: "Ethereum", address: user.wallets?.ETH || "" },
-        { symbol: "USDT", name: "Tether", address: user.wallets?.USDT || "" }
+        {
+          symbol: "BTC",
+          name: "Bitcoin",
+          address: user.wallets?.BTC || "BTC_ADDRESS_NOT_AVAILABLE"
+        },
+        {
+          symbol: "ETH",
+          name: "Ethereum",
+          address: user.wallets?.ETH || "ETH_ADDRESS_NOT_AVAILABLE"
+        },
+        {
+          symbol: "USDT",
+          name: "Tether",
+          address: user.wallets?.USDT || "USDT_ADDRESS_NOT_AVAILABLE"
+        }
       ]
     });
     return true;
   }
 
   if (pathname === "/api/wallet/convert-options" && req.method === "GET") {
+    const result = getCurrentUser(req);
+    if (result.error) {
+      sendJson(res, 401, { error: result.error });
+      return true;
+    }
+
     sendJson(res, 200, {
       assets: ["BTC", "ETH", "USDT"],
       localCurrencies: ["USD", "EUR", "GBP", "NGN"]
@@ -129,7 +147,7 @@ async function walletRoute(req, res, pathname) {
     const identifier = String(body.identifier || "").trim().toLowerCase();
     const amount = Number(body.amount || 0);
 
-    if (!identifier || !amount || amount <= 0) {
+    if (!identifier || amount <= 0) {
       sendJson(res, 400, { error: "Identifier and valid amount are required." });
       return true;
     }
@@ -146,7 +164,7 @@ async function walletRoute(req, res, pathname) {
     }
 
     target.balance = Number(target.balance || 0) + amount;
-    target.transactions = target.transactions || [];
+    target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
     target.transactions.unshift({
       type: "fund",
       amount,
@@ -198,6 +216,12 @@ async function walletRoute(req, res, pathname) {
 
     target.cardActivated = true;
     target.cardBalance = cardBalance >= 0 ? cardBalance : 0;
+    target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
+    target.transactions.unshift({
+      type: "card_activated",
+      amount: target.cardBalance,
+      createdAt: new Date().toISOString()
+    });
 
     writeDB(db);
 
