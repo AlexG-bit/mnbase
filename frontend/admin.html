@@ -5,39 +5,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Admin</title>
   <style>
-    body{margin:0;font-family:Inter,Arial,sans-serif;background:#0b1220;color:#fff}
-    .wrap{width:min(900px,calc(100% - 32px));margin:40px auto}
-    .card{background:#111827;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:24px}
-    input{width:100%;padding:14px;margin-bottom:12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#0f172a;color:#fff}
-    button{padding:14px 18px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:600;cursor:pointer}
-    .msg{margin-top:12px}
+    :root{
+      --bg:#f7f9fc;
+      --panel:#fff;
+      --line:#e2e8f0;
+      --text:#0f172a;
+      --muted:#64748b;
+      --blue:#1652f0;
+      --blue2:#2f6bff;
+      --shadow:0 20px 50px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#f8fbff 0%,#f3f7fc 100%);color:var(--text)}
+    .container{width:min(1100px,calc(100% - 32px));margin:40px auto}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:24px;margin-bottom:22px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    input{width:100%;padding:14px 15px;margin-bottom:12px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--text);font-size:15px}
+    button{padding:14px 18px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-weight:600;cursor:pointer}
+    .msg{display:none;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px}
+    .msg.error{display:block;color:#991b1b;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18)}
+    .msg.success{display:block;color:#166534;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.18)}
+    .muted{color:var(--muted)}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <div class="card">
-      <h1>MNBase Admin</h1>
-      <p style="color:#94a3b8">Separate admin access panel.</p>
+      <h1 style="margin-top:0">MNBase Admin Panel</h1>
+      <p class="muted">Login as admin, fund user wallets, and activate virtual cards professionally.</p>
 
-      <input id="identifier" type="text" placeholder="Admin username or email" />
-      <input id="password" type="password" placeholder="Password" />
+      <input id="adminIdentifier" type="text" placeholder="Admin username or email" />
+      <input id="adminPassword" type="password" placeholder="Password" />
       <button onclick="adminLogin()">Login</button>
-      <div id="msg" class="msg"></div>
+      <div id="loginMsg" class="msg"></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Fund Wallet</h2>
+        <input id="fundIdentifier" type="text" placeholder="User username or email" />
+        <input id="fundAmount" type="number" placeholder="Amount in USD" />
+        <button onclick="fundWallet()">Fund Wallet</button>
+        <div id="fundMsg" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Activate Card</h2>
+        <input id="cardIdentifier" type="text" placeholder="User username or email" />
+        <input id="cardBalance" type="number" placeholder="Card balance in USD" />
+        <button onclick="activateCard()">Activate Card</button>
+        <div id="cardMsg" class="msg"></div>
+      </div>
     </div>
   </div>
 
   <script>
     const API = "https://api.mnbase.app/api";
 
-    function show(text, ok=false){
-      const el = document.getElementById("msg");
-      el.style.color = ok ? "#16a34a" : "#dc2626";
+    function show(id, text, ok = false) {
+      const el = document.getElementById(id);
       el.textContent = text;
+      el.className = ok ? "msg success" : "msg error";
+    }
+
+    function getAdminToken() {
+      return localStorage.getItem("mnbase_admin_token");
     }
 
     async function adminLogin() {
-      const identifier = document.getElementById("identifier").value.trim();
-      const password = document.getElementById("password").value;
+      const identifier = document.getElementById("adminIdentifier").value.trim();
+      const password = document.getElementById("adminPassword").value;
 
       try {
         const r = await fetch(`${API}/auth/login`, {
@@ -48,15 +86,67 @@
 
         const text = await r.text();
         if (!r.ok) {
-          show(text);
+          show("loginMsg", text);
           return;
         }
 
         const data = JSON.parse(text);
         localStorage.setItem("mnbase_admin_token", data.token || "");
-        show("Admin login successful.", true);
+        show("loginMsg", "Admin login successful.", true);
       } catch (err) {
-        show(`Failed to fetch: ${err.message}`);
+        show("loginMsg", `Failed to fetch: ${err.message}`);
+      }
+    }
+
+    async function fundWallet() {
+      try {
+        const r = await fetch(`${API}/admin/fund-wallet`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getAdminToken()}`
+          },
+          body: JSON.stringify({
+            identifier: document.getElementById("fundIdentifier").value.trim(),
+            amount: document.getElementById("fundAmount").value
+          })
+        });
+
+        const text = await r.text();
+        if (!r.ok) {
+          show("fundMsg", text);
+          return;
+        }
+
+        show("fundMsg", "Wallet funded successfully.", true);
+      } catch (err) {
+        show("fundMsg", `Failed to fetch: ${err.message}`);
+      }
+    }
+
+    async function activateCard() {
+      try {
+        const r = await fetch(`${API}/admin/activate-card`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getAdminToken()}`
+          },
+          body: JSON.stringify({
+            identifier: document.getElementById("cardIdentifier").value.trim(),
+            cardBalance: document.getElementById("cardBalance").value
+          })
+        });
+
+        const text = await r.text();
+        if (!r.ok) {
+          show("cardMsg", text);
+          return;
+        }
+
+        show("cardMsg", "Card activated successfully.", true);
+      } catch (err) {
+        show("cardMsg", `Failed to fetch: ${err.message}`);
       }
     }
   </script>

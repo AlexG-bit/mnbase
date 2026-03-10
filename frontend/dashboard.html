@@ -15,13 +15,12 @@
       --blue: #1652f0;
       --blue-2: #2f6bff;
       --green: #16a34a;
+      --red: #dc2626;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -40,7 +39,7 @@
     .nav {
       background: rgba(255,255,255,.88);
       backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(15, 23, 42, .05);
+      border-bottom: 1px solid rgba(15,23,42,.05);
       position: sticky;
       top: 0;
       z-index: 50;
@@ -186,6 +185,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      cursor: pointer;
     }
 
     .action-icon {
@@ -251,10 +251,82 @@
     .badge {
       padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(22, 163, 74, .08);
+      background: rgba(22,163,74,.08);
       color: #166534;
       font-size: 12px;
       font-weight: 700;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(560px, 100%);
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 30px 60px rgba(15,23,42,.18);
+      border: 1px solid var(--line);
+    }
+
+    .modal-card h3 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+
+    .modal-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .field select,
+    .field input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .field select:focus,
+    .field input:focus {
+      border-color: rgba(22,82,240,.55);
+      box-shadow: 0 0 0 4px rgba(22,82,240,.12);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 18px;
     }
 
     .msg {
@@ -309,10 +381,10 @@
       <div class="balance-card">
         <div>
           <small>Total Wallet Value</small>
-          <h1>$24,850.00</h1>
+          <h1 id="usdBalance">$0.00</h1>
           <p>
-            Multi-network wallet dashboard designed for cleaner crypto access,
-            investment platform withdrawals, and a more professional transaction experience.
+            A cleaner wallet dashboard for receiving, account access, asset conversion,
+            and card-enabled transaction workflows.
           </p>
         </div>
         <div>
@@ -324,8 +396,8 @@
       <div class="card profile-card">
         <h2>Welcome to your dashboard</h2>
         <p class="muted">
-          This is your main wallet environment. From here you can manage future actions such as sending,
-          receiving, converting, and accessing virtual card features in a more polished and legitimate interface.
+          This is your main wallet environment. From here you can access receiving details,
+          conversion options, virtual card tools, and other professional wallet actions.
         </p>
 
         <div class="user-box">
@@ -340,35 +412,43 @@
     <section>
       <h2 class="section-title">Quick actions</h2>
       <div class="action-grid">
-        <div class="action-card">
+        <div class="action-card" onclick="blockedCardAction('Send')">
           <div class="action-icon">↑</div>
           <div>
             <h3>Send</h3>
-            <p>Transfer crypto assets to another wallet with a cleaner transaction experience.</p>
+            <p>Send assets to another wallet after card activation is completed.</p>
           </div>
         </div>
 
-        <div class="action-card">
+        <div class="action-card" onclick="openReceive()">
           <div class="action-icon">↓</div>
           <div>
             <h3>Receive</h3>
-            <p>Receive funds into your preferred MNBase wallet environment across supported flows.</p>
+            <p>View supported assets and copy the address for the one you want to receive.</p>
           </div>
         </div>
 
-        <div class="action-card">
+        <div class="action-card" onclick="openConvert()">
           <div class="action-icon">⇄</div>
           <div>
             <h3>Convert</h3>
-            <p>Move toward easier crypto-to-local-currency workflows from a professional dashboard.</p>
+            <p>Explore supported assets that can be converted into local currencies.</p>
           </div>
         </div>
 
-        <div class="action-card">
+        <div class="action-card" onclick="goToCard()">
           <div class="action-icon">VC</div>
           <div>
             <h3>Virtual Card</h3>
-            <p>Access future virtual card capabilities for a more complete fintech-style experience.</p>
+            <p>Access your MNBase virtual card page and view card balance and status.</p>
+          </div>
+        </div>
+
+        <div class="action-card" onclick="blockedCardAction('Withdraw')">
+          <div class="action-icon">W</div>
+          <div>
+            <h3>Withdraw</h3>
+            <p>Withdrawals require card activation before they can be processed.</p>
           </div>
         </div>
       </div>
@@ -388,7 +468,7 @@
 
           <div class="list-item">
             <div>
-              <strong>BTC conversion</strong>
+              <strong>Asset conversion</strong>
               <span>Crypto to local currency workflow</span>
             </div>
             <div class="badge">Completed</div>
@@ -396,8 +476,8 @@
 
           <div class="list-item">
             <div>
-              <strong>Wallet access</strong>
-              <span>Secure dashboard session</span>
+              <strong>Wallet session</strong>
+              <span>Secure dashboard access</span>
             </div>
             <div class="badge">Active</div>
           </div>
@@ -407,38 +487,27 @@
       <div class="card">
         <h2 class="section-title">Platform overview</h2>
         <p class="muted">
-          MNBase is positioned as a cleaner and more professional wallet destination for users who want a more
-          credible interface for crypto access, withdrawals, receiving activity, and future fintech-style controls.
+          MNBase is built to feel like a more professional wallet destination for users who want
+          easier crypto access, cleaner transaction structure, and a more polished fintech-style experience.
         </p>
-
-        <div class="list">
-          <div class="list-item">
-            <div>
-              <strong>Multi-network support</strong>
-              <span>Structured for broader crypto activity</span>
-            </div>
-          </div>
-
-          <div class="list-item">
-            <div>
-              <strong>Account flexibility</strong>
-              <span>Username or email login supported</span>
-            </div>
-          </div>
-
-          <div class="list-item">
-            <div>
-              <strong>Future-ready features</strong>
-              <span>Virtual cards, conversion, transfers and more</span>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   </main>
 
+  <div class="modal" id="mainModal">
+    <div class="modal-card">
+      <h3 id="modalTitle">Action</h3>
+      <p id="modalText"></p>
+      <div id="modalContent"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API = "https://api.mnbase.app/api";
+    let currentUser = null;
 
     function getToken() {
       return localStorage.getItem("mnbase_token");
@@ -448,10 +517,30 @@
       localStorage.removeItem("mnbase_token");
     }
 
-    function showMsg(id, text, ok = false) {
-      const el = document.getElementById(id);
-      el.textContent = text;
-      el.className = ok ? "msg success" : "msg error";
+    function openModal(title, text, contentHtml = "") {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalText").textContent = text;
+      document.getElementById("modalContent").innerHTML = contentHtml;
+      document.getElementById("mainModal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("mainModal").classList.remove("active");
+    }
+
+    function formatMoney(value) {
+      return `$${Number(value || 0).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}`;
+    }
+
+    function blockedCardAction(actionName) {
+      openModal(
+        `${actionName} Unavailable`,
+        `To use ${actionName.toLowerCase()} on MNBase, please contact support to activate your MNBase card first. This requirement helps us maintain a more secure and professionally managed transaction process.`,
+        `<div class="msg success" style="display:block;">Support contact required before ${actionName.toLowerCase()} can be enabled.</div>`
+      );
     }
 
     async function loadMe() {
@@ -480,12 +569,95 @@
         }
 
         const data = JSON.parse(text);
+        currentUser = data;
+
         document.getElementById("currentUser").textContent = data.username || data.email || "User";
         document.getElementById("userMeta").textContent =
           `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
+
+        document.getElementById("usdBalance").textContent = formatMoney(data.wallet?.usdBalance || 0);
       } catch (err) {
-        showMsg("dashboardMsg", `Failed to fetch profile: ${err.message}`);
+        document.getElementById("dashboardMsg").textContent = `Failed to fetch profile: ${err.message}`;
+        document.getElementById("dashboardMsg").className = "msg error";
       }
+    }
+
+    async function openReceive() {
+      const token = getToken();
+
+      try {
+        const r = await fetch(`${API}/wallet/receive`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+        if (!r.ok) {
+          openModal("Receive", text || "Failed to load assets.");
+          return;
+        }
+
+        const data = JSON.parse(text);
+        const assets = data.assets || {};
+
+        const html = Object.entries(assets).map(([asset, info]) => `
+          <div class="field">
+            <label>${asset} Address</label>
+            <input type="text" value="${info.address}" readonly />
+          </div>
+        `).join("");
+
+        openModal(
+          "Receive Assets",
+          "Select the asset you want to receive and use the corresponding wallet address below.",
+          html
+        );
+      } catch (err) {
+        openModal("Receive", `Failed to fetch: ${err.message}`);
+      }
+    }
+
+    async function openConvert() {
+      const token = getToken();
+
+      try {
+        const r = await fetch(`${API}/wallet/convert-options`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+        if (!r.ok) {
+          openModal("Convert", text || "Failed to load conversion options.");
+          return;
+        }
+
+        const data = JSON.parse(text);
+        const pairs = data.pairs || [];
+
+        const html = pairs.map((pair) => `
+          <div class="field">
+            <label>${pair.asset}</label>
+            <input type="text" value="Convertible to: ${pair.currencies.join(", ")}" readonly />
+          </div>
+        `).join("");
+
+        openModal(
+          "Convert Assets",
+          "These assets are currently available for conversion into supported local currencies.",
+          html
+        );
+      } catch (err) {
+        openModal("Convert", `Failed to fetch: ${err.message}`);
+      }
+    }
+
+    function goToCard() {
+      window.location.href = "/virtual-card.html";
     }
 
     function logout() {
