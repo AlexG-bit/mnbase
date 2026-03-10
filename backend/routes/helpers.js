@@ -53,27 +53,20 @@ function signToken(payload) {
 function verifyToken(token) {
   try {
     const [header, body, signature] = String(token || "").split(".");
-
-    if (!header || !body || !signature) {
-      return null;
-    }
+    if (!header || !body || !signature) return null;
 
     const expected = crypto
       .createHmac("sha256", JWT_SECRET)
       .update(`${header}.${body}`)
       .digest("base64url");
 
-    if (expected !== signature) {
-      return null;
-    }
+    if (expected !== signature) return null;
 
     const payload = JSON.parse(
       Buffer.from(body, "base64url").toString("utf8")
     );
 
-    if (payload.exp && Date.now() > payload.exp) {
-      return null;
-    }
+    if (payload.exp && Date.now() > payload.exp) return null;
 
     return payload;
   } catch {
@@ -83,10 +76,16 @@ function verifyToken(token) {
 
 function getBearerToken(req) {
   const auth = req.headers.authorization || "";
-  if (!auth.startsWith("Bearer ")) {
-    return null;
-  }
+  if (!auth.startsWith("Bearer ")) return null;
   return auth.slice(7).trim();
+}
+
+function buildWalletAddresses(seed) {
+  return {
+    BTC: `bc1q${seed}btc9x4f2w7m1q8n5`,
+    ETH: `0x${seed}eth9ab45cd7821ef`,
+    USDT: `T${seed}usdt6Za91x4Pq`
+  };
 }
 
 module.exports = {
@@ -96,5 +95,6 @@ module.exports = {
   hashPassword,
   signToken,
   verifyToken,
-  getBearerToken
+  getBearerToken,
+  buildWalletAddresses
 };

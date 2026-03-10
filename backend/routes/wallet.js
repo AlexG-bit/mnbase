@@ -1,9 +1,8 @@
-const { readDB, writeDB } = require("../db/store");
+const { readDB } = require("../db/store");
 const {
-  verifyToken,
-  getBearerToken,
   sendJson,
-  parseBody
+  verifyToken,
+  getBearerToken
 } = require("./helpers");
 
 function getCurrentUser(req) {
@@ -55,21 +54,9 @@ async function walletRoute(req, res, pathname) {
 
     sendJson(res, 200, {
       assets: [
-        {
-          symbol: "BTC",
-          name: "Bitcoin",
-          address: user.wallets?.BTC || "BTC_ADDRESS_NOT_AVAILABLE"
-        },
-        {
-          symbol: "ETH",
-          name: "Ethereum",
-          address: user.wallets?.ETH || "ETH_ADDRESS_NOT_AVAILABLE"
-        },
-        {
-          symbol: "USDT",
-          name: "Tether",
-          address: user.wallets?.USDT || "USDT_ADDRESS_NOT_AVAILABLE"
-        }
+        { symbol: "BTC", name: "Bitcoin", address: user.wallets.BTC },
+        { symbol: "ETH", name: "Ethereum", address: user.wallets.ETH },
+        { symbol: "USDT", name: "Tether", address: user.wallets.USDT }
       ]
     });
     return true;
@@ -96,9 +83,7 @@ async function walletRoute(req, res, pathname) {
       return true;
     }
 
-    const { user } = result;
-
-    if (!user.cardActivated) {
+    if (!result.user.cardActivated) {
       sendJson(res, 403, {
         error: "Please contact support to activate your MNBase card before using send."
       });
@@ -116,9 +101,7 @@ async function walletRoute(req, res, pathname) {
       return true;
     }
 
-    const { user } = result;
-
-    if (!user.cardActivated) {
+    if (!result.user.cardActivated) {
       sendJson(res, 403, {
         error: "Please contact support to activate your MNBase card before using withdraw."
       });
@@ -126,110 +109,6 @@ async function walletRoute(req, res, pathname) {
     }
 
     sendJson(res, 200, { message: "Withdraw request accepted." });
-    return true;
-  }
-
-  if (pathname === "/api/admin/fund" && req.method === "POST") {
-    const result = getCurrentUser(req);
-    if (result.error) {
-      sendJson(res, 401, { error: result.error });
-      return true;
-    }
-
-    const { db, user } = result;
-
-    if (user.role !== "admin") {
-      sendJson(res, 403, { error: "Admin access required." });
-      return true;
-    }
-
-    const body = await parseBody(req);
-    const identifier = String(body.identifier || "").trim().toLowerCase();
-    const amount = Number(body.amount || 0);
-
-    if (!identifier || amount <= 0) {
-      sendJson(res, 400, { error: "Identifier and valid amount are required." });
-      return true;
-    }
-
-    const target = db.users.find(
-      (u) =>
-        String(u.username || "").toLowerCase() === identifier ||
-        String(u.email || "").toLowerCase() === identifier
-    );
-
-    if (!target) {
-      sendJson(res, 404, { error: "User not found." });
-      return true;
-    }
-
-    target.balance = Number(target.balance || 0) + amount;
-    target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
-    target.transactions.unshift({
-      type: "fund",
-      amount,
-      createdAt: new Date().toISOString()
-    });
-
-    writeDB(db);
-
-    sendJson(res, 200, {
-      message: "Wallet funded successfully.",
-      balance: target.balance
-    });
-    return true;
-  }
-
-  if (pathname === "/api/admin/card/activate" && req.method === "POST") {
-    const result = getCurrentUser(req);
-    if (result.error) {
-      sendJson(res, 401, { error: result.error });
-      return true;
-    }
-
-    const { db, user } = result;
-
-    if (user.role !== "admin") {
-      sendJson(res, 403, { error: "Admin access required." });
-      return true;
-    }
-
-    const body = await parseBody(req);
-    const identifier = String(body.identifier || "").trim().toLowerCase();
-    const cardBalance = Number(body.cardBalance || 0);
-
-    if (!identifier) {
-      sendJson(res, 400, { error: "Identifier is required." });
-      return true;
-    }
-
-    const target = db.users.find(
-      (u) =>
-        String(u.username || "").toLowerCase() === identifier ||
-        String(u.email || "").toLowerCase() === identifier
-    );
-
-    if (!target) {
-      sendJson(res, 404, { error: "User not found." });
-      return true;
-    }
-
-    target.cardActivated = true;
-    target.cardBalance = cardBalance >= 0 ? cardBalance : 0;
-    target.transactions = Array.isArray(target.transactions) ? target.transactions : [];
-    target.transactions.unshift({
-      type: "card_activated",
-      amount: target.cardBalance,
-      createdAt: new Date().toISOString()
-    });
-
-    writeDB(db);
-
-    sendJson(res, 200, {
-      message: "Card activated successfully.",
-      cardActivated: true,
-      cardBalance: target.cardBalance
-    });
     return true;
   }
 

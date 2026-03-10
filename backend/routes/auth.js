@@ -7,12 +7,9 @@ const {
   hashPassword,
   signToken,
   verifyToken,
-  getBearerToken
+  getBearerToken,
+  buildWalletAddresses
 } = require("./helpers");
-
-function makeAddress(symbol) {
-  return `${symbol}_${crypto.randomBytes(16).toString("hex")}`;
-}
 
 async function authRoute(req, res, pathname) {
   if (pathname === "/api/auth/register" && req.method === "POST") {
@@ -24,32 +21,23 @@ async function authRoute(req, res, pathname) {
       const password = normalize(body.password);
 
       if (!username || !email || !password) {
-        sendJson(res, 400, {
-          error: "Username, email, and password are required."
-        });
+        sendJson(res, 400, { error: "Username, email, and password are required." });
         return true;
       }
 
       const db = readDB();
 
-      const usernameTaken = db.users.some(
-        (u) => String(u.username).toLowerCase() === username
-      );
-
-      if (usernameTaken) {
+      if (db.users.some((u) => String(u.username).toLowerCase() === username)) {
         sendJson(res, 409, { error: "Username already exists." });
         return true;
       }
 
-      const emailTaken = db.users.some(
-        (u) => String(u.email).toLowerCase() === email
-      );
-
-      if (emailTaken) {
+      if (db.users.some((u) => String(u.email).toLowerCase() === email)) {
         sendJson(res, 409, { error: "Email already exists." });
         return true;
       }
 
+      const seed = crypto.randomBytes(8).toString("hex");
       const user = {
         id: crypto.randomUUID(),
         username,
@@ -59,11 +47,7 @@ async function authRoute(req, res, pathname) {
         balance: 0,
         cardActivated: false,
         cardBalance: 0,
-        wallets: {
-          BTC: makeAddress("BTC"),
-          ETH: makeAddress("ETH"),
-          USDT: makeAddress("USDT")
-        },
+        wallets: buildWalletAddresses(seed),
         transactions: [],
         createdAt: new Date().toISOString()
       };
@@ -90,19 +74,15 @@ async function authRoute(req, res, pathname) {
   if (pathname === "/api/auth/login" && req.method === "POST") {
     try {
       const body = await parseBody(req);
-
       const identifier = normalize(body.identifier).toLowerCase();
       const password = normalize(body.password);
 
       if (!identifier || !password) {
-        sendJson(res, 400, {
-          error: "Identifier and password are required."
-        });
+        sendJson(res, 400, { error: "Identifier and password are required." });
         return true;
       }
 
       const db = readDB();
-
       const user = db.users.find(
         (u) =>
           String(u.username || "").toLowerCase() === identifier ||
@@ -110,9 +90,7 @@ async function authRoute(req, res, pathname) {
       );
 
       if (!user || user.passwordHash !== hashPassword(password)) {
-        sendJson(res, 401, {
-          error: "Invalid username/email or password."
-        });
+        sendJson(res, 401, { error: "Invalid username/email or password." });
         return true;
       }
 
@@ -143,14 +121,12 @@ async function authRoute(req, res, pathname) {
 
   if (pathname === "/api/auth/me" && req.method === "GET") {
     const token = getBearerToken(req);
-
     if (!token) {
       sendJson(res, 401, { error: "Missing authorization token." });
       return true;
     }
 
     const payload = verifyToken(token);
-
     if (!payload) {
       sendJson(res, 401, { error: "Invalid or expired token." });
       return true;
@@ -168,10 +144,7 @@ async function authRoute(req, res, pathname) {
       id: user.id,
       username: user.username,
       email: user.email,
-      role: user.role,
-      balance: Number(user.balance || 0),
-      cardActivated: !!user.cardActivated,
-      cardBalance: Number(user.cardBalance || 0)
+      role: user.role
     });
     return true;
   }
