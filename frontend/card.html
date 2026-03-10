@@ -75,7 +75,7 @@
     }
 
     .virtual-card {
-      min-height: 260px;
+      min-height: 280px;
       border-radius: 28px;
       padding: 28px;
       color: white;
@@ -93,12 +93,25 @@
     .virtual-card::after {
       content: "";
       position: absolute;
-      width: 160px;
-      height: 160px;
+      width: 170px;
+      height: 170px;
       border-radius: 50%;
-      right: -40px;
-      bottom: -40px;
+      right: -45px;
+      bottom: -45px;
       background: rgba(255,255,255,.08);
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .brand {
+      font-size: 14px;
+      letter-spacing: 1px;
+      opacity: .92;
+      font-weight: 700;
     }
 
     .chip {
@@ -107,13 +120,6 @@
       border-radius: 10px;
       background: linear-gradient(135deg, #f8d66d, #c99618);
       box-shadow: inset 0 1px 2px rgba(255,255,255,.35);
-    }
-
-    .brand {
-      font-size: 14px;
-      letter-spacing: 1px;
-      opacity: .9;
-      font-weight: 700;
     }
 
     .number {
@@ -126,8 +132,8 @@
     .row {
       display: flex;
       justify-content: space-between;
-      align-items: end;
       gap: 18px;
+      align-items: end;
     }
 
     .meta-label {
@@ -143,7 +149,7 @@
       font-weight: 600;
     }
 
-    .card-balance {
+    .big-balance {
       font-size: 34px;
       font-weight: 800;
       letter-spacing: -1px;
@@ -193,13 +199,13 @@
 <body>
   <div class="container">
     <div class="nav">
-      <button class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+      <button class="btn btn-secondary" onclick="goBack()">Back to Dashboard</button>
       <button class="btn btn-primary" onclick="logout()">Logout</button>
     </div>
 
     <div class="grid">
       <div class="virtual-card">
-        <div style="display:flex;justify-content:space-between;align-items:start;">
+        <div class="top-row">
           <div class="brand">MNBASE VIRTUAL CARD</div>
           <div class="chip"></div>
         </div>
@@ -227,7 +233,7 @@
       <div class="panel">
         <h2 style="margin-top:0;">Card overview</h2>
         <p class="muted">
-          Your MNBase virtual card is presented in a professional format with card holder details,
+          Your MNBase virtual card is displayed in a professional format with card holder details,
           expiration date, CVV, activation status, and available card balance.
         </p>
 
@@ -265,6 +271,10 @@
       el.className = "msg error";
     }
 
+    function goBack() {
+      window.location.href = "/dashboard.html";
+    }
+
     function logout() {
       clearToken();
       window.location.href = "/wallet.html";
@@ -293,40 +303,44 @@
         return;
       }
 
-      const r = await fetch(`${API}/wallet/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      try {
+        const r = await fetch(`${API}/wallet/me`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("cardMsg", `Card session error: ${text}`);
+          return;
         }
-      });
 
-      const text = await r.text();
+        const data = JSON.parse(text);
 
-      if (!r.ok) {
-        showMsg("cardMsg", `Card session error: ${text}`);
-        return;
-      }
+        document.getElementById("cardUser").textContent = (data.username || data.email || "USER").toUpperCase();
+        document.getElementById("cardNumber").textContent = makeCardNumber(data.username || data.email || "MNBASE");
+        document.getElementById("cardCvv").textContent = makeCvv(data.username || data.email || "MNBASE");
+        document.getElementById("cardBalance").textContent = formatMoney(data.cardBalance || 0);
+        document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
 
-      const data = JSON.parse(text);
-
-      document.getElementById("cardUser").textContent = (data.username || data.email || "USER").toUpperCase();
-      document.getElementById("cardNumber").textContent = makeCardNumber(data.username || data.email || "MNBASE");
-      document.getElementById("cardCvv").textContent = makeCvv(data.username || data.email || "MNBASE");
-      document.getElementById("cardBalance").textContent = formatMoney(data.cardBalance || 0);
-      document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
-
-      const badge = document.getElementById("cardStatusBadge");
-      if (data.cardActivated) {
-        badge.textContent = "Active";
-        badge.className = "badge";
-        document.getElementById("cardMeta").textContent =
-          "Your virtual card is active and ready for supported wallet-linked actions.";
-      } else {
-        badge.textContent = "Not Activated";
-        badge.className = "badge inactive";
-        document.getElementById("cardMeta").textContent =
-          "Your virtual card has not yet been activated. Please contact support or wait for admin activation.";
+        const badge = document.getElementById("cardStatusBadge");
+        if (data.cardActivated) {
+          badge.textContent = "Active";
+          badge.className = "badge";
+          document.getElementById("cardMeta").textContent =
+            "Your virtual card is active and ready for supported wallet-linked actions.";
+        } else {
+          badge.textContent = "Not Activated";
+          badge.className = "badge inactive";
+          document.getElementById("cardMeta").textContent =
+            "Your virtual card has not yet been activated. Please contact support or wait for admin activation.";
+        }
+      } catch (err) {
+        showMsg("cardMsg", `Failed to fetch card data: ${err.message}`);
       }
     }
 

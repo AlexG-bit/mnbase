@@ -13,10 +13,16 @@
       --muted: #64748b;
       --blue: #1652f0;
       --blue-2: #2f6bff;
+      --green: #16a34a;
+      --red: #dc2626;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -25,37 +31,81 @@
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
-    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
     .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
       background: rgba(255,255,255,.88);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(15,23,42,.05);
-      position: sticky; top: 0; z-index: 50;
     }
+
     .nav-inner {
-      display: flex; justify-content: space-between; align-items: center; padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
     }
+
     .brand {
-      display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
     }
+
     .brand-box {
-      width: 40px; height: 40px; border-radius: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 12px 28px rgba(22,82,240,.18);
     }
-    .nav-actions { display: flex; gap: 10px; }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+    }
+
     .btn {
-      border: 0; border-radius: 14px; padding: 12px 16px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
     }
-    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
-    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
 
     .hero {
       padding: 34px 0 22px;
-      display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
     }
+
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -63,17 +113,46 @@
       box-shadow: var(--shadow);
       padding: 24px;
     }
+
     .balance-card {
       background: linear-gradient(135deg, #1652f0, #2f6bff);
-      color: white; border-radius: 24px; padding: 24px;
-      min-height: 220px; display: flex; flex-direction: column; justify-content: space-between;
+      color: white;
+      border-radius: 24px;
+      padding: 24px;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .balance-card h1 { margin: 0; font-size: 42px; }
-    .balance-card small { display: block; opacity: .9; margin-bottom: 8px; }
-    .balance-card p { margin: 10px 0 0; opacity: .92; line-height: 1.6; font-size: 14px; }
 
-    .section-title { margin: 0 0 12px; font-size: 24px; }
-    .muted { color: var(--muted); line-height: 1.7; }
+    .balance-card small {
+      display: block;
+      opacity: .9;
+      margin-bottom: 8px;
+    }
+
+    .balance-card h1 {
+      margin: 0;
+      font-size: 42px;
+      letter-spacing: -1px;
+    }
+
+    .balance-card p {
+      margin: 10px 0 0;
+      opacity: .92;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+    }
 
     .user-box {
       background: var(--panel-2);
@@ -84,8 +163,12 @@
     }
 
     .action-grid {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; padding: 8px 0 26px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      padding: 8px 0 26px;
     }
+
     .action-card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -94,47 +177,124 @@
       padding: 20px;
       cursor: pointer;
       min-height: 150px;
+      transition: .18s ease;
     }
+
+    .action-card:hover {
+      transform: translateY(-2px);
+    }
+
     .action-icon {
-      width: 48px; height: 48px; border-radius: 14px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      color: white; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 18px; margin-bottom: 12px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      margin-bottom: 12px;
+      box-shadow: 0 12px 24px rgba(22,82,240,.14);
     }
-    .action-card h3 { margin: 0 0 8px; font-size: 18px; }
-    .action-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+
+    .action-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .action-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
 
     .bottom-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 22px; padding-bottom: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      padding-bottom: 40px;
     }
-    .list { display: grid; gap: 12px; margin-top: 16px; }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
     .list-item {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--panel-2); border: 1px solid var(--line);
-      border-radius: 16px; padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 16px;
     }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .list-item span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .badge {
-      padding: 8px 12px; border-radius: 999px;
-      background: rgba(22,163,74,.08); color: #166534;
-      font-size: 12px; font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(22,163,74,.08);
+      color: #166534;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
     .msg {
-      display: none; margin-top: 14px; padding: 12px 14px;
-      border-radius: 14px; font-size: 14px;
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
     }
+
     .msg.error {
-      display: block; color: #991b1b;
+      display: block;
+      color: #991b1b;
       background: rgba(220,38,38,.08);
       border: 1px solid rgba(220,38,38,.18);
     }
 
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(15,23,42,.45);
-      display: none; align-items: center; justify-content: center;
-      z-index: 100; padding: 16px;
+    .msg.success {
+      display: block;
+      color: #166534;
+      background: rgba(22,163,74,.08);
+      border: 1px solid rgba(22,163,74,.18);
     }
-    .modal-backdrop.active { display: flex; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
     .modal {
       width: min(560px, 100%);
       background: white;
@@ -143,19 +303,40 @@
       box-shadow: var(--shadow);
       padding: 24px;
     }
-    .modal h3 { margin: 0 0 10px; font-size: 24px; }
-    .modal p { margin: 0 0 16px; color: var(--muted); line-height: 1.7; }
 
-    .field { margin-bottom: 14px; }
+    .modal h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .modal p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
     .field label {
-      display: block; margin-bottom: 8px; color: #334155;
-      font-size: 13px; font-weight: 500;
+      display: block;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 500;
     }
+
     .field select {
-      width: 100%; padding: 14px 15px; border-radius: 14px;
-      border: 1px solid var(--line); background: white;
-      color: var(--text); font-size: 15px;
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      font-size: 15px;
     }
+
     .address-box {
       background: var(--panel-2);
       border: 1px solid var(--line);
@@ -164,10 +345,15 @@
       word-break: break-all;
       font-size: 14px;
       color: #0f172a;
+      line-height: 1.6;
     }
 
     @media (max-width: 980px) {
-      .hero, .bottom-grid, .action-grid { grid-template-columns: 1fr; }
+      .hero,
+      .bottom-grid,
+      .action-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -178,6 +364,7 @@
         <div class="brand-box">MN</div>
         <span>MNBase Dashboard</span>
       </div>
+
       <div class="nav-actions">
         <button class="btn btn-secondary" onclick="loadWallet()">Refresh</button>
         <button class="btn btn-primary" onclick="logout()">Logout</button>
@@ -191,8 +378,12 @@
         <div>
           <small>Total Wallet Value</small>
           <h1 id="walletBalance">$0.00</h1>
-          <p>Your main wallet dashboard for balances, receiving assets, virtual card access, and conversion workflows.</p>
+          <p>
+            Your main wallet dashboard for balances, receiving assets, virtual card access,
+            and conversion workflows.
+          </p>
         </div>
+
         <div>
           <small>Primary account</small>
           <strong id="currentUser">User</strong>
@@ -201,7 +392,9 @@
 
       <div class="card">
         <h2 class="section-title">Welcome to your dashboard</h2>
-        <p class="muted">This is your active wallet environment. Use the quick actions below to navigate your professional MNBase experience.</p>
+        <p class="muted">
+          This is your active wallet environment. Use the quick actions below to navigate your professional MNBase experience.
+        </p>
 
         <div class="user-box">
           <strong>User profile</strong>
@@ -234,7 +427,7 @@
           <p>View different crypto assets and local currency conversion options.</p>
         </div>
 
-        <div class="action-card" onclick="window.location.href='/card.html'">
+        <div class="action-card" onclick="openCardPage()">
           <div class="action-icon">VC</div>
           <h3>Virtual Card</h3>
           <p>Open your virtual card page and view card status and balance.</p>
@@ -257,7 +450,8 @@
       <div class="card">
         <h2 class="section-title">Platform overview</h2>
         <p class="muted">
-          MNBase is structured as a more credible wallet environment for receiving, managing, and preparing crypto assets for future movement and conversion.
+          MNBase is structured as a more credible wallet environment for receiving, managing,
+          and preparing crypto assets for future movement and conversion.
         </p>
       </div>
     </section>
@@ -282,6 +476,7 @@
       </div>
 
       <div class="address-box" id="receiveAddress">Loading address...</div>
+
       <div style="margin-top:16px;">
         <button class="btn btn-primary" onclick="closeModal('receiveModal')">Close</button>
       </div>
@@ -303,7 +498,9 @@
         <select id="convertCurrency"></select>
       </div>
 
-      <div class="address-box" id="convertInfo">Conversion route preview ready.</div>
+      <div class="address-box" id="convertInfo">
+        Supported crypto assets can be prepared for conversion into selected local currencies.
+      </div>
 
       <div style="margin-top:16px;">
         <button class="btn btn-primary" onclick="closeModal('convertModal')">Close</button>
@@ -329,6 +526,12 @@
       el.className = "msg error";
     }
 
+    function clearMsg(id) {
+      const el = document.getElementById(id);
+      el.textContent = "";
+      el.className = "msg";
+    }
+
     function openModal(id) {
       document.getElementById(id).classList.add("active");
     }
@@ -340,6 +543,17 @@
     function logout() {
       clearToken();
       window.location.href = "/wallet.html";
+    }
+
+    function openCardPage() {
+      const token = getToken();
+
+      if (!token) {
+        showMsg("dashboardMsg", "No active session found. Please log in again.");
+        return;
+      }
+
+      window.location.href = "/card.html";
     }
 
     function formatMoney(value) {
@@ -354,102 +568,114 @@
         type === "withdraw"
           ? "Please contact support to activate your MNBase card before using withdraw."
           : "Please contact support to activate your MNBase card before using send.";
+
       openModal("activationModal");
     }
 
     async function loadWallet() {
       const token = getToken();
+
       if (!token) {
         showMsg("dashboardMsg", "No active session found. Please log in again.");
         return;
       }
 
-      const r = await fetch(`${API}/wallet/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      try {
+        const r = await fetch(`${API}/wallet/me`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("dashboardMsg", `Session error: ${text}`);
+          return;
         }
-      });
 
-      const text = await r.text();
+        const data = JSON.parse(text);
 
-      if (!r.ok) {
-        showMsg("dashboardMsg", `Session error: ${text}`);
-        return;
-      }
+        document.getElementById("currentUser").textContent = data.username || data.email || "User";
+        document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
+        document.getElementById("userMeta").textContent =
+          `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
 
-      const data = JSON.parse(text);
+        document.getElementById("cardStatus").textContent =
+          data.cardActivated
+            ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
+            : "Virtual card status: Not activated";
 
-      document.getElementById("currentUser").textContent = data.username || data.email || "User";
-      document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
-      document.getElementById("userMeta").textContent =
-        `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
-      document.getElementById("cardStatus").textContent =
-        data.cardActivated
-          ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
-          : "Virtual card status: Not activated";
+        const txs = Array.isArray(data.transactions) ? data.transactions : [];
+        const activity = document.getElementById("activityList");
 
-      const txs = Array.isArray(data.transactions) ? data.transactions : [];
-      const activity = document.getElementById("activityList");
-
-      if (!txs.length) {
-        activity.innerHTML = `
-          <div class="list-item">
-            <div>
-              <strong>No recent activity yet</strong>
-              <span>Your funded or card-related activity will appear here.</span>
+        if (!txs.length) {
+          activity.innerHTML = `
+            <div class="list-item">
+              <div>
+                <strong>No recent activity yet</strong>
+                <span>Your funded or card-related activity will appear here.</span>
+              </div>
+              <div class="badge">New</div>
             </div>
-            <div class="badge">New</div>
-          </div>
-        `;
-      } else {
-        activity.innerHTML = txs.slice(0, 6).map((tx) => `
-          <div class="list-item">
-            <div>
-              <strong>${tx.type || "Activity"}</strong>
-              <span>${tx.message || tx.createdAt || ""}</span>
+          `;
+        } else {
+          activity.innerHTML = txs.slice(0, 6).map((tx) => `
+            <div class="list-item">
+              <div>
+                <strong>${tx.type || "Activity"}</strong>
+                <span>${tx.message || tx.createdAt || ""}</span>
+              </div>
+              <div class="badge">${tx.amount ? "$" + tx.amount : "Logged"}</div>
             </div>
-            <div class="badge">${tx.amount ? "$" + tx.amount : "Logged"}</div>
-          </div>
-        `).join("");
-      }
+          `).join("");
+        }
 
-      document.getElementById("dashboardMsg").className = "msg";
-      document.getElementById("dashboardMsg").textContent = "";
+        clearMsg("dashboardMsg");
+      } catch (err) {
+        showMsg("dashboardMsg", `Failed to fetch dashboard: ${err.message}`);
+      }
     }
 
     async function openReceiveModal() {
       const token = getToken();
 
-      const r = await fetch(`${API}/wallet/receive-assets`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      try {
+        const r = await fetch(`${API}/wallet/receive-assets`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("dashboardMsg", text);
+          return;
         }
-      });
 
-      const text = await r.text();
-      if (!r.ok) {
-        showMsg("dashboardMsg", text);
-        return;
+        const data = JSON.parse(text);
+        receiveAssets = Array.isArray(data.assets) ? data.assets : [];
+
+        const select = document.getElementById("receiveAsset");
+        select.innerHTML = receiveAssets.map((a) =>
+          `<option value="${a.symbol}">${a.name} (${a.symbol})</option>`
+        ).join("");
+
+        renderReceiveAddress();
+        openModal("receiveModal");
+      } catch (err) {
+        showMsg("dashboardMsg", `Failed to fetch receive assets: ${err.message}`);
       }
-
-      const data = JSON.parse(text);
-      receiveAssets = data.assets || [];
-
-      const select = document.getElementById("receiveAsset");
-      select.innerHTML = receiveAssets.map((a) =>
-        `<option value="${a.symbol}">${a.name} (${a.symbol})</option>`
-      ).join("");
-
-      renderReceiveAddress();
-      openModal("receiveModal");
     }
 
     function renderReceiveAddress() {
       const symbol = document.getElementById("receiveAsset").value;
       const asset = receiveAssets.find((a) => a.symbol === symbol);
+
       document.getElementById("receiveAddress").textContent = asset
         ? `${asset.name} Address: ${asset.address}`
         : "Address unavailable.";
@@ -458,31 +684,36 @@
     async function openConvertModal() {
       const token = getToken();
 
-      const r = await fetch(`${API}/wallet/convert-options`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      try {
+        const r = await fetch(`${API}/wallet/convert-options`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("dashboardMsg", text);
+          return;
         }
-      });
 
-      const text = await r.text();
-      if (!r.ok) {
-        showMsg("dashboardMsg", text);
-        return;
+        const data = JSON.parse(text);
+
+        document.getElementById("convertAsset").innerHTML =
+          (data.assets || []).map((a) => `<option value="${a}">${a}</option>`).join("");
+
+        document.getElementById("convertCurrency").innerHTML =
+          (data.localCurrencies || []).map((c) => `<option value="${c}">${c}</option>`).join("");
+
+        document.getElementById("convertInfo").textContent =
+          "Supported crypto assets can be prepared for conversion into selected local currencies.";
+
+        openModal("convertModal");
+      } catch (err) {
+        showMsg("dashboardMsg", `Failed to fetch convert options: ${err.message}`);
       }
-
-      const data = JSON.parse(text);
-
-      document.getElementById("convertAsset").innerHTML =
-        (data.assets || []).map((a) => `<option value="${a}">${a}</option>`).join("");
-
-      document.getElementById("convertCurrency").innerHTML =
-        (data.localCurrencies || []).map((c) => `<option value="${c}">${c}</option>`).join("");
-
-      document.getElementById("convertInfo").textContent =
-        "Supported crypto assets can be prepared for conversion into selected local currencies.";
-
-      openModal("convertModal");
     }
 
     window.addEventListener("load", loadWallet);
