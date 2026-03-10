@@ -4,7 +4,7 @@ const {
   getBearerToken,
   sendJson,
   parseBody
-} = require("./auth");
+} = require("./helpers");
 
 function getCurrentUser(req) {
   const token = getBearerToken(req);
