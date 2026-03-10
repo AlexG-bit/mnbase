@@ -6,21 +6,16 @@
   <title>MNBase Virtual Card</title>
   <style>
     :root {
-      --bg: #f7f9fc;
       --panel: #ffffff;
       --line: #e2e8f0;
       --text: #0f172a;
       --muted: #64748b;
       --blue: #1652f0;
       --blue-2: #2f6bff;
-      --green: #16a34a;
-      --red: #dc2626;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -29,154 +24,102 @@
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
-
     .container {
-      width: min(980px, calc(100% - 32px));
+      width: min(920px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 32px 0 60px;
+      padding: 34px 0 50px;
     }
-
-    .topbar {
+    .nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 26px;
     }
-
-    .back {
-      color: var(--blue);
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
     }
-
-    .grid {
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      color: white;
+    }
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .card-page {
       display: grid;
       grid-template-columns: 1.1fr .9fr;
-      gap: 24px;
+      gap: 22px;
     }
-
-    .card,
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      padding: 24px;
     }
-
-    .card {
-      min-height: 260px;
-      padding: 28px;
+    .virtual-card {
       background: linear-gradient(135deg, #0f172a, #1d4ed8);
       color: white;
+      border-radius: 24px;
+      padding: 26px;
+      min-height: 240px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
-
-    .chip {
-      width: 52px;
-      height: 38px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #facc15, #fde68a);
+    .virtual-card h2 { margin: 0; font-size: 28px; }
+    .small { opacity: .85; font-size: 13px; }
+    .card-balance { font-size: 34px; font-weight: 800; letter-spacing: -1px; }
+    .meta { color: var(--muted); line-height: 1.7; }
+    .msg {
+      display: none; margin-top: 14px; padding: 12px 14px;
+      border-radius: 14px; font-size: 14px;
     }
-
-    .card-number {
-      font-size: 28px;
-      letter-spacing: 3px;
-      margin: 26px 0 10px;
+    .msg.error {
+      display: block; color: #991b1b;
+      background: rgba(220,38,38,.08);
+      border: 1px solid rgba(220,38,38,.18);
     }
-
-    .card-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      opacity: .94;
-    }
-
-    .panel {
-      padding: 24px;
-    }
-
-    .panel h2 {
-      margin: 0 0 10px;
-      font-size: 24px;
-    }
-
-    .muted {
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .stat {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      background: #f8fafc;
-    }
-
-    .stat strong {
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .status-ok {
-      color: #166534;
-      font-weight: 700;
-    }
-
-    .status-bad {
-      color: #991b1b;
-      font-weight: 700;
-    }
-
-    @media (max-width: 900px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    @media (max-width: 900px) { .card-page { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="topbar">
-      <div class="back" onclick="window.location.href='/dashboard.html'">← Back to Dashboard</div>
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="window.location.href='/dashboard.html'">Back to Dashboard</button>
+      <button class="btn btn-primary" onclick="logout()">Logout</button>
     </div>
 
-    <div class="grid">
-      <div class="card">
+    <div class="card-page">
+      <div class="virtual-card">
         <div>
-          <div class="chip"></div>
-          <div class="card-number">**** **** **** <span id="last4">2847</span></div>
+          <div class="small">MNBase Virtual Card</div>
+          <h2 id="cardUser">User</h2>
         </div>
 
-        <div class="card-meta">
-          <div>
-            <small>Card Holder</small><br />
-            <strong id="holderName">MNBASE USER</strong>
-          </div>
-          <div>
-            <small>Brand</small><br />
-            <strong>MNBase Virtual Card</strong>
-          </div>
+        <div>
+          <div class="small">Card Balance</div>
+          <div class="card-balance" id="cardBalance">$0.00</div>
         </div>
+
+        <div class="small" id="cardStatus">Card status ready</div>
       </div>
 
       <div class="panel">
-        <h2>Virtual Card</h2>
-        <p class="muted">
-          Your MNBase virtual card is designed to support a more complete fintech-style wallet experience.
+        <h2 style="margin-top:0;">Card overview</h2>
+        <p class="meta">
+          Your MNBase virtual card page displays activation status and card balance in a more professional, standard card-style layout.
         </p>
 
-        <div class="stat">
-          <strong>Card Status</strong>
-          <span id="cardStatus">Loading...</span>
-        </div>
-
-        <div class="stat">
-          <strong>Available Card Balance</strong>
-          <span id="cardBalance">$0.00</span>
-        </div>
+        <div class="meta" id="cardMeta">Waiting for card information...</div>
+        <div id="cardMsg" class="msg"></div>
       </div>
     </div>
   </div>
@@ -188,23 +131,39 @@
       return localStorage.getItem("mnbase_token");
     }
 
+    function clearToken() {
+      localStorage.removeItem("mnbase_token");
+    }
+
     function formatMoney(value) {
-      return `$${Number(value || 0).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`;
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD"
+      }).format(Number(value || 0));
+    }
+
+    function showMsg(id, text) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = "msg error";
+    }
+
+    function logout() {
+      clearToken();
+      window.location.href = "/wallet.html";
     }
 
     async function loadCard() {
       const token = getToken();
 
       if (!token) {
-        window.location.href = "/wallet.html";
+        showMsg("cardMsg", "No active session found. Please log in again.");
         return;
       }
 
       try {
-        const r = await fetch(`${API}/wallet/card`, {
+        const r = await fetch(`${API}/wallet/me`, {
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
@@ -212,27 +171,25 @@
         });
 
         const text = await r.text();
+
         if (!r.ok) {
-          window.location.href = "/wallet.html";
+          showMsg("cardMsg", `Card session error: ${text}`);
           return;
         }
 
         const data = JSON.parse(text);
 
-        document.getElementById("holderName").textContent = data.holderName || "MNBASE USER";
-        document.getElementById("last4").textContent = data.last4 || "2847";
-        document.getElementById("cardBalance").textContent = formatMoney(data.usdBalance || 0);
+        document.getElementById("cardUser").textContent = data.username || data.email || "User";
+        document.getElementById("cardBalance").textContent = formatMoney(data.cardBalance || 0);
+        document.getElementById("cardStatus").textContent =
+          data.cardActivated ? "Card status: Active" : "Card status: Not activated";
 
-        const statusEl = document.getElementById("cardStatus");
-        if (data.cardActivated) {
-          statusEl.textContent = "Activated";
-          statusEl.className = "status-ok";
-        } else {
-          statusEl.textContent = "Not activated";
-          statusEl.className = "status-bad";
-        }
-      } catch {
-        window.location.href = "/wallet.html";
+        document.getElementById("cardMeta").textContent =
+          data.cardActivated
+            ? "Your card is active and ready for supported wallet-linked actions."
+            : "Your card has not yet been activated. Please contact support or wait for admin activation.";
+      } catch (err) {
+        showMsg("cardMsg", `Failed to fetch card data: ${err.message}`);
       }
     }
 
