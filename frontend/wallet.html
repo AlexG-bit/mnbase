@@ -4,24 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Wallet</title>
-  <!-- Smartsupp Live Chat -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
 
-window.smartsupp || (function(d) {
-  var s, c, o = smartsupp = function() { o._.push(arguments) };
-  o._ = [];
-  s = d.getElementsByTagName('script')[0];
-  c = d.createElement('script');
-  c.type = 'text/javascript';
-  c.charset = 'utf-8';
-  c.async = true;
-  c.src = 'https://www.smartsuppchat.com/loader.js?';
-  s.parentNode.insertBefore(c, s);
-})(document);
-</script>
-<!-- End Smartsupp -->
+  <!-- Smartsupp Live Chat -->
+  <script type="text/javascript">
+    var _smartsupp = _smartsupp || {};
+    _smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
+
+    window.smartsupp || (function(d) {
+      var s, c, o = smartsupp = function() { o._.push(arguments) };
+      o._ = [];
+      s = d.getElementsByTagName('script')[0];
+      c = d.createElement('script');
+      c.type = 'text/javascript';
+      c.charset = 'utf-8';
+      c.async = true;
+      c.src = 'https://www.smartsuppchat.com/loader.js?';
+      s.parentNode.insertBefore(c, s);
+    })(document);
+  </script>
+  <!-- End Smartsupp -->
+
   <style>
     :root {
       --panel: #ffffff;
@@ -36,6 +38,7 @@ window.smartsupp || (function(d) {
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -348,6 +351,11 @@ window.smartsupp || (function(d) {
       margin-top: 6px;
     }
 
+    .support-chat-btn {
+      width: 100%;
+      margin-top: 12px;
+    }
+
     .msg {
       display: none;
       margin-top: 14px;
@@ -376,6 +384,26 @@ window.smartsupp || (function(d) {
       text-align: center;
       color: var(--muted);
       font-size: 13px;
+    }
+
+    .forgot-password-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .forgot-password-card {
+      width: min(560px, 100%);
+      background: white;
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 20px 50px rgba(15,23,42,.08);
+      padding: 24px;
     }
 
     @media (max-width: 980px) {
@@ -522,6 +550,7 @@ window.smartsupp || (function(d) {
           </div>
 
           <button class="btn btn-primary submit-btn" onclick="register()">Create Account</button>
+          <button class="btn btn-secondary support-chat-btn" type="button" onclick="openSupportChat()">Chat with Support</button>
           <div id="registerMsg" class="msg"></div>
         </div>
 
@@ -537,6 +566,8 @@ window.smartsupp || (function(d) {
           </div>
 
           <button class="btn btn-primary submit-btn" onclick="login()">Login</button>
+          <button class="btn btn-secondary support-chat-btn" type="button" onclick="openSupportChat()">Chat with Support</button>
+          <button class="btn btn-secondary support-chat-btn" type="button" onclick="openForgotPassword()">Forgot Password?</button>
           <div id="loginMsg" class="msg"></div>
         </div>
       </div>
@@ -546,6 +577,38 @@ window.smartsupp || (function(d) {
       MNBase Wallet • Multi-network crypto access with a cleaner and more professional user experience.
     </div>
   </main>
+
+  <div id="forgotPasswordModal" class="forgot-password-modal">
+    <div class="forgot-password-card">
+      <h3 style="margin:0 0 10px;font-size:24px;color:#0f172a;">Forgot Password</h3>
+      <p style="margin:0 0 16px;color:#64748b;line-height:1.7;">
+        Enter your email to generate a reset code, then use that code to set a new password.
+      </p>
+
+      <div class="field">
+        <label for="forgotEmail">Email</label>
+        <input id="forgotEmail" type="email" placeholder="Enter your account email" />
+      </div>
+
+      <div class="field">
+        <label for="forgotCode">Reset Code</label>
+        <input id="forgotCode" type="text" placeholder="Enter the reset code" />
+      </div>
+
+      <div class="field">
+        <label for="forgotNewPassword">New Password</label>
+        <input id="forgotNewPassword" type="password" placeholder="Enter your new password" />
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+        <button class="btn btn-secondary" type="button" onclick="requestResetCode()">Generate Code</button>
+        <button class="btn btn-primary" type="button" onclick="resetPassword()">Reset Password</button>
+        <button class="btn btn-secondary" type="button" onclick="closeForgotPassword()">Close</button>
+      </div>
+
+      <div id="forgotMsg" class="msg"></div>
+    </div>
+  </div>
 
   <script>
     const API = "https://api.mnbase.app/api";
@@ -589,6 +652,20 @@ window.smartsupp || (function(d) {
       localStorage.removeItem("mnbase_token");
     }
 
+    function openSupportChat() {
+      if (typeof smartsupp === "function") {
+        smartsupp("chat:open");
+      }
+    }
+
+    function openForgotPassword() {
+      document.getElementById("forgotPasswordModal").style.display = "flex";
+    }
+
+    function closeForgotPassword() {
+      document.getElementById("forgotPasswordModal").style.display = "none";
+    }
+
     async function loginAndRedirect(identifier, password) {
       const r = await fetch(`${API}/auth/login`, {
         method: "POST",
@@ -609,6 +686,16 @@ window.smartsupp || (function(d) {
       }
 
       saveToken(data.token);
+
+      if (typeof smartsupp === "function") {
+        smartsupp("name", data.user?.username || "MNBase User");
+        smartsupp("email", data.user?.email || "");
+        smartsupp("variables", {
+          Role: data.user?.role || "user",
+          Page: "Wallet Login"
+        });
+      }
+
       window.location.href = "/dashboard.html";
     }
 
@@ -659,6 +746,70 @@ window.smartsupp || (function(d) {
         await loginAndRedirect(identifier, password);
       } catch (err) {
         showMsg("loginMsg", err.message || "Failed to fetch.");
+      }
+    }
+
+    async function requestResetCode() {
+      const email = document.getElementById("forgotEmail").value.trim();
+
+      if (!email) {
+        showMsg("forgotMsg", "Please enter your email.");
+        return;
+      }
+
+      try {
+        const r = await fetch(`${API}/auth/forgot-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("forgotMsg", text);
+          return;
+        }
+
+        const data = JSON.parse(text);
+        showMsg("forgotMsg", `Reset code generated: ${data.resetCode}`, true);
+      } catch (err) {
+        showMsg("forgotMsg", `Failed to fetch: ${err.message}`);
+      }
+    }
+
+    async function resetPassword() {
+      const email = document.getElementById("forgotEmail").value.trim();
+      const resetCode = document.getElementById("forgotCode").value.trim();
+      const newPassword = document.getElementById("forgotNewPassword").value;
+
+      if (!email || !resetCode || !newPassword) {
+        showMsg("forgotMsg", "Please complete all reset fields.");
+        return;
+      }
+
+      try {
+        const r = await fetch(`${API}/auth/reset-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, resetCode, newPassword })
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("forgotMsg", text);
+          return;
+        }
+
+        showMsg("forgotMsg", "Password reset successful. You can now log in.", true);
+        document.getElementById("loginIdentifier").value = email;
+      } catch (err) {
+        showMsg("forgotMsg", `Failed to fetch: ${err.message}`);
       }
     }
 
