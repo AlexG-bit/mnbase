@@ -11,6 +11,10 @@ const {
   buildWalletAddresses
 } = require("./helpers");
 
+function generateResetCode() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
 async function authRoute(req, res, pathname) {
   if (pathname === "/api/auth/register" && req.method === "POST") {
     try {
@@ -49,6 +53,8 @@ async function authRoute(req, res, pathname) {
         cardBalance: 0,
         wallets: buildWalletAddresses(seed),
         transactions: [],
+        resetCode: null,
+        resetCodeExpiresAt: null,
         createdAt: new Date().toISOString()
       };
 
@@ -115,6 +121,93 @@ async function authRoute(req, res, pathname) {
       return true;
     } catch (err) {
       sendJson(res, 400, { error: err.message || "Login failed." });
+      return true;
+    }
+  }
+
+  if (pathname === "/api/auth/forgot-password" && req.method === "POST") {
+    try {
+      const body = await parseBody(req);
+      const email = normalize(body.email).toLowerCase();
+
+      if (!email) {
+        sendJson(res, 400, { error: "Email is required." });
+        return true;
+      }
+
+      const db = readDB();
+      const user = db.users.find((u) => String(u.email || "").toLowerCase() === email);
+
+      if (!user) {
+        sendJson(res, 404, { error: "No account found with that email." });
+        return true;
+      }
+
+      const code = generateResetCode();
+      user.resetCode = code;
+      user.resetCodeExpiresAt = Date.now() + 15 * 60 * 1000;
+
+      writeDB(db);
+
+      sendJson(res, 200, {
+        message: "Reset code generated successfully.",
+        resetCode: code
+      });
+      return true;
+    } catch (err) {
+      sendJson(res, 400, { error: err.message || "Could not process forgot password." });
+      return true;
+    }
+  }
+
+  if (pathname === "/api/auth/reset-password" && req.method === "POST") {
+    try {
+      const body = await parseBody(req);
+      const email = normalize(body.email).toLowerCase();
+      const resetCode = normalize(body.resetCode);
+      const newPassword = normalize(body.newPassword);
+
+      if (!email || !resetCode || !newPassword) {
+        sendJson(res, 400, { error: "Email, reset code, and new password are required." });
+        return true;
+      }
+
+      const db = readDB();
+      const user = db.users.find((u) => String(u.email || "").toLowerCase() === email);
+
+      if (!user) {
+        sendJson(res, 404, { error: "User not found." });
+        return true;
+      }
+
+      if (!user.resetCode || !user.resetCodeExpiresAt) {
+        sendJson(res, 400, { error: "No active reset request found." });
+        return true;
+      }
+
+      if (Date.now() > Number(user.resetCodeExpiresAt)) {
+        user.resetCode = null;
+        user.resetCodeExpiresAt = null;
+        writeDB(db);
+        sendJson(res, 400, { error: "Reset code has expired." });
+        return true;
+      }
+
+      if (String(user.resetCode) !== resetCode) {
+        sendJson(res, 400, { error: "Invalid reset code." });
+        return true;
+      }
+
+      user.passwordHash = hashPassword(newPassword);
+      user.resetCode = null;
+      user.resetCodeExpiresAt = null;
+
+      writeDB(db);
+
+      sendJson(res, 200, { message: "Password reset successful." });
+      return true;
+    } catch (err) {
+      sendJson(res, 400, { error: err.message || "Could not reset password." });
       return true;
     }
   }
