@@ -24,6 +24,19 @@ async function getCurrentUser(req) {
   return { user };
 }
 
+function parseTransactions(value) {
+  if (Array.isArray(value)) return value;
+  if (!value) return [];
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 async function walletRoute(req, res, pathname) {
   if (pathname === "/api/wallet/me" && req.method === "GET") {
     try {
@@ -35,11 +48,6 @@ async function walletRoute(req, res, pathname) {
 
       const { user } = result;
 
-      const wallets = user.wallets || {};
-      const transactions = Array.isArray(user.transactions)
-        ? user.transactions
-        : (user.transactions || []);
-
       sendJson(res, 200, {
         username: user.username,
         email: user.email,
@@ -47,12 +55,46 @@ async function walletRoute(req, res, pathname) {
         balance: Number(user.balance || 0),
         cardActivated: !!user.card_activated,
         cardBalance: Number(user.card_balance || 0),
-        wallets,
-        transactions
+        wallets: user.wallets || {},
+        transactions: parseTransactions(user.transactions)
       });
       return true;
     } catch (err) {
       sendJson(res, 500, { error: err.message || "Failed to load wallet profile." });
+      return true;
+    }
+  }
+
+  if (pathname === "/api/wallet/history" && req.method === "GET") {
+    try {
+      const result = await getCurrentUser(req);
+      if (result.error) {
+        sendJson(res, 401, { error: result.error });
+        return true;
+      }
+
+      const history = await pool.query(
+        `SELECT id, user_id, type, amount, asset, message, created_at
+         FROM transactions
+         WHERE user_id = $1
+         ORDER BY created_at DESC
+         LIMIT 100`,
+        [result.user.id]
+      );
+
+      sendJson(res, 200, {
+        transactions: history.rows.map((tx) => ({
+          id: tx.id,
+          type: tx.type,
+          amount: Number(tx.amount || 0),
+          asset: tx.asset || "USD",
+          message: tx.message || "",
+          createdAt: tx.created_at
+        }))
+      });
+      return true;
+    } catch (err) {
+      sendJson(res, 500, { error: err.message || "Failed to load wallet history." });
       return true;
     }
   }

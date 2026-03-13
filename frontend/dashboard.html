@@ -4,24 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Dashboard</title>
-  <!-- Smartsupp Live Chat -->
-<script type="text/javascript">
-var _smartsupp = _smartsupp || {};
-_smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
 
-window.smartsupp || (function(d) {
-  var s, c, o = smartsupp = function() { o._.push(arguments) };
-  o._ = [];
-  s = d.getElementsByTagName('script')[0];
-  c = d.createElement('script');
-  c.type = 'text/javascript';
-  c.charset = 'utf-8';
-  c.async = true;
-  c.src = 'https://www.smartsuppchat.com/loader.js?';
-  s.parentNode.insertBefore(c, s);
-})(document);
-</script>
-<!-- End Smartsupp -->
+  <!-- Smartsupp Live Chat -->
+  <script type="text/javascript">
+    var _smartsupp = _smartsupp || {};
+    _smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
+    window.smartsupp || (function(d) {
+      var s, c, o = smartsupp = function() { o._.push(arguments) };
+      o._ = [];
+      s = d.getElementsByTagName('script')[0];
+      c = d.createElement('script');
+      c.type = 'text/javascript';
+      c.charset = 'utf-8';
+      c.async = true;
+      c.src = 'https://www.smartsuppchat.com/loader.js?';
+      s.parentNode.insertBefore(c, s);
+    })(document);
+  </script>
+
   <style>
     :root {
       --panel: #ffffff;
@@ -31,16 +31,11 @@ window.smartsupp || (function(d) {
       --muted: #64748b;
       --blue: #1652f0;
       --blue-2: #2f6bff;
-      --green: #16a34a;
-      --red: #dc2626;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -50,80 +45,37 @@ window.smartsupp || (function(d) {
       color: var(--text);
     }
 
-    .container {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
+    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
     .nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      position: sticky; top: 0; z-index: 50;
       background: rgba(255,255,255,.88);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(15,23,42,.05);
     }
-
     .nav-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 0;
+      display: flex; justify-content: space-between; align-items: center; padding: 18px 0;
     }
-
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      font-size: 18px;
+      display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px;
     }
-
     .brand-box {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
+      width: 40px; height: 40px; border-radius: 14px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      box-shadow: 0 12px 28px rgba(22,82,240,.18);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800;
     }
-
-    .nav-actions {
-      display: flex;
-      gap: 10px;
-    }
-
+    .nav-actions { display: flex; gap: 10px; }
     .btn {
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 16px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
+      border: 0; border-radius: 14px; padding: 12px 16px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
     }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      color: white;
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
+    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
 
     .hero {
       padding: 34px 0 22px;
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 22px;
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px;
     }
-
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -131,7 +83,6 @@ window.smartsupp || (function(d) {
       box-shadow: var(--shadow);
       padding: 24px;
     }
-
     .balance-card {
       background: linear-gradient(135deg, #1652f0, #2f6bff);
       color: white;
@@ -142,35 +93,12 @@ window.smartsupp || (function(d) {
       flex-direction: column;
       justify-content: space-between;
     }
+    .balance-card h1 { margin: 0; font-size: 42px; }
+    .balance-card small { display: block; opacity: .9; margin-bottom: 8px; }
+    .balance-card p { margin: 10px 0 0; opacity: .92; line-height: 1.6; font-size: 14px; }
 
-    .balance-card small {
-      display: block;
-      opacity: .9;
-      margin-bottom: 8px;
-    }
-
-    .balance-card h1 {
-      margin: 0;
-      font-size: 42px;
-      letter-spacing: -1px;
-    }
-
-    .balance-card p {
-      margin: 10px 0 0;
-      opacity: .92;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .section-title {
-      margin: 0 0 12px;
-      font-size: 24px;
-    }
-
-    .muted {
-      color: var(--muted);
-      line-height: 1.7;
-    }
+    .section-title { margin: 0 0 12px; font-size: 24px; }
+    .muted { color: var(--muted); line-height: 1.7; }
 
     .user-box {
       background: var(--panel-2);
@@ -181,12 +109,8 @@ window.smartsupp || (function(d) {
     }
 
     .action-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-      padding: 8px 0 26px;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; padding: 8px 0 26px;
     }
-
     .action-card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -195,124 +119,48 @@ window.smartsupp || (function(d) {
       padding: 20px;
       cursor: pointer;
       min-height: 150px;
-      transition: .18s ease;
     }
-
-    .action-card:hover {
-      transform: translateY(-2px);
-    }
-
     .action-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+      width: 48px; height: 48px; border-radius: 14px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 18px;
-      margin-bottom: 12px;
-      box-shadow: 0 12px 24px rgba(22,82,240,.14);
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 18px; margin-bottom: 12px;
     }
-
-    .action-card h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
-
-    .action-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.65;
-    }
+    .action-card h3 { margin: 0 0 8px; font-size: 18px; }
+    .action-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
 
     .bottom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
-      padding-bottom: 40px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 22px; padding-bottom: 40px;
     }
-
-    .list {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
+    .list { display: grid; gap: 12px; margin-top: 16px; }
     .list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px 16px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--panel-2); border: 1px solid var(--line);
+      border-radius: 16px; padding: 14px 16px; gap: 14px;
     }
-
-    .list-item strong {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 14px;
-    }
-
-    .list-item span {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
     .badge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(22,163,74,.08);
-      color: #166534;
-      font-size: 12px;
-      font-weight: 700;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(22,163,74,.08); color: #166534;
+      font-size: 12px; font-weight: 700;
       white-space: nowrap;
     }
 
     .msg {
-      display: none;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-size: 14px;
-      line-height: 1.5;
+      display: none; margin-top: 14px; padding: 12px 14px;
+      border-radius: 14px; font-size: 14px;
     }
-
     .msg.error {
-      display: block;
-      color: #991b1b;
+      display: block; color: #991b1b;
       background: rgba(220,38,38,.08);
       border: 1px solid rgba(220,38,38,.18);
     }
 
-    .msg.success {
-      display: block;
-      color: #166534;
-      background: rgba(22,163,74,.08);
-      border: 1px solid rgba(22,163,74,.18);
-    }
-
     .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,.45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(15,23,42,.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 100; padding: 16px;
     }
-
-    .modal-backdrop.active {
-      display: flex;
-    }
-
+    .modal-backdrop.active { display: flex; }
     .modal {
       width: min(560px, 100%);
       background: white;
@@ -321,40 +169,19 @@ window.smartsupp || (function(d) {
       box-shadow: var(--shadow);
       padding: 24px;
     }
+    .modal h3 { margin: 0 0 10px; font-size: 24px; }
+    .modal p { margin: 0 0 16px; color: var(--muted); line-height: 1.7; }
 
-    .modal h3 {
-      margin: 0 0 10px;
-      font-size: 24px;
-    }
-
-    .modal p {
-      margin: 0 0 16px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
+    .field { margin-bottom: 14px; }
     .field label {
-      display: block;
-      margin-bottom: 8px;
-      color: #334155;
-      font-size: 13px;
-      font-weight: 500;
+      display: block; margin-bottom: 8px; color: #334155;
+      font-size: 13px; font-weight: 500;
     }
-
     .field select {
-      width: 100%;
-      padding: 14px 15px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--text);
-      font-size: 15px;
+      width: 100%; padding: 14px 15px; border-radius: 14px;
+      border: 1px solid var(--line); background: white;
+      color: var(--text); font-size: 15px;
     }
-
     .address-box {
       background: var(--panel-2);
       border: 1px solid var(--line);
@@ -363,15 +190,10 @@ window.smartsupp || (function(d) {
       word-break: break-all;
       font-size: 14px;
       color: #0f172a;
-      line-height: 1.6;
     }
 
     @media (max-width: 980px) {
-      .hero,
-      .bottom-grid,
-      .action-grid {
-        grid-template-columns: 1fr;
-      }
+      .hero, .bottom-grid, .action-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -382,7 +204,6 @@ window.smartsupp || (function(d) {
         <div class="brand-box">MN</div>
         <span>MNBase Dashboard</span>
       </div>
-
       <div class="nav-actions">
         <button class="btn btn-secondary" onclick="loadWallet()">Refresh</button>
         <button class="btn btn-primary" onclick="logout()">Logout</button>
@@ -396,12 +217,8 @@ window.smartsupp || (function(d) {
         <div>
           <small>Total Wallet Value</small>
           <h1 id="walletBalance">$0.00</h1>
-          <p>
-            Your main wallet dashboard for balances, receiving assets, virtual card access,
-            and conversion workflows.
-          </p>
+          <p>Your main wallet dashboard for balances, receiving assets, virtual card access, and conversion workflows.</p>
         </div>
-
         <div>
           <small>Primary account</small>
           <strong id="currentUser">User</strong>
@@ -410,9 +227,7 @@ window.smartsupp || (function(d) {
 
       <div class="card">
         <h2 class="section-title">Welcome to your dashboard</h2>
-        <p class="muted">
-          This is your active wallet environment. Use the quick actions below to navigate your professional MNBase experience.
-        </p>
+        <p class="muted">This is your active wallet environment. Use the quick actions below to navigate your professional MNBase experience.</p>
 
         <div class="user-box">
           <strong>User profile</strong>
@@ -451,6 +266,12 @@ window.smartsupp || (function(d) {
           <p>Open your virtual card page and view card status and balance.</p>
         </div>
 
+        <div class="action-card" onclick="window.location.href='/history.html'">
+          <div class="action-icon">H</div>
+          <h3>History</h3>
+          <p>Open your full wallet transaction history.</p>
+        </div>
+
         <div class="action-card" onclick="showActivationPopup('withdraw')">
           <div class="action-icon">⇣</div>
           <h3>Withdraw</h3>
@@ -468,8 +289,7 @@ window.smartsupp || (function(d) {
       <div class="card">
         <h2 class="section-title">Platform overview</h2>
         <p class="muted">
-          MNBase is structured as a more credible wallet environment for receiving, managing,
-          and preparing crypto assets for future movement and conversion.
+          MNBase is structured as a more credible wallet environment for receiving, managing, and preparing crypto assets for future movement and conversion.
         </p>
       </div>
     </section>
@@ -494,7 +314,6 @@ window.smartsupp || (function(d) {
       </div>
 
       <div class="address-box" id="receiveAddress">Loading address...</div>
-
       <div style="margin-top:16px;">
         <button class="btn btn-primary" onclick="closeModal('receiveModal')">Close</button>
       </div>
@@ -516,9 +335,7 @@ window.smartsupp || (function(d) {
         <select id="convertCurrency"></select>
       </div>
 
-      <div class="address-box" id="convertInfo">
-        Supported crypto assets can be prepared for conversion into selected local currencies.
-      </div>
+      <div class="address-box" id="convertInfo">Supported crypto assets can be prepared for conversion into selected local currencies.</div>
 
       <div style="margin-top:16px;">
         <button class="btn btn-primary" onclick="closeModal('convertModal')">Close</button>
@@ -565,12 +382,10 @@ window.smartsupp || (function(d) {
 
     function openCardPage() {
       const token = getToken();
-
       if (!token) {
         showMsg("dashboardMsg", "No active session found. Please log in again.");
         return;
       }
-
       window.location.href = "/card.html";
     }
 
@@ -599,22 +414,33 @@ window.smartsupp || (function(d) {
       }
 
       try {
-        const r = await fetch(`${API}/wallet/me`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
+        const [walletRes, historyRes] = await Promise.all([
+          fetch(`${API}/wallet/me`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }),
+          fetch(`${API}/wallet/history`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          })
+        ]);
 
-        const text = await r.text();
+        const walletText = await walletRes.text();
+        const historyText = await historyRes.text();
 
-        if (!r.ok) {
-          showMsg("dashboardMsg", `Session error: ${text}`);
+        if (!walletRes.ok) {
+          showMsg("dashboardMsg", `Session error: ${walletText}`);
           return;
         }
 
-        const data = JSON.parse(text);
+        const data = JSON.parse(walletText);
+        const historyData = historyRes.ok ? JSON.parse(historyText) : { transactions: [] };
 
         document.getElementById("currentUser").textContent = data.username || data.email || "User";
         document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
@@ -626,7 +452,18 @@ window.smartsupp || (function(d) {
             ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
             : "Virtual card status: Not activated";
 
-        const txs = Array.isArray(data.transactions) ? data.transactions : [];
+        if (typeof smartsupp === "function") {
+          smartsupp("name", data.username || "MNBase User");
+          smartsupp("email", data.email || "");
+          smartsupp("variables", {
+            Role: data.role || "user",
+            Page: "Dashboard",
+            Wallet_Balance: String(data.balance || 0),
+            Card_Activated: data.cardActivated ? "Yes" : "No"
+          });
+        }
+
+        const txs = Array.isArray(historyData.transactions) ? historyData.transactions : [];
         const activity = document.getElementById("activityList");
 
         if (!txs.length) {
@@ -646,7 +483,7 @@ window.smartsupp || (function(d) {
                 <strong>${tx.type || "Activity"}</strong>
                 <span>${tx.message || tx.createdAt || ""}</span>
               </div>
-              <div class="badge">${tx.amount ? "$" + tx.amount : "Logged"}</div>
+              <div class="badge">${formatMoney(tx.amount || 0)}</div>
             </div>
           `).join("");
         }
