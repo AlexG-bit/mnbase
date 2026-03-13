@@ -1,3 +1,4 @@
+const initDatabase = require("./db/init-db");
 const http = require("http");
 const url = require("url");
 
@@ -76,6 +77,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, HOST, () => {
+server.listen(PORT, HOST, async () => {
+  await initDatabase();
   console.log(`Server running on ${PORT}`);
 });
