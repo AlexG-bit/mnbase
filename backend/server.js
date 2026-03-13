@@ -1,9 +1,9 @@
 const http = require("http");
-const initDatabase = require("./db/init-db");
 const url = require("url");
 
+const initDatabase = require("./db/init-db");
 const { router } = require("./routes");
-const { initDB, seedAdmin } = require("./db/store");
+const { seedAdmin } = require("./db/store");
 
 const PORT = process.env.PORT || 8080;
 const HOST = "0.0.0.0";
@@ -29,9 +29,6 @@ function applyCors(req, res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
-initDB();
-seedAdmin();
-
 const server = http.createServer(async (req, res) => {
   applyCors(req, res);
 
@@ -43,6 +40,7 @@ const server = http.createServer(async (req, res) => {
 
   const parsedUrl = url.parse(req.url, true);
 
+  // Root endpoint
   if (parsedUrl.pathname === "/") {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(
@@ -54,9 +52,14 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Railway health check
   if (parsedUrl.pathname === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: "healthy" }));
+    res.end(
+      JSON.stringify({
+        status: "healthy"
+      })
+    );
     return;
   }
 
@@ -65,19 +68,39 @@ const server = http.createServer(async (req, res) => {
 
     if (!handled && !res.writableEnded) {
       res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "Not found" }));
+      res.end(
+        JSON.stringify({
+          error: "Not found"
+        })
+      );
     }
   } catch (err) {
     console.error("SERVER ERROR:", err);
 
     if (!res.writableEnded) {
       res.writeHead(500, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: "Internal server error" }));
+      res.end(
+        JSON.stringify({
+          error: "Internal server error"
+        })
+      );
     }
   }
 });
 
-server.listen(PORT, HOST, async () => {
-  await initDatabase();
-  console.log(`Server running on ${PORT}`);
-});
+// Start server safely
+async function startServer() {
+  try {
+    await initDatabase();
+    await seedAdmin();
+
+    server.listen(PORT, HOST, () => {
+      console.log(`MNBase API running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Startup error:", err);
+    process.exit(1);
+  }
+}
+
+startServer();
