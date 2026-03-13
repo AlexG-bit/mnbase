@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { readDB, writeDB } = require("../db/store");
+const pool = require("../db/postgres");
 const {
   sendJson,
   parseBody,
@@ -29,46 +29,50 @@ async function authRoute(req, res, pathname) {
         return true;
       }
 
-      const db = readDB();
+      const existing = await pool.query(
+        `SELECT id FROM users WHERE username = $1 OR email = $2 LIMIT 1`,
+        [username, email]
+      );
 
-      if (db.users.some((u) => String(u.username).toLowerCase() === username)) {
-        sendJson(res, 409, { error: "Username already exists." });
+      if (existing.rows.length) {
+        sendJson(res, 409, { error: "Username or email already exists." });
         return true;
       }
 
-      if (db.users.some((u) => String(u.email).toLowerCase() === email)) {
-        sendJson(res, 409, { error: "Email already exists." });
-        return true;
-      }
+      const id = crypto.randomUUID();
+      const wallets = buildWalletAddresses(crypto.randomBytes(8).toString("hex"));
 
-      const seed = crypto.randomBytes(8).toString("hex");
-      const user = {
-        id: crypto.randomUUID(),
-        username,
-        email,
-        passwordHash: hashPassword(password),
-        role: "user",
-        balance: 0,
-        cardActivated: false,
-        cardBalance: 0,
-        wallets: buildWalletAddresses(seed),
-        transactions: [],
-        resetCode: null,
-        resetCodeExpiresAt: null,
-        createdAt: new Date().toISOString()
-      };
-
-      db.users.push(user);
-      writeDB(db);
+      await pool.query(
+        `INSERT INTO users (
+          id, username, email, password_hash, role, balance,
+          card_activated, card_balance, wallets, transactions,
+          reset_code, reset_code_expires_at, created_at
+        )
+        VALUES (
+          $1,$2,$3,$4,$5,$6,
+          $7,$8,$9::jsonb,$10::jsonb,
+          $11,$12,$13
+        )`,
+        [
+          id,
+          username,
+          email,
+          hashPassword(password),
+          "user",
+          0,
+          false,
+          0,
+          JSON.stringify(wallets),
+          JSON.stringify([]),
+          null,
+          null,
+          new Date().toISOString()
+        ]
+      );
 
       sendJson(res, 201, {
         message: "Account created successfully.",
-        user: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role
-        }
+        user: { id, username, email, role: "user" }
       });
       return true;
     } catch (err) {
@@ -88,14 +92,14 @@ async function authRoute(req, res, pathname) {
         return true;
       }
 
-      const db = readDB();
-      const user = db.users.find(
-        (u) =>
-          String(u.username || "").toLowerCase() === identifier ||
-          String(u.email || "").toLowerCase() === identifier
+      const result = await pool.query(
+        `SELECT * FROM users WHERE username = $1 OR email = $1 LIMIT 1`,
+        [identifier]
       );
 
-      if (!user || user.passwordHash !== hashPassword(password)) {
+      const user = result.rows[0];
+
+      if (!user || user.password_hash !== hashPassword(password)) {
         sendJson(res, 401, { error: "Invalid username/email or password." });
         return true;
       }
@@ -135,19 +139,23 @@ async function authRoute(req, res, pathname) {
         return true;
       }
 
-      const db = readDB();
-      const user = db.users.find((u) => String(u.email || "").toLowerCase() === email);
+      const result = await pool.query(
+        `SELECT id FROM users WHERE email = $1 LIMIT 1`,
+        [email]
+      );
 
-      if (!user) {
+      if (!result.rows.length) {
         sendJson(res, 404, { error: "No account found with that email." });
         return true;
       }
 
       const code = generateResetCode();
-      user.resetCode = code;
-      user.resetCodeExpiresAt = Date.now() + 15 * 60 * 1000;
+      const expires = Date.now() + 15 * 60 * 1000;
 
-      writeDB(db);
+      await pool.query(
+        `UPDATE users SET reset_code = $1, reset_code_expires_at = $2 WHERE email = $3`,
+        [code, expires, email]
+      );
 
       sendJson(res, 200, {
         message: "Reset code generated successfully.",
@@ -172,37 +180,43 @@ async function authRoute(req, res, pathname) {
         return true;
       }
 
-      const db = readDB();
-      const user = db.users.find((u) => String(u.email || "").toLowerCase() === email);
+      const result = await pool.query(
+        `SELECT * FROM users WHERE email = $1 LIMIT 1`,
+        [email]
+      );
+
+      const user = result.rows[0];
 
       if (!user) {
         sendJson(res, 404, { error: "User not found." });
         return true;
       }
 
-      if (!user.resetCode || !user.resetCodeExpiresAt) {
+      if (!user.reset_code || !user.reset_code_expires_at) {
         sendJson(res, 400, { error: "No active reset request found." });
         return true;
       }
 
-      if (Date.now() > Number(user.resetCodeExpiresAt)) {
-        user.resetCode = null;
-        user.resetCodeExpiresAt = null;
-        writeDB(db);
+      if (Date.now() > Number(user.reset_code_expires_at)) {
+        await pool.query(
+          `UPDATE users SET reset_code = NULL, reset_code_expires_at = NULL WHERE email = $1`,
+          [email]
+        );
         sendJson(res, 400, { error: "Reset code has expired." });
         return true;
       }
 
-      if (String(user.resetCode) !== resetCode) {
+      if (String(user.reset_code) !== resetCode) {
         sendJson(res, 400, { error: "Invalid reset code." });
         return true;
       }
 
-      user.passwordHash = hashPassword(newPassword);
-      user.resetCode = null;
-      user.resetCodeExpiresAt = null;
-
-      writeDB(db);
+      await pool.query(
+        `UPDATE users
+         SET password_hash = $1, reset_code = NULL, reset_code_expires_at = NULL
+         WHERE email = $2`,
+        [hashPassword(newPassword), email]
+      );
 
       sendJson(res, 200, { message: "Password reset successful." });
       return true;
@@ -213,33 +227,37 @@ async function authRoute(req, res, pathname) {
   }
 
   if (pathname === "/api/auth/me" && req.method === "GET") {
-    const token = getBearerToken(req);
-    if (!token) {
-      sendJson(res, 401, { error: "Missing authorization token." });
+    try {
+      const token = getBearerToken(req);
+      if (!token) {
+        sendJson(res, 401, { error: "Missing authorization token." });
+        return true;
+      }
+
+      const payload = verifyToken(token);
+      if (!payload) {
+        sendJson(res, 401, { error: "Invalid or expired token." });
+        return true;
+      }
+
+      const result = await pool.query(
+        `SELECT id, username, email, role FROM users WHERE id = $1 LIMIT 1`,
+        [payload.sub]
+      );
+
+      const user = result.rows[0];
+
+      if (!user) {
+        sendJson(res, 404, { error: "User not found." });
+        return true;
+      }
+
+      sendJson(res, 200, user);
+      return true;
+    } catch (err) {
+      sendJson(res, 500, { error: err.message || "Failed to fetch current user." });
       return true;
     }
-
-    const payload = verifyToken(token);
-    if (!payload) {
-      sendJson(res, 401, { error: "Invalid or expired token." });
-      return true;
-    }
-
-    const db = readDB();
-    const user = db.users.find((u) => u.id === payload.sub);
-
-    if (!user) {
-      sendJson(res, 404, { error: "User not found." });
-      return true;
-    }
-
-    sendJson(res, 200, {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role
-    });
-    return true;
   }
 
   return false;
