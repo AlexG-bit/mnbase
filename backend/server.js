@@ -1,5 +1,5 @@
-const initDatabase = require("./db/init-db");
 const http = require("http");
+const initDatabase = require("./db/init-db");
 const url = require("url");
 
 const { router } = require("./routes");
