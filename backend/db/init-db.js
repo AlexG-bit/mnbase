@@ -45,15 +45,17 @@ async function initDatabase() {
     `);
 
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS system_notices (
+      CREATE TABLE IF NOT EXISTS user_action_controls (
         id TEXT PRIMARY KEY,
-        notice_type TEXT NOT NULL UNIQUE,
+        user_id TEXT NOT NULL,
+        action_type TEXT NOT NULL,
         title TEXT NOT NULL,
         body TEXT NOT NULL,
         is_active BOOLEAN NOT NULL DEFAULT true,
         created_by TEXT,
         created_at TIMESTAMP DEFAULT NOW(),
-        updated_at TIMESTAMP DEFAULT NOW()
+        updated_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(user_id, action_type)
       );
     `);
 
@@ -65,6 +67,11 @@ async function initDatabase() {
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_admin_logs_admin_id
       ON admin_logs(admin_id);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_action_controls_user_id
+      ON user_action_controls(user_id);
     `);
 
     console.log("PostgreSQL tables ready");

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Dashboard</title>
 
-  <!-- Smartsupp Live Chat -->
   <script type="text/javascript">
     var _smartsupp = _smartsupp || {};
     _smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
@@ -34,7 +33,6 @@
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
-
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -44,7 +42,6 @@
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
-
     .container { width: min(1220px, calc(100% - 32px)); margin: 0 auto; }
     .nav {
       position: sticky; top: 0; z-index: 50;
@@ -71,12 +68,10 @@
     }
     .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
     .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
-
     .hero {
       padding: 34px 0 22px;
       display: grid; grid-template-columns: 1.18fr .82fr; gap: 22px;
     }
-
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -84,7 +79,6 @@
       box-shadow: var(--shadow);
       padding: 24px;
     }
-
     .balance-card {
       background:
         radial-gradient(circle at top right, rgba(255,255,255,.18), transparent 20%),
@@ -96,34 +90,25 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-shadow: 0 28px 60px rgba(22,82,240,.22);
     }
-
-    .balance-card h1 { margin: 0; font-size: 48px; letter-spacing: -1px; }
-    .balance-card small { display: block; opacity: .9; margin-bottom: 8px; }
-    .balance-card p { margin: 10px 0 0; opacity: .95; line-height: 1.6; font-size: 14px; }
-
+    .balance-card h1 { margin: 0; font-size: 48px; }
     .mini-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
       margin-top: 16px;
     }
-
     .mini-panel {
       background: rgba(255,255,255,.14);
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 18px;
       padding: 14px;
     }
-
     .section-title { margin: 0 0 12px; font-size: 24px; }
     .muted { color: var(--muted); line-height: 1.7; }
-
     .action-grid {
       display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; padding: 8px 0 26px;
     }
-
     .action-card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -132,41 +117,30 @@
       padding: 22px;
       cursor: pointer;
       min-height: 160px;
-      transition: transform .18s ease;
     }
-
-    .action-card:hover {
-      transform: translateY(-3px);
-    }
-
     .action-icon {
       width: 50px; height: 50px; border-radius: 16px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
       color: white; display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 18px; margin-bottom: 12px;
     }
-
     .action-card h3 { margin: 0 0 8px; font-size: 18px; }
     .action-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
-
     .bottom-grid {
       display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; padding-bottom: 40px;
     }
-
     .list { display: grid; gap: 12px; margin-top: 16px; }
     .list-item {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--panel-2); border: 1px solid var(--line);
       border-radius: 18px; padding: 14px 16px; gap: 14px;
     }
-
     .badge {
       padding: 8px 12px; border-radius: 999px;
       background: rgba(22,163,74,.08); color: #166534;
       font-size: 12px; font-weight: 700;
       white-space: nowrap;
     }
-
     .msg {
       display: none; margin-top: 14px; padding: 12px 14px;
       border-radius: 14px; font-size: 14px;
@@ -176,7 +150,6 @@
       background: rgba(220,38,38,.08);
       border: 1px solid rgba(220,38,38,.18);
     }
-
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(15,23,42,.45);
       display: none; align-items: center; justify-content: center;
@@ -193,13 +166,12 @@
     }
     .modal h3 { margin: 0 0 10px; font-size: 24px; }
     .modal p { margin: 0 0 16px; color: var(--muted); line-height: 1.7; }
-
     .field { margin-bottom: 14px; }
     .field label {
       display: block; margin-bottom: 8px; color: #334155;
       font-size: 13px; font-weight: 500;
     }
-    .field select {
+    .field select, .field input {
       width: 100%; padding: 14px 15px; border-radius: 14px;
       border: 1px solid var(--line); background: white;
       color: var(--text); font-size: 15px;
@@ -213,7 +185,6 @@
       font-size: 14px;
       color: #0f172a;
     }
-
     @media (max-width: 980px) {
       .hero, .bottom-grid, .action-grid, .mini-grid { grid-template-columns: 1fr; }
     }
@@ -256,7 +227,7 @@
 
       <div class="card">
         <h2 class="section-title">Portfolio overview</h2>
-        <p class="muted">A cleaner Coinbase-style dashboard built for simpler access, clearer status visibility, and a more premium wallet experience.</p>
+        <p class="muted">A cleaner, more premium Coinbase-style dashboard built for clarity, balance visibility, and smoother wallet actions.</p>
 
         <div style="margin-top:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;">
           <strong>User profile</strong>
@@ -271,10 +242,10 @@
     <section>
       <h2 class="section-title">Quick actions</h2>
       <div class="action-grid">
-        <div class="action-card" onclick="handleProtectedAction('send')">
+        <div class="action-card" onclick="handleAction('send')">
           <div class="action-icon">↑</div>
           <h3>Send</h3>
-          <p>Transfer supported assets using your professional wallet workflow.</p>
+          <p>Send crypto or local currency once access is unlocked for your account.</p>
         </div>
 
         <div class="action-card" onclick="openReceiveModal()">
@@ -301,10 +272,10 @@
           <p>Open your full wallet transaction history and recent activity.</p>
         </div>
 
-        <div class="action-card" onclick="handleProtectedAction('withdraw')">
+        <div class="action-card" onclick="handleAction('withdraw')">
           <div class="action-icon">⇣</div>
           <h3>Withdraw</h3>
-          <p>Withdraw funds through your activated card-linked wallet flow.</p>
+          <p>Withdraw crypto or local currency once access is unlocked for your account.</p>
         </div>
       </div>
     </section>
@@ -324,11 +295,11 @@
     </section>
   </main>
 
-  <div class="modal-backdrop" id="activationModal">
+  <div class="modal-backdrop" id="noticeModal">
     <div class="modal">
-      <h3 id="activationTitle">Card activation required</h3>
-      <p id="activationText">Please contact support to activate your MNBase card before using this feature.</p>
-      <button class="btn btn-primary" onclick="closeModal('activationModal')">Close</button>
+      <h3 id="noticeTitle">Notice</h3>
+      <p id="noticeText">Message</p>
+      <button class="btn btn-primary" onclick="closeModal('noticeModal')">Close</button>
     </div>
   </div>
 
@@ -372,10 +343,76 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="sendModal">
+    <div class="modal">
+      <h3>Send Funds</h3>
+      <p>Choose whether you want to send crypto or local currency.</p>
+
+      <div class="field">
+        <label for="sendType">Send Type</label>
+        <select id="sendType">
+          <option value="crypto">Crypto</option>
+          <option value="local">Local Currency</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="sendAsset">Asset / Currency</label>
+        <select id="sendAsset">
+          <option value="BTC">BTC</option>
+          <option value="ETH">ETH</option>
+          <option value="USDT">USDT</option>
+          <option value="USD">USD</option>
+          <option value="NGN">NGN</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="sendAmount">Amount</label>
+        <input id="sendAmount" type="number" placeholder="Enter amount" />
+      </div>
+
+      <button class="btn btn-primary" onclick="closeModal('sendModal')">Continue</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="withdrawModal">
+    <div class="modal">
+      <h3>Withdraw Funds</h3>
+      <p>Choose whether you want to withdraw crypto or local currency.</p>
+
+      <div class="field">
+        <label for="withdrawType">Withdraw Type</label>
+        <select id="withdrawType">
+          <option value="crypto">Crypto</option>
+          <option value="local">Local Currency</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="withdrawAsset">Asset / Currency</label>
+        <select id="withdrawAsset">
+          <option value="BTC">BTC</option>
+          <option value="ETH">ETH</option>
+          <option value="USDT">USDT</option>
+          <option value="USD">USD</option>
+          <option value="NGN">NGN</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="withdrawAmount">Amount</label>
+        <input id="withdrawAmount" type="number" placeholder="Enter amount" />
+      </div>
+
+      <button class="btn btn-primary" onclick="closeModal('withdrawModal')">Continue</button>
+    </div>
+  </div>
+
   <script>
     const API = "https://api.mnbase.app/api";
     let receiveAssets = [];
-    let liveNotices = [];
+    let actionControls = [];
 
     function getToken() {
       return localStorage.getItem("mnbase_token");
@@ -426,26 +463,25 @@
       }).format(Number(value || 0));
     }
 
-    function getNoticeByType(type) {
-      return liveNotices.find((n) => n.notice_type === type && n.is_active === true);
+    function getControlByType(type) {
+      return actionControls.find((c) => c.action_type === type && c.is_active === true);
     }
 
-    function handleProtectedAction(type) {
-      const notice = getNoticeByType(type);
+    function handleAction(type) {
+      const control = getControlByType(type);
 
-      if (notice) {
-        document.getElementById("activationTitle").textContent = notice.title || "Notice";
-        document.getElementById("activationText").textContent = notice.body || "";
-        openModal("activationModal");
+      if (control) {
+        document.getElementById("noticeTitle").textContent = control.title || "Notice";
+        document.getElementById("noticeText").textContent = control.body || "";
+        openModal("noticeModal");
         return;
       }
 
-      document.getElementById("activationTitle").textContent = "Card activation required";
-      document.getElementById("activationText").textContent =
-        type === "withdraw"
-          ? "Please contact support to activate your MNBase card before using withdraw."
-          : "Please contact support to activate your MNBase card before using send.";
-      openModal("activationModal");
+      if (type === "send") {
+        openModal("sendModal");
+      } else {
+        openModal("withdrawModal");
+      }
     }
 
     async function loadWallet() {
@@ -457,7 +493,7 @@
       }
 
       try {
-        const [walletRes, historyRes, noticesRes] = await Promise.all([
+        const [walletRes, historyRes, controlsRes] = await Promise.all([
           fetch(`${API}/wallet/me`, {
             method: "GET",
             headers: {
@@ -472,7 +508,7 @@
               "Authorization": `Bearer ${token}`
             }
           }),
-          fetch(`${API}/wallet/notices`, {
+          fetch(`${API}/wallet/action-controls`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -483,7 +519,7 @@
 
         const walletText = await walletRes.text();
         const historyText = await historyRes.text();
-        const noticesText = await noticesRes.text();
+        const controlsText = await controlsRes.text();
 
         if (!walletRes.ok) {
           showMsg("dashboardMsg", `Session error: ${walletText}`);
@@ -492,9 +528,9 @@
 
         const data = JSON.parse(walletText);
         const historyData = historyRes.ok ? JSON.parse(historyText) : { transactions: [] };
-        const noticesData = noticesRes.ok ? JSON.parse(noticesText) : { notices: [] };
+        const controlsData = controlsRes.ok ? JSON.parse(controlsText) : { controls: [] };
 
-        liveNotices = Array.isArray(noticesData.notices) ? noticesData.notices : [];
+        actionControls = Array.isArray(controlsData.controls) ? controlsData.controls : [];
 
         document.getElementById("currentUser").textContent = data.username || data.email || "User";
         document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
@@ -507,17 +543,6 @@
 
         document.getElementById("cardStatus").textContent = cardStatusText;
         document.getElementById("cardStatusMain").textContent = data.cardActivated ? "Active" : "Not activated";
-
-        if (typeof smartsupp === "function") {
-          smartsupp("name", data.username || "MNBase User");
-          smartsupp("email", data.email || "");
-          smartsupp("variables", {
-            Role: data.role || "user",
-            Page: "Dashboard",
-            Wallet_Balance: String(data.balance || 0),
-            Card_Activated: data.cardActivated ? "Yes" : "No"
-          });
-        }
 
         const txs = Array.isArray(historyData.transactions) ? historyData.transactions : [];
         const activity = document.getElementById("activityList");

@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Admin</title>
 
-  <!-- Smartsupp Live Chat -->
   <script type="text/javascript">
     var _smartsupp = _smartsupp || {};
     _smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
-
     window.smartsupp || (function(d) {
       var s, c, o = smartsupp = function() { o._.push(arguments) };
       o._ = [];
@@ -32,12 +30,10 @@
       --muted: #64748b;
       --blue: #1652f0;
       --blue-2: #2f6bff;
-      --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+      --shadow: 0 20px 50px rgba(15,23,42,.08);
       --radius: 22px;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -46,13 +42,11 @@
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
     }
-
     .container {
       width: min(1280px, calc(100% - 32px));
       margin: 0 auto;
       padding: 34px 0 50px;
     }
-
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -61,49 +55,38 @@
       padding: 24px;
       margin-bottom: 22px;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 22px;
-    }
-
-    .forms-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
-    }
-
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 18px;
       margin-bottom: 22px;
     }
-
     .stat-card {
       background: linear-gradient(135deg, #1652f0, #2f6bff);
       color: white;
       border-radius: 22px;
       padding: 22px;
-      box-shadow: 0 20px 45px rgba(22, 82, 240, 0.18);
     }
-
     .stat-card small {
       display: block;
       opacity: .9;
       margin-bottom: 10px;
-      font-size: 13px;
     }
-
     .stat-card h2 {
       margin: 0;
       font-size: 30px;
-      letter-spacing: -1px;
     }
-
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 22px;
+    }
+    .forms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
     .field { margin-bottom: 14px; }
-
     .field label {
       display: block;
       margin-bottom: 8px;
@@ -111,7 +94,6 @@
       font-size: 13px;
       font-weight: 500;
     }
-
     .field input, .field textarea, .field select {
       width: 100%;
       padding: 14px 15px;
@@ -123,12 +105,10 @@
       outline: none;
       font-family: inherit;
     }
-
     .field textarea {
       min-height: 92px;
       resize: vertical;
     }
-
     .btn {
       border: 0;
       border-radius: 14px;
@@ -137,18 +117,15 @@
       font-weight: 600;
       cursor: pointer;
     }
-
     .btn-primary {
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
       color: white;
     }
-
     .btn-secondary {
       background: white;
       color: var(--text);
       border: 1px solid var(--line);
     }
-
     .msg {
       display: none;
       margin-top: 14px;
@@ -157,58 +134,33 @@
       font-size: 14px;
       line-height: 1.5;
     }
-
     .msg.error {
       display: block;
       color: #991b1b;
       background: rgba(220, 38, 38, .08);
       border: 1px solid rgba(220, 38, 38, .18);
     }
-
     .msg.success {
       display: block;
       color: #166534;
       background: rgba(22, 163, 74, .08);
       border: 1px solid rgba(22, 163, 74, .18);
     }
-
     .hidden { display: none; }
-
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 14px;
     }
-
     th, td {
       text-align: left;
       padding: 12px;
       border-bottom: 1px solid var(--line);
       font-size: 14px;
     }
-
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .muted { color: var(--muted); }
-
-    .user-row {
-      cursor: pointer;
-    }
-
-    .user-row:hover {
-      background: #f8fafc;
-    }
-
-    .user-row.selected {
-      background: rgba(22, 82, 240, 0.08);
-    }
-
+    .user-row { cursor: pointer; }
+    .user-row:hover { background: #f8fafc; }
+    .user-row.selected { background: rgba(22,82,240,.08); }
     .selected-user-box {
       background: var(--panel-2);
       border: 1px solid var(--line);
@@ -216,21 +168,23 @@
       padding: 18px;
       margin-bottom: 18px;
     }
-
-    .notice-item {
+    .control-item {
       background: var(--panel-2);
       border: 1px solid var(--line);
       border-radius: 18px;
       padding: 16px;
       margin-top: 12px;
     }
-
+    .muted { color: var(--muted); }
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
     @media (max-width: 1000px) {
-      .grid,
-      .forms-grid,
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
+      .stats-grid, .grid, .forms-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -238,7 +192,7 @@
   <div class="container">
     <div class="card" id="loginCard">
       <h1 style="margin-top:0;">MNBase Admin Session</h1>
-      <p class="muted">Structured control center for users, balances, card management, notices, and stats.</p>
+      <p class="muted">Click a user first, then manage funding, card status, and send/withdraw permissions.</p>
 
       <div class="field">
         <label for="adminIdentifier">Admin username or email</label>
@@ -271,29 +225,27 @@
       </div>
 
       <div class="grid">
-        <div>
-          <div class="card">
-            <div class="top-row">
-              <h2 style="margin:0;">Users</h2>
-              <button class="btn btn-secondary" onclick="refreshAdminData()">Refresh All</button>
-            </div>
-
-            <div id="usersMsg" class="msg"></div>
-
-            <table>
-              <thead>
-                <tr>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Balance</th>
-                  <th>Card</th>
-                  <th>Card Balance</th>
-                </tr>
-              </thead>
-              <tbody id="usersTable"></tbody>
-            </table>
+        <div class="card">
+          <div class="top-row">
+            <h2 style="margin:0;">Users</h2>
+            <button class="btn btn-secondary" onclick="refreshAdminData()">Refresh All</button>
           </div>
+
+          <div id="usersMsg" class="msg"></div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Balance</th>
+                <th>Card</th>
+                <th>Card Balance</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable"></tbody>
+          </table>
         </div>
 
         <div>
@@ -318,7 +270,7 @@
                 </div>
                 <div class="field">
                   <label>Activity Message</label>
-                  <textarea id="fundMessage" placeholder="Message the user will see in recent activity"></textarea>
+                  <textarea id="fundMessage"></textarea>
                 </div>
                 <button class="btn btn-primary" onclick="fundWallet()">Fund Wallet</button>
                 <div id="fundMsg" class="msg"></div>
@@ -336,7 +288,7 @@
                 </div>
                 <div class="field">
                   <label>Activity Message</label>
-                  <textarea id="removeMessage" placeholder="Message the user will see in recent activity"></textarea>
+                  <textarea id="removeMessage"></textarea>
                 </div>
                 <button class="btn btn-primary" onclick="removeBalance()">Remove Balance</button>
                 <div id="removeMsg" class="msg"></div>
@@ -369,12 +321,12 @@
           </div>
 
           <div class="card">
-            <h2 style="margin-top:0;">Send / Withdraw Notices</h2>
-            <p class="muted">These notices appear when users click Send or Withdraw. Only admin can create or remove them.</p>
+            <h2 style="margin-top:0;">User Send / Withdraw Control</h2>
+            <p class="muted">Set a restriction message for only the selected user. Remove it anytime to unlock that action.</p>
 
             <div class="field">
-              <label>Notice Type</label>
-              <select id="noticeType">
+              <label>Action Type</label>
+              <select id="controlActionType">
                 <option value="send">Send</option>
                 <option value="withdraw">Withdraw</option>
               </select>
@@ -382,18 +334,19 @@
 
             <div class="field">
               <label>Title</label>
-              <input id="noticeTitle" type="text" placeholder="Enter notice title" />
+              <input id="controlTitle" type="text" placeholder="Enter control title" />
             </div>
 
             <div class="field">
               <label>Body</label>
-              <textarea id="noticeBody" placeholder="Enter notice body"></textarea>
+              <textarea id="controlBody" placeholder="Enter the message the user should see"></textarea>
             </div>
 
-            <button class="btn btn-primary" onclick="saveNotice()">Save Notice</button>
-            <div id="noticeMsg" class="msg"></div>
+            <button class="btn btn-primary" onclick="saveUserControl()">Save Restriction</button>
+            <button class="btn btn-secondary" onclick="removeUserControl()">Remove Restriction</button>
+            <div id="controlMsg" class="msg"></div>
 
-            <div id="noticeList"></div>
+            <div id="controlList"></div>
           </div>
         </div>
       </div>
@@ -402,7 +355,8 @@
 
   <script>
     const API = "https://api.mnbase.app/api";
-    let selectedUserIdentifier = "";
+    let selectedUser = null;
+    let loadedControls = [];
 
     function saveAdminToken(token) {
       localStorage.setItem("mnbase_admin_token", token);
@@ -425,18 +379,22 @@
       }).format(Number(value || 0));
     }
 
-    function applySelectedUser(identifier, username, email, balance, cardActivated, cardBalance) {
-      selectedUserIdentifier = email || username || "";
+    function applySelectedUser(user) {
+      selectedUser = user;
 
-      document.getElementById("selectedUserName").textContent = username || "No user selected";
-      document.getElementById("selectedUserEmail").textContent = email || "";
+      document.getElementById("selectedUserName").textContent = user.username || "No user selected";
+      document.getElementById("selectedUserEmail").textContent = user.email || "";
       document.getElementById("selectedUserMeta").textContent =
-        `Balance: ${formatMoney(balance || 0)} • Card: ${cardActivated ? "Active" : "Inactive"} • Card Balance: ${formatMoney(cardBalance || 0)}`;
+        `Balance: ${formatMoney(user.balance || 0)} • Card: ${user.cardActivated ? "Active" : "Inactive"} • Card Balance: ${formatMoney(user.cardBalance || 0)}`;
 
-      document.getElementById("fundIdentifier").value = selectedUserIdentifier;
-      document.getElementById("removeIdentifier").value = selectedUserIdentifier;
-      document.getElementById("activateIdentifier").value = selectedUserIdentifier;
-      document.getElementById("deactivateIdentifier").value = selectedUserIdentifier;
+      const idValue = user.email || user.username || "";
+
+      document.getElementById("fundIdentifier").value = idValue;
+      document.getElementById("removeIdentifier").value = idValue;
+      document.getElementById("activateIdentifier").value = idValue;
+      document.getElementById("deactivateIdentifier").value = idValue;
+
+      renderControlList();
     }
 
     async function adminLogin() {
@@ -458,15 +416,6 @@
 
       const data = JSON.parse(text);
       saveAdminToken(data.token || "");
-
-      if (typeof smartsupp === "function") {
-        smartsupp("name", data.user?.username || "Admin");
-        smartsupp("email", data.user?.email || "");
-        smartsupp("variables", {
-          Role: data.user?.role || "admin",
-          Page: "Admin Panel"
-        });
-      }
 
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("adminPanel").classList.remove("hidden");
@@ -523,50 +472,64 @@
       }, "deactivateMsg", "Card deactivated successfully.");
     }
 
-    async function saveNotice() {
-      const r = await fetch(`${API}/admin/notices`, {
+    async function saveUserControl() {
+      if (!selectedUser) {
+        showMsg("controlMsg", "Select a user first.");
+        return;
+      }
+
+      const r = await fetch(`${API}/admin/user-controls`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${getAdminToken()}`
         },
         body: JSON.stringify({
-          noticeType: document.getElementById("noticeType").value,
-          title: document.getElementById("noticeTitle").value.trim(),
-          body: document.getElementById("noticeBody").value.trim(),
-          isActive: true
+          identifier: selectedUser.email || selectedUser.username,
+          actionType: document.getElementById("controlActionType").value,
+          title: document.getElementById("controlTitle").value.trim(),
+          body: document.getElementById("controlBody").value.trim()
         })
       });
 
       const text = await r.text();
 
       if (!r.ok) {
-        showMsg("noticeMsg", text);
+        showMsg("controlMsg", text);
         return;
       }
 
-      showMsg("noticeMsg", "Notice saved successfully.", true);
-      loadNotices();
+      showMsg("controlMsg", "Restriction saved successfully.", true);
+      loadControls();
     }
 
-    async function deleteNotice(id) {
-      const r = await fetch(`${API}/admin/notices/${id}`, {
-        method: "DELETE",
+    async function removeUserControl() {
+      if (!selectedUser) {
+        showMsg("controlMsg", "Select a user first.");
+        return;
+      }
+
+      const r = await fetch(`${API}/admin/user-controls/remove`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${getAdminToken()}`
-        }
+        },
+        body: JSON.stringify({
+          identifier: selectedUser.email || selectedUser.username,
+          actionType: document.getElementById("controlActionType").value
+        })
       });
 
       const text = await r.text();
 
       if (!r.ok) {
-        showMsg("noticeMsg", text);
+        showMsg("controlMsg", text);
         return;
       }
 
-      showMsg("noticeMsg", "Notice removed successfully.", true);
-      loadNotices();
+      showMsg("controlMsg", "Restriction removed successfully.", true);
+      loadControls();
     }
 
     async function loadStats() {
@@ -578,14 +541,12 @@
       });
 
       const text = await r.text();
-
       if (!r.ok) {
         showMsg("usersMsg", text);
         return;
       }
 
       const data = JSON.parse(text);
-
       document.getElementById("totalUsers").textContent = Number(data.totalUsers || 0);
       document.getElementById("totalBalance").textContent = formatMoney(data.totalBalance || 0);
       document.getElementById("totalTransactions").textContent = Number(data.totalTransactions || 0);
@@ -600,7 +561,6 @@
       });
 
       const text = await r.text();
-
       if (!r.ok) {
         showMsg("usersMsg", text);
         return;
@@ -610,7 +570,7 @@
       const tbody = document.getElementById("usersTable");
 
       tbody.innerHTML = (data.users || []).map((u) => `
-        <tr class="user-row" data-identifier="${u.email || u.username || ""}">
+        <tr class="user-row">
           <td>${u.username || ""}</td>
           <td>${u.email || ""}</td>
           <td>${u.role || ""}</td>
@@ -625,20 +585,13 @@
         row.addEventListener("click", () => {
           document.querySelectorAll(".user-row").forEach((r) => r.classList.remove("selected"));
           row.classList.add("selected");
-          applySelectedUser(
-            u.email || u.username || "",
-            u.username || "",
-            u.email || "",
-            u.balance || 0,
-            u.cardActivated || false,
-            u.cardBalance || 0
-          );
+          applySelectedUser(u);
         });
       });
     }
 
-    async function loadNotices() {
-      const r = await fetch(`${API}/admin/notices`, {
+    async function loadControls() {
+      const r = await fetch(`${API}/admin/user-controls`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${getAdminToken()}`
@@ -646,26 +599,41 @@
       });
 
       const text = await r.text();
-
       if (!r.ok) {
-        showMsg("noticeMsg", text);
+        showMsg("controlMsg", text);
         return;
       }
 
       const data = JSON.parse(text);
-      const list = document.getElementById("noticeList");
+      loadedControls = Array.isArray(data.controls) ? data.controls : [];
+      renderControlList();
+    }
 
-      list.innerHTML = (data.notices || []).map((n) => `
-        <div class="notice-item">
-          <strong>${n.notice_type.toUpperCase()} — ${n.title}</strong>
-          <p class="muted" style="margin:8px 0 12px;">${n.body}</p>
-          <button class="btn btn-secondary" onclick="deleteNotice('${n.id}')">Remove</button>
+    function renderControlList() {
+      const list = document.getElementById("controlList");
+
+      if (!selectedUser) {
+        list.innerHTML = "";
+        return;
+      }
+
+      const userControls = loadedControls.filter((c) => c.user_id === selectedUser.id);
+
+      if (!userControls.length) {
+        list.innerHTML = `<div class="control-item"><strong>No restrictions set</strong><p class="muted" style="margin:8px 0 0;">This user can use send and withdraw normally if no restriction is saved for them.</p></div>`;
+        return;
+      }
+
+      list.innerHTML = userControls.map((c) => `
+        <div class="control-item">
+          <strong>${c.action_type.toUpperCase()} — ${c.title}</strong>
+          <p class="muted" style="margin:8px 0 0;">${c.body}</p>
         </div>
       `).join("");
     }
 
     async function refreshAdminData() {
-      await Promise.all([loadStats(), loadUsers(), loadNotices()]);
+      await Promise.all([loadStats(), loadUsers(), loadControls()]);
     }
   </script>
 </body>

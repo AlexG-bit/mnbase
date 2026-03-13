@@ -73,6 +73,14 @@ async function addTransaction(client, { userId, type, amount = 0, asset = "USD",
   );
 }
 
+async function findUserByIdentifier(identifier, client = pool) {
+  const result = await client.query(
+    `SELECT * FROM users WHERE username = $1 OR email = $1 LIMIT 1`,
+    [identifier]
+  );
+  return result.rows[0];
+}
+
 async function adminRoute(req, res, pathname) {
   if (pathname === "/api/admin/users" && req.method === "GET") {
     try {
@@ -158,12 +166,7 @@ async function adminRoute(req, res, pathname) {
         return true;
       }
 
-      const result = await client.query(
-        `SELECT * FROM users WHERE username = $1 OR email = $1 LIMIT 1`,
-        [identifier]
-      );
-
-      const target = result.rows[0];
+      const target = await findUserByIdentifier(identifier, client);
       if (!target) {
         sendJson(res, 404, { error: "User not found." });
         return true;
@@ -207,7 +210,6 @@ async function adminRoute(req, res, pathname) {
       });
 
       await client.query("COMMIT");
-
       sendJson(res, 200, { message: "Wallet funded successfully." });
       return true;
     } catch (err) {
@@ -238,12 +240,7 @@ async function adminRoute(req, res, pathname) {
         return true;
       }
 
-      const result = await client.query(
-        `SELECT * FROM users WHERE username = $1 OR email = $1 LIMIT 1`,
-        [identifier]
-      );
-
-      const target = result.rows[0];
+      const target = await findUserByIdentifier(identifier, client);
       if (!target) {
         sendJson(res, 404, { error: "User not found." });
         return true;
@@ -287,7 +284,6 @@ async function adminRoute(req, res, pathname) {
       });
 
       await client.query("COMMIT");
-
       sendJson(res, 200, { message: "Balance removed successfully." });
       return true;
     } catch (err) {
@@ -313,12 +309,7 @@ async function adminRoute(req, res, pathname) {
       const cardBalance = Number(body.cardBalance || 0);
       const message = "Virtual card activated by admin.";
 
-      const result = await client.query(
-        `SELECT * FROM users WHERE username = $1 OR email = $1 LIMIT 1`,
-        [identifier]
-      );
-
-      const target = result.rows[0];
+      const target = await findUserByIdentifier(identifier, client);
       if (!target) {
         sendJson(res, 404, { error: "User not found." });
         return true;
@@ -358,7 +349,6 @@ async function adminRoute(req, res, pathname) {
       });
 
       await client.query("COMMIT");
-
       sendJson(res, 200, { message: "Card activated successfully." });
       return true;
     } catch (err) {
@@ -383,12 +373,7 @@ async function adminRoute(req, res, pathname) {
       const identifier = String(body.identifier || "").trim().toLowerCase();
       const message = "Virtual card deactivated by admin.";
 
-      const result = await client.query(
-        `SELECT * FROM users WHERE username = $1 OR email = $1 LIMIT 1`,
-        [identifier]
-      );
-
-      const target = result.rows[0];
+      const target = await findUserByIdentifier(identifier, client);
       if (!target) {
         sendJson(res, 404, { error: "User not found." });
         return true;
@@ -428,7 +413,6 @@ async function adminRoute(req, res, pathname) {
       });
 
       await client.query("COMMIT");
-
       sendJson(res, 200, { message: "Card deactivated successfully." });
       return true;
     } catch (err) {
@@ -440,7 +424,7 @@ async function adminRoute(req, res, pathname) {
     }
   }
 
-  if (pathname === "/api/admin/notices" && req.method === "GET") {
+  if (pathname === "/api/admin/user-controls" && req.method === "GET") {
     try {
       const auth = await getAdmin(req);
       if (auth.error) {
@@ -449,20 +433,20 @@ async function adminRoute(req, res, pathname) {
       }
 
       const result = await pool.query(
-        `SELECT id, notice_type, title, body, is_active, created_at, updated_at
-         FROM system_notices
+        `SELECT id, user_id, action_type, title, body, is_active, updated_at
+         FROM user_action_controls
          ORDER BY updated_at DESC`
       );
 
-      sendJson(res, 200, { notices: result.rows });
+      sendJson(res, 200, { controls: result.rows });
       return true;
     } catch (err) {
-      sendJson(res, 500, { error: err.message || "Failed to load notices." });
+      sendJson(res, 500, { error: err.message || "Failed to load user controls." });
       return true;
     }
   }
 
-  if (pathname === "/api/admin/notices" && req.method === "POST") {
+  if (pathname === "/api/admin/user-controls" && req.method === "POST") {
     try {
       const auth = await getAdmin(req);
       if (auth.error) {
@@ -471,27 +455,33 @@ async function adminRoute(req, res, pathname) {
       }
 
       const body = await parseBody(req);
-      const noticeType = String(body.noticeType || "").trim().toLowerCase();
+      const identifier = String(body.identifier || "").trim().toLowerCase();
+      const actionType = String(body.actionType || "").trim().toLowerCase();
       const title = String(body.title || "").trim();
       const noticeBody = String(body.body || "").trim();
-      const isActive = body.isActive !== false;
 
-      if (!noticeType || !title || !noticeBody) {
-        sendJson(res, 400, { error: "Notice type, title, and body are required." });
+      if (!identifier || !actionType || !title || !noticeBody) {
+        sendJson(res, 400, { error: "Identifier, action type, title, and body are required." });
         return true;
       }
 
-      if (!["send", "withdraw"].includes(noticeType)) {
-        sendJson(res, 400, { error: "Notice type must be send or withdraw." });
+      if (!["send", "withdraw"].includes(actionType)) {
+        sendJson(res, 400, { error: "Action type must be send or withdraw." });
+        return true;
+      }
+
+      const target = await findUserByIdentifier(identifier);
+      if (!target) {
+        sendJson(res, 404, { error: "User not found." });
         return true;
       }
 
       await pool.query(
-        `INSERT INTO system_notices (
-          id, notice_type, title, body, is_active, created_by, created_at, updated_at
+        `INSERT INTO user_action_controls (
+          id, user_id, action_type, title, body, is_active, created_by, created_at, updated_at
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-        ON CONFLICT (notice_type)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        ON CONFLICT (user_id, action_type)
         DO UPDATE SET
           title = EXCLUDED.title,
           body = EXCLUDED.body,
@@ -500,25 +490,26 @@ async function adminRoute(req, res, pathname) {
           updated_at = EXCLUDED.updated_at`,
         [
           crypto.randomUUID(),
-          noticeType,
+          target.id,
+          actionType,
           title,
           noticeBody,
-          isActive,
+          true,
           auth.admin.id,
           new Date().toISOString(),
           new Date().toISOString()
         ]
       );
 
-      sendJson(res, 200, { message: "Notice saved successfully." });
+      sendJson(res, 200, { message: "User action control saved successfully." });
       return true;
     } catch (err) {
-      sendJson(res, 500, { error: err.message || "Failed to save notice." });
+      sendJson(res, 500, { error: err.message || "Failed to save user action control." });
       return true;
     }
   }
 
-  if (pathname.startsWith("/api/admin/notices/") && req.method === "DELETE") {
+  if (pathname === "/api/admin/user-controls/remove" && req.method === "POST") {
     try {
       const auth = await getAdmin(req);
       if (auth.error) {
@@ -526,14 +517,30 @@ async function adminRoute(req, res, pathname) {
         return true;
       }
 
-      const noticeId = pathname.split("/").pop();
+      const body = await parseBody(req);
+      const identifier = String(body.identifier || "").trim().toLowerCase();
+      const actionType = String(body.actionType || "").trim().toLowerCase();
 
-      await pool.query(`DELETE FROM system_notices WHERE id = $1`, [noticeId]);
+      if (!identifier || !actionType) {
+        sendJson(res, 400, { error: "Identifier and action type are required." });
+        return true;
+      }
 
-      sendJson(res, 200, { message: "Notice removed successfully." });
+      const target = await findUserByIdentifier(identifier);
+      if (!target) {
+        sendJson(res, 404, { error: "User not found." });
+        return true;
+      }
+
+      await pool.query(
+        `DELETE FROM user_action_controls WHERE user_id = $1 AND action_type = $2`,
+        [target.id, actionType]
+      );
+
+      sendJson(res, 200, { message: "User action control removed successfully." });
       return true;
     } catch (err) {
-      sendJson(res, 500, { error: err.message || "Failed to remove notice." });
+      sendJson(res, 500, { error: err.message || "Failed to remove user action control." });
       return true;
     }
   }

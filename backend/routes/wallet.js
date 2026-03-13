@@ -18,7 +18,6 @@ async function getCurrentUser(req) {
   );
 
   const user = result.rows[0];
-
   if (!user) return { error: "User not found." };
 
   return { user };
@@ -99,7 +98,7 @@ async function walletRoute(req, res, pathname) {
     }
   }
 
-  if (pathname === "/api/wallet/notices" && req.method === "GET") {
+  if (pathname === "/api/wallet/action-controls" && req.method === "GET") {
     try {
       const result = await getCurrentUser(req);
       if (result.error) {
@@ -107,17 +106,18 @@ async function walletRoute(req, res, pathname) {
         return true;
       }
 
-      const notices = await pool.query(
-        `SELECT id, notice_type, title, body, is_active, updated_at
-         FROM system_notices
-         WHERE is_active = true
-         ORDER BY updated_at DESC`
+      const controls = await pool.query(
+        `SELECT id, action_type, title, body, is_active, updated_at
+         FROM user_action_controls
+         WHERE user_id = $1 AND is_active = true
+         ORDER BY updated_at DESC`,
+        [result.user.id]
       );
 
-      sendJson(res, 200, { notices: notices.rows });
+      sendJson(res, 200, { controls: controls.rows });
       return true;
     } catch (err) {
-      sendJson(res, 500, { error: err.message || "Failed to load notices." });
+      sendJson(res, 500, { error: err.message || "Failed to load action controls." });
       return true;
     }
   }
@@ -186,14 +186,7 @@ async function walletRoute(req, res, pathname) {
         return true;
       }
 
-      if (!result.user.card_activated) {
-        sendJson(res, 403, {
-          error: "Please contact support to activate your MNBase card before using send."
-        });
-        return true;
-      }
-
-      sendJson(res, 200, { message: "Send request accepted." });
+      sendJson(res, 200, { message: "Send unlocked." });
       return true;
     } catch (err) {
       sendJson(res, 500, { error: err.message || "Send request failed." });
@@ -209,14 +202,7 @@ async function walletRoute(req, res, pathname) {
         return true;
       }
 
-      if (!result.user.card_activated) {
-        sendJson(res, 403, {
-          error: "Please contact support to activate your MNBase card before using withdraw."
-        });
-        return true;
-      }
-
-      sendJson(res, 200, { message: "Withdraw request accepted." });
+      sendJson(res, 200, { message: "Withdraw unlocked." });
       return true;
     } catch (err) {
       sendJson(res, 500, { error: err.message || "Withdraw request failed." });
