@@ -99,6 +99,29 @@ async function walletRoute(req, res, pathname) {
     }
   }
 
+  if (pathname === "/api/wallet/notices" && req.method === "GET") {
+    try {
+      const result = await getCurrentUser(req);
+      if (result.error) {
+        sendJson(res, 401, { error: result.error });
+        return true;
+      }
+
+      const notices = await pool.query(
+        `SELECT id, notice_type, title, body, is_active, updated_at
+         FROM system_notices
+         WHERE is_active = true
+         ORDER BY updated_at DESC`
+      );
+
+      sendJson(res, 200, { notices: notices.rows });
+      return true;
+    } catch (err) {
+      sendJson(res, 500, { error: err.message || "Failed to load notices." });
+      return true;
+    }
+  }
+
   if (pathname === "/api/wallet/receive-assets" && req.method === "GET") {
     try {
       const result = await getCurrentUser(req);

@@ -440,6 +440,104 @@ async function adminRoute(req, res, pathname) {
     }
   }
 
+  if (pathname === "/api/admin/notices" && req.method === "GET") {
+    try {
+      const auth = await getAdmin(req);
+      if (auth.error) {
+        sendJson(res, 403, { error: auth.error });
+        return true;
+      }
+
+      const result = await pool.query(
+        `SELECT id, notice_type, title, body, is_active, created_at, updated_at
+         FROM system_notices
+         ORDER BY updated_at DESC`
+      );
+
+      sendJson(res, 200, { notices: result.rows });
+      return true;
+    } catch (err) {
+      sendJson(res, 500, { error: err.message || "Failed to load notices." });
+      return true;
+    }
+  }
+
+  if (pathname === "/api/admin/notices" && req.method === "POST") {
+    try {
+      const auth = await getAdmin(req);
+      if (auth.error) {
+        sendJson(res, 403, { error: auth.error });
+        return true;
+      }
+
+      const body = await parseBody(req);
+      const noticeType = String(body.noticeType || "").trim().toLowerCase();
+      const title = String(body.title || "").trim();
+      const noticeBody = String(body.body || "").trim();
+      const isActive = body.isActive !== false;
+
+      if (!noticeType || !title || !noticeBody) {
+        sendJson(res, 400, { error: "Notice type, title, and body are required." });
+        return true;
+      }
+
+      if (!["send", "withdraw"].includes(noticeType)) {
+        sendJson(res, 400, { error: "Notice type must be send or withdraw." });
+        return true;
+      }
+
+      await pool.query(
+        `INSERT INTO system_notices (
+          id, notice_type, title, body, is_active, created_by, created_at, updated_at
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+        ON CONFLICT (notice_type)
+        DO UPDATE SET
+          title = EXCLUDED.title,
+          body = EXCLUDED.body,
+          is_active = EXCLUDED.is_active,
+          created_by = EXCLUDED.created_by,
+          updated_at = EXCLUDED.updated_at`,
+        [
+          crypto.randomUUID(),
+          noticeType,
+          title,
+          noticeBody,
+          isActive,
+          auth.admin.id,
+          new Date().toISOString(),
+          new Date().toISOString()
+        ]
+      );
+
+      sendJson(res, 200, { message: "Notice saved successfully." });
+      return true;
+    } catch (err) {
+      sendJson(res, 500, { error: err.message || "Failed to save notice." });
+      return true;
+    }
+  }
+
+  if (pathname.startsWith("/api/admin/notices/") && req.method === "DELETE") {
+    try {
+      const auth = await getAdmin(req);
+      if (auth.error) {
+        sendJson(res, 403, { error: auth.error });
+        return true;
+      }
+
+      const noticeId = pathname.split("/").pop();
+
+      await pool.query(`DELETE FROM system_notices WHERE id = $1`, [noticeId]);
+
+      sendJson(res, 200, { message: "Notice removed successfully." });
+      return true;
+    } catch (err) {
+      sendJson(res, 500, { error: err.message || "Failed to remove notice." });
+      return true;
+    }
+  }
+
   return false;
 }
 

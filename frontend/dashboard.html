@@ -45,7 +45,7 @@
       color: var(--text);
     }
 
-    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .container { width: min(1220px, calc(100% - 32px)); margin: 0 auto; }
     .nav {
       position: sticky; top: 0; z-index: 50;
       background: rgba(255,255,255,.88);
@@ -74,8 +74,9 @@
 
     .hero {
       padding: 34px 0 22px;
-      display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px;
+      display: grid; grid-template-columns: 1.18fr .82fr; gap: 22px;
     }
+
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -83,61 +84,82 @@
       box-shadow: var(--shadow);
       padding: 24px;
     }
+
     .balance-card {
-      background: linear-gradient(135deg, #1652f0, #2f6bff);
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.18), transparent 20%),
+        linear-gradient(135deg, #1652f0, #2f6bff);
       color: white;
-      border-radius: 24px;
-      padding: 24px;
-      min-height: 220px;
+      border-radius: 26px;
+      padding: 28px;
+      min-height: 250px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: 0 28px 60px rgba(22,82,240,.22);
     }
-    .balance-card h1 { margin: 0; font-size: 42px; }
+
+    .balance-card h1 { margin: 0; font-size: 48px; letter-spacing: -1px; }
     .balance-card small { display: block; opacity: .9; margin-bottom: 8px; }
-    .balance-card p { margin: 10px 0 0; opacity: .92; line-height: 1.6; font-size: 14px; }
+    .balance-card p { margin: 10px 0 0; opacity: .95; line-height: 1.6; font-size: 14px; }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .mini-panel {
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      padding: 14px;
+    }
 
     .section-title { margin: 0 0 12px; font-size: 24px; }
     .muted { color: var(--muted); line-height: 1.7; }
 
-    .user-box {
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 18px;
-    }
-
     .action-grid {
       display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; padding: 8px 0 26px;
     }
+
     .action-card {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: 22px;
       box-shadow: var(--shadow);
-      padding: 20px;
+      padding: 22px;
       cursor: pointer;
-      min-height: 150px;
+      min-height: 160px;
+      transition: transform .18s ease;
     }
+
+    .action-card:hover {
+      transform: translateY(-3px);
+    }
+
     .action-icon {
-      width: 48px; height: 48px; border-radius: 14px;
+      width: 50px; height: 50px; border-radius: 16px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
       color: white; display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 18px; margin-bottom: 12px;
     }
+
     .action-card h3 { margin: 0 0 8px; font-size: 18px; }
     .action-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
 
     .bottom-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 22px; padding-bottom: 40px;
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; padding-bottom: 40px;
     }
+
     .list { display: grid; gap: 12px; margin-top: 16px; }
     .list-item {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--panel-2); border: 1px solid var(--line);
-      border-radius: 16px; padding: 14px 16px; gap: 14px;
+      border-radius: 18px; padding: 14px 16px; gap: 14px;
     }
+
     .badge {
       padding: 8px 12px; border-radius: 999px;
       background: rgba(22,163,74,.08); color: #166534;
@@ -193,7 +215,7 @@
     }
 
     @media (max-width: 980px) {
-      .hero, .bottom-grid, .action-grid { grid-template-columns: 1fr; }
+      .hero, .bottom-grid, .action-grid, .mini-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -217,19 +239,26 @@
         <div>
           <small>Total Wallet Value</small>
           <h1 id="walletBalance">$0.00</h1>
-          <p>Your main wallet dashboard for balances, receiving assets, virtual card access, and conversion workflows.</p>
+          <p>Your professional multi-network wallet experience for receiving, storing, and managing crypto-linked value.</p>
         </div>
-        <div>
-          <small>Primary account</small>
-          <strong id="currentUser">User</strong>
+
+        <div class="mini-grid">
+          <div class="mini-panel">
+            <small>Primary account</small>
+            <strong id="currentUser">User</strong>
+          </div>
+          <div class="mini-panel">
+            <small>Card status</small>
+            <strong id="cardStatusMain">Not activated</strong>
+          </div>
         </div>
       </div>
 
       <div class="card">
-        <h2 class="section-title">Welcome to your dashboard</h2>
-        <p class="muted">This is your active wallet environment. Use the quick actions below to navigate your professional MNBase experience.</p>
+        <h2 class="section-title">Portfolio overview</h2>
+        <p class="muted">A cleaner Coinbase-style dashboard built for simpler access, clearer status visibility, and a more premium wallet experience.</p>
 
-        <div class="user-box">
+        <div style="margin-top:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;">
           <strong>User profile</strong>
           <p class="muted" id="userMeta" style="margin:8px 0 0;">Profile ready</p>
           <p class="muted" id="cardStatus" style="margin:8px 0 0;">Card status ready</p>
@@ -242,40 +271,40 @@
     <section>
       <h2 class="section-title">Quick actions</h2>
       <div class="action-grid">
-        <div class="action-card" onclick="showActivationPopup('send')">
+        <div class="action-card" onclick="handleProtectedAction('send')">
           <div class="action-icon">↑</div>
           <h3>Send</h3>
-          <p>Transfer crypto assets with a cleaner transaction workflow.</p>
+          <p>Transfer supported assets using your professional wallet workflow.</p>
         </div>
 
         <div class="action-card" onclick="openReceiveModal()">
           <div class="action-icon">↓</div>
           <h3>Receive</h3>
-          <p>Select an asset and view the deposit address for receiving funds.</p>
+          <p>View wallet deposit addresses for supported crypto assets.</p>
         </div>
 
         <div class="action-card" onclick="openConvertModal()">
           <div class="action-icon">⇄</div>
           <h3>Convert</h3>
-          <p>View different crypto assets and local currency conversion options.</p>
+          <p>Preview supported crypto-to-local currency conversion routes.</p>
         </div>
 
         <div class="action-card" onclick="openCardPage()">
           <div class="action-icon">VC</div>
           <h3>Virtual Card</h3>
-          <p>Open your virtual card page and view card status and balance.</p>
+          <p>Review your virtual card status, details, and card balance.</p>
         </div>
 
         <div class="action-card" onclick="window.location.href='/history.html'">
           <div class="action-icon">H</div>
           <h3>History</h3>
-          <p>Open your full wallet transaction history.</p>
+          <p>Open your full wallet transaction history and recent activity.</p>
         </div>
 
-        <div class="action-card" onclick="showActivationPopup('withdraw')">
+        <div class="action-card" onclick="handleProtectedAction('withdraw')">
           <div class="action-icon">⇣</div>
           <h3>Withdraw</h3>
-          <p>Withdrawals require an active MNBase card before use.</p>
+          <p>Withdraw funds through your activated card-linked wallet flow.</p>
         </div>
       </div>
     </section>
@@ -287,9 +316,9 @@
       </div>
 
       <div class="card">
-        <h2 class="section-title">Platform overview</h2>
+        <h2 class="section-title">Platform notes</h2>
         <p class="muted">
-          MNBase is structured as a more credible wallet environment for receiving, managing, and preparing crypto assets for future movement and conversion.
+          MNBase is structured as a more premium wallet environment for receiving assets, tracking balance events, and preparing users for smoother crypto operations.
         </p>
       </div>
     </section>
@@ -297,7 +326,7 @@
 
   <div class="modal-backdrop" id="activationModal">
     <div class="modal">
-      <h3>Card activation required</h3>
+      <h3 id="activationTitle">Card activation required</h3>
       <p id="activationText">Please contact support to activate your MNBase card before using this feature.</p>
       <button class="btn btn-primary" onclick="closeModal('activationModal')">Close</button>
     </div>
@@ -346,6 +375,7 @@
   <script>
     const API = "https://api.mnbase.app/api";
     let receiveAssets = [];
+    let liveNotices = [];
 
     function getToken() {
       return localStorage.getItem("mnbase_token");
@@ -396,12 +426,25 @@
       }).format(Number(value || 0));
     }
 
-    function showActivationPopup(type) {
+    function getNoticeByType(type) {
+      return liveNotices.find((n) => n.notice_type === type && n.is_active === true);
+    }
+
+    function handleProtectedAction(type) {
+      const notice = getNoticeByType(type);
+
+      if (notice) {
+        document.getElementById("activationTitle").textContent = notice.title || "Notice";
+        document.getElementById("activationText").textContent = notice.body || "";
+        openModal("activationModal");
+        return;
+      }
+
+      document.getElementById("activationTitle").textContent = "Card activation required";
       document.getElementById("activationText").textContent =
         type === "withdraw"
           ? "Please contact support to activate your MNBase card before using withdraw."
           : "Please contact support to activate your MNBase card before using send.";
-
       openModal("activationModal");
     }
 
@@ -414,7 +457,7 @@
       }
 
       try {
-        const [walletRes, historyRes] = await Promise.all([
+        const [walletRes, historyRes, noticesRes] = await Promise.all([
           fetch(`${API}/wallet/me`, {
             method: "GET",
             headers: {
@@ -428,11 +471,19 @@
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
             }
+          }),
+          fetch(`${API}/wallet/notices`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
           })
         ]);
 
         const walletText = await walletRes.text();
         const historyText = await historyRes.text();
+        const noticesText = await noticesRes.text();
 
         if (!walletRes.ok) {
           showMsg("dashboardMsg", `Session error: ${walletText}`);
@@ -441,16 +492,21 @@
 
         const data = JSON.parse(walletText);
         const historyData = historyRes.ok ? JSON.parse(historyText) : { transactions: [] };
+        const noticesData = noticesRes.ok ? JSON.parse(noticesText) : { notices: [] };
+
+        liveNotices = Array.isArray(noticesData.notices) ? noticesData.notices : [];
 
         document.getElementById("currentUser").textContent = data.username || data.email || "User";
         document.getElementById("walletBalance").textContent = formatMoney(data.balance || 0);
         document.getElementById("userMeta").textContent =
           `Username: ${data.username || "-"} • Email: ${data.email || "-"} • Role: ${data.role || "user"}`;
 
-        document.getElementById("cardStatus").textContent =
-          data.cardActivated
-            ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
-            : "Virtual card status: Not activated";
+        const cardStatusText = data.cardActivated
+          ? `Virtual card status: Active • Card balance: ${formatMoney(data.cardBalance || 0)}`
+          : "Virtual card status: Not activated";
+
+        document.getElementById("cardStatus").textContent = cardStatusText;
+        document.getElementById("cardStatusMain").textContent = data.cardActivated ? "Active" : "Not activated";
 
         if (typeof smartsupp === "function") {
           smartsupp("name", data.username || "MNBase User");

@@ -45,6 +45,19 @@ async function initDatabase() {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS system_notices (
+        id TEXT PRIMARY KEY,
+        notice_type TEXT NOT NULL UNIQUE,
+        title TEXT NOT NULL,
+        body TEXT NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        created_by TEXT,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_transactions_user_id
       ON transactions(user_id);
     `);

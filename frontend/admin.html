@@ -22,7 +22,6 @@
       s.parentNode.insertBefore(c, s);
     })(document);
   </script>
-  <!-- End Smartsupp -->
 
   <style>
     :root {
@@ -49,7 +48,7 @@
     }
 
     .container {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1280px, calc(100% - 32px));
       margin: 0 auto;
       padding: 34px 0 50px;
     }
@@ -64,6 +63,12 @@
     }
 
     .grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+    }
+
+    .forms-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 22px;
@@ -107,7 +112,7 @@
       font-weight: 500;
     }
 
-    .field input, .field textarea {
+    .field input, .field textarea, .field select {
       width: 100%;
       padding: 14px 15px;
       border-radius: 14px;
@@ -190,12 +195,39 @@
       flex-wrap: wrap;
     }
 
-    .muted {
-      color: var(--muted);
+    .muted { color: var(--muted); }
+
+    .user-row {
+      cursor: pointer;
     }
 
-    @media (max-width: 900px) {
+    .user-row:hover {
+      background: #f8fafc;
+    }
+
+    .user-row.selected {
+      background: rgba(22, 82, 240, 0.08);
+    }
+
+    .selected-user-box {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .notice-item {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 1000px) {
       .grid,
+      .forms-grid,
       .stats-grid {
         grid-template-columns: 1fr;
       }
@@ -206,7 +238,7 @@
   <div class="container">
     <div class="card" id="loginCard">
       <h1 style="margin-top:0;">MNBase Admin Session</h1>
-      <p class="muted">Structured control center for users, balances, virtual card management, and system statistics.</p>
+      <p class="muted">Structured control center for users, balances, card management, notices, and stats.</p>
 
       <div class="field">
         <label for="adminIdentifier">Admin username or email</label>
@@ -239,94 +271,138 @@
       </div>
 
       <div class="grid">
-        <div class="card">
-          <h2 style="margin-top:0;">Fund wallet</h2>
-          <div class="field">
-            <label>Username or Email</label>
-            <input id="fundIdentifier" type="text" />
+        <div>
+          <div class="card">
+            <div class="top-row">
+              <h2 style="margin:0;">Users</h2>
+              <button class="btn btn-secondary" onclick="refreshAdminData()">Refresh All</button>
+            </div>
+
+            <div id="usersMsg" class="msg"></div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Balance</th>
+                  <th>Card</th>
+                  <th>Card Balance</th>
+                </tr>
+              </thead>
+              <tbody id="usersTable"></tbody>
+            </table>
           </div>
-          <div class="field">
-            <label>Amount</label>
-            <input id="fundAmount" type="number" />
-          </div>
-          <div class="field">
-            <label>Activity Message</label>
-            <textarea id="fundMessage" placeholder="Message the user will see in recent activity"></textarea>
-          </div>
-          <button class="btn btn-primary" onclick="fundWallet()">Fund Wallet</button>
-          <div id="fundMsg" class="msg"></div>
         </div>
 
-        <div class="card">
-          <h2 style="margin-top:0;">Remove balance</h2>
-          <div class="field">
-            <label>Username or Email</label>
-            <input id="removeIdentifier" type="text" />
+        <div>
+          <div class="card">
+            <h2 style="margin-top:0;">Selected User</h2>
+            <div class="selected-user-box">
+              <strong id="selectedUserName">No user selected</strong>
+              <p class="muted" id="selectedUserEmail" style="margin:8px 0 0;">Click a user row to load actions.</p>
+              <p class="muted" id="selectedUserMeta" style="margin:8px 0 0;"></p>
+            </div>
+
+            <div class="forms-grid">
+              <div>
+                <h3>Fund wallet</h3>
+                <div class="field">
+                  <label>Username or Email</label>
+                  <input id="fundIdentifier" type="text" />
+                </div>
+                <div class="field">
+                  <label>Amount</label>
+                  <input id="fundAmount" type="number" />
+                </div>
+                <div class="field">
+                  <label>Activity Message</label>
+                  <textarea id="fundMessage" placeholder="Message the user will see in recent activity"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="fundWallet()">Fund Wallet</button>
+                <div id="fundMsg" class="msg"></div>
+              </div>
+
+              <div>
+                <h3>Remove balance</h3>
+                <div class="field">
+                  <label>Username or Email</label>
+                  <input id="removeIdentifier" type="text" />
+                </div>
+                <div class="field">
+                  <label>Amount</label>
+                  <input id="removeAmount" type="number" />
+                </div>
+                <div class="field">
+                  <label>Activity Message</label>
+                  <textarea id="removeMessage" placeholder="Message the user will see in recent activity"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="removeBalance()">Remove Balance</button>
+                <div id="removeMsg" class="msg"></div>
+              </div>
+
+              <div>
+                <h3>Activate card</h3>
+                <div class="field">
+                  <label>Username or Email</label>
+                  <input id="activateIdentifier" type="text" />
+                </div>
+                <div class="field">
+                  <label>Opening Card Balance</label>
+                  <input id="activateBalance" type="number" />
+                </div>
+                <button class="btn btn-primary" onclick="activateCard()">Activate Card</button>
+                <div id="activateMsg" class="msg"></div>
+              </div>
+
+              <div>
+                <h3>Deactivate card</h3>
+                <div class="field">
+                  <label>Username or Email</label>
+                  <input id="deactivateIdentifier" type="text" />
+                </div>
+                <button class="btn btn-primary" onclick="deactivateCard()">Deactivate Card</button>
+                <div id="deactivateMsg" class="msg"></div>
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label>Amount</label>
-            <input id="removeAmount" type="number" />
+
+          <div class="card">
+            <h2 style="margin-top:0;">Send / Withdraw Notices</h2>
+            <p class="muted">These notices appear when users click Send or Withdraw. Only admin can create or remove them.</p>
+
+            <div class="field">
+              <label>Notice Type</label>
+              <select id="noticeType">
+                <option value="send">Send</option>
+                <option value="withdraw">Withdraw</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Title</label>
+              <input id="noticeTitle" type="text" placeholder="Enter notice title" />
+            </div>
+
+            <div class="field">
+              <label>Body</label>
+              <textarea id="noticeBody" placeholder="Enter notice body"></textarea>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveNotice()">Save Notice</button>
+            <div id="noticeMsg" class="msg"></div>
+
+            <div id="noticeList"></div>
           </div>
-          <div class="field">
-            <label>Activity Message</label>
-            <textarea id="removeMessage" placeholder="Message the user will see in recent activity"></textarea>
-          </div>
-          <button class="btn btn-primary" onclick="removeBalance()">Remove Balance</button>
-          <div id="removeMsg" class="msg"></div>
         </div>
-
-        <div class="card">
-          <h2 style="margin-top:0;">Activate card</h2>
-          <div class="field">
-            <label>Username or Email</label>
-            <input id="activateIdentifier" type="text" />
-          </div>
-          <div class="field">
-            <label>Opening Card Balance</label>
-            <input id="activateBalance" type="number" />
-          </div>
-          <button class="btn btn-primary" onclick="activateCard()">Activate Card</button>
-          <div id="activateMsg" class="msg"></div>
-        </div>
-
-        <div class="card">
-          <h2 style="margin-top:0;">Deactivate card</h2>
-          <div class="field">
-            <label>Username or Email</label>
-            <input id="deactivateIdentifier" type="text" />
-          </div>
-          <button class="btn btn-primary" onclick="deactivateCard()">Deactivate Card</button>
-          <div id="deactivateMsg" class="msg"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="top-row">
-          <h2 style="margin:0;">Users</h2>
-          <button class="btn btn-secondary" onclick="refreshAdminData()">Refresh All</button>
-        </div>
-
-        <div id="usersMsg" class="msg"></div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Balance</th>
-              <th>Card</th>
-              <th>Card Balance</th>
-            </tr>
-          </thead>
-          <tbody id="usersTable"></tbody>
-        </table>
       </div>
     </div>
   </div>
 
   <script>
     const API = "https://api.mnbase.app/api";
+    let selectedUserIdentifier = "";
 
     function saveAdminToken(token) {
       localStorage.setItem("mnbase_admin_token", token);
@@ -347,6 +423,20 @@
         style: "currency",
         currency: "USD"
       }).format(Number(value || 0));
+    }
+
+    function applySelectedUser(identifier, username, email, balance, cardActivated, cardBalance) {
+      selectedUserIdentifier = email || username || "";
+
+      document.getElementById("selectedUserName").textContent = username || "No user selected";
+      document.getElementById("selectedUserEmail").textContent = email || "";
+      document.getElementById("selectedUserMeta").textContent =
+        `Balance: ${formatMoney(balance || 0)} • Card: ${cardActivated ? "Active" : "Inactive"} • Card Balance: ${formatMoney(cardBalance || 0)}`;
+
+      document.getElementById("fundIdentifier").value = selectedUserIdentifier;
+      document.getElementById("removeIdentifier").value = selectedUserIdentifier;
+      document.getElementById("activateIdentifier").value = selectedUserIdentifier;
+      document.getElementById("deactivateIdentifier").value = selectedUserIdentifier;
     }
 
     async function adminLogin() {
@@ -433,6 +523,52 @@
       }, "deactivateMsg", "Card deactivated successfully.");
     }
 
+    async function saveNotice() {
+      const r = await fetch(`${API}/admin/notices`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getAdminToken()}`
+        },
+        body: JSON.stringify({
+          noticeType: document.getElementById("noticeType").value,
+          title: document.getElementById("noticeTitle").value.trim(),
+          body: document.getElementById("noticeBody").value.trim(),
+          isActive: true
+        })
+      });
+
+      const text = await r.text();
+
+      if (!r.ok) {
+        showMsg("noticeMsg", text);
+        return;
+      }
+
+      showMsg("noticeMsg", "Notice saved successfully.", true);
+      loadNotices();
+    }
+
+    async function deleteNotice(id) {
+      const r = await fetch(`${API}/admin/notices/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getAdminToken()}`
+        }
+      });
+
+      const text = await r.text();
+
+      if (!r.ok) {
+        showMsg("noticeMsg", text);
+        return;
+      }
+
+      showMsg("noticeMsg", "Notice removed successfully.", true);
+      loadNotices();
+    }
+
     async function loadStats() {
       const r = await fetch(`${API}/admin/stats`, {
         headers: {
@@ -474,7 +610,7 @@
       const tbody = document.getElementById("usersTable");
 
       tbody.innerHTML = (data.users || []).map((u) => `
-        <tr>
+        <tr class="user-row" data-identifier="${u.email || u.username || ""}">
           <td>${u.username || ""}</td>
           <td>${u.email || ""}</td>
           <td>${u.role || ""}</td>
@@ -483,10 +619,53 @@
           <td>${formatMoney(u.cardBalance || 0)}</td>
         </tr>
       `).join("");
+
+      Array.from(document.querySelectorAll(".user-row")).forEach((row, index) => {
+        const u = data.users[index];
+        row.addEventListener("click", () => {
+          document.querySelectorAll(".user-row").forEach((r) => r.classList.remove("selected"));
+          row.classList.add("selected");
+          applySelectedUser(
+            u.email || u.username || "",
+            u.username || "",
+            u.email || "",
+            u.balance || 0,
+            u.cardActivated || false,
+            u.cardBalance || 0
+          );
+        });
+      });
+    }
+
+    async function loadNotices() {
+      const r = await fetch(`${API}/admin/notices`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getAdminToken()}`
+        }
+      });
+
+      const text = await r.text();
+
+      if (!r.ok) {
+        showMsg("noticeMsg", text);
+        return;
+      }
+
+      const data = JSON.parse(text);
+      const list = document.getElementById("noticeList");
+
+      list.innerHTML = (data.notices || []).map((n) => `
+        <div class="notice-item">
+          <strong>${n.notice_type.toUpperCase()} — ${n.title}</strong>
+          <p class="muted" style="margin:8px 0 12px;">${n.body}</p>
+          <button class="btn btn-secondary" onclick="deleteNotice('${n.id}')">Remove</button>
+        </div>
+      `).join("");
     }
 
     async function refreshAdminData() {
-      await Promise.all([loadStats(), loadUsers()]);
+      await Promise.all([loadStats(), loadUsers(), loadNotices()]);
     }
   </script>
 </body>
