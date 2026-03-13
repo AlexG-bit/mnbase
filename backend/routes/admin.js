@@ -30,9 +30,9 @@ async function getAdmin(req) {
 async function adminRoute(req, res, pathname) {
   if (pathname === "/api/admin/users" && req.method === "GET") {
     try {
-      const result = await getAdmin(req);
-      if (result.error) {
-        sendJson(res, 403, { error: result.error });
+      const auth = await getAdmin(req);
+      if (auth.error) {
+        sendJson(res, 403, { error: auth.error });
         return true;
       }
 
@@ -97,8 +97,9 @@ async function adminRoute(req, res, pathname) {
         return true;
       }
 
-      const transactions = Array.isArray(target.transactions) ? target.transactions : target.transactions || [];
-      const parsedTransactions = typeof transactions === "string" ? JSON.parse(transactions) : transactions;
+      const parsedTransactions = Array.isArray(target.transactions)
+        ? target.transactions
+        : (target.transactions || []);
 
       parsedTransactions.unshift({
         type: "fund",
@@ -156,8 +157,9 @@ async function adminRoute(req, res, pathname) {
         return true;
       }
 
-      const transactions = Array.isArray(target.transactions) ? target.transactions : target.transactions || [];
-      const parsedTransactions = typeof transactions === "string" ? JSON.parse(transactions) : transactions;
+      const parsedTransactions = Array.isArray(target.transactions)
+        ? target.transactions
+        : (target.transactions || []);
 
       parsedTransactions.unshift({
         type: "balance_removed",
@@ -209,8 +211,9 @@ async function adminRoute(req, res, pathname) {
         return true;
       }
 
-      const transactions = Array.isArray(target.transactions) ? target.transactions : target.transactions || [];
-      const parsedTransactions = typeof transactions === "string" ? JSON.parse(transactions) : transactions;
+      const parsedTransactions = Array.isArray(target.transactions)
+        ? target.transactions
+        : (target.transactions || []);
 
       parsedTransactions.unshift({
         type: "card_activated",
@@ -257,8 +260,9 @@ async function adminRoute(req, res, pathname) {
         return true;
       }
 
-      const transactions = Array.isArray(target.transactions) ? target.transactions : target.transactions || [];
-      const parsedTransactions = typeof transactions === "string" ? JSON.parse(transactions) : transactions;
+      const parsedTransactions = Array.isArray(target.transactions)
+        ? target.transactions
+        : (target.transactions || []);
 
       parsedTransactions.unshift({
         type: "card_deactivated",
