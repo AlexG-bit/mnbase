@@ -4,9 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Admin</title>
+
+  <!-- Smartsupp Live Chat -->
+  <script type="text/javascript">
+    var _smartsupp = _smartsupp || {};
+    _smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
+
+    window.smartsupp || (function(d) {
+      var s, c, o = smartsupp = function() { o._.push(arguments) };
+      o._ = [];
+      s = d.getElementsByTagName('script')[0];
+      c = d.createElement('script');
+      c.type = 'text/javascript';
+      c.charset = 'utf-8';
+      c.async = true;
+      c.src = 'https://www.smartsuppchat.com/loader.js?';
+      s.parentNode.insertBefore(c, s);
+    })(document);
+  </script>
+  <!-- End Smartsupp -->
+
   <style>
     :root {
       --panel: #ffffff;
+      --panel-2: #f8fafc;
       --line: #e2e8f0;
       --text: #0f172a;
       --muted: #64748b;
@@ -46,6 +67,34 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 22px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #1652f0, #2f6bff);
+      color: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 20px 45px rgba(22, 82, 240, 0.18);
+    }
+
+    .stat-card small {
+      display: block;
+      opacity: .9;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .stat-card h2 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -1px;
     }
 
     .field { margin-bottom: 14px; }
@@ -133,8 +182,23 @@
       font-size: 14px;
     }
 
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
     @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
+      .grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -142,7 +206,7 @@
   <div class="container">
     <div class="card" id="loginCard">
       <h1 style="margin-top:0;">MNBase Admin Session</h1>
-      <p style="color:#64748b;">Structured control center for users, balances, and virtual card management.</p>
+      <p class="muted">Structured control center for users, balances, virtual card management, and system statistics.</p>
 
       <div class="field">
         <label for="adminIdentifier">Admin username or email</label>
@@ -159,6 +223,21 @@
     </div>
 
     <div id="adminPanel" class="hidden">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <small>Total Users</small>
+          <h2 id="totalUsers">0</h2>
+        </div>
+        <div class="stat-card">
+          <small>Total Wallet Balance</small>
+          <h2 id="totalBalance">$0.00</h2>
+        </div>
+        <div class="stat-card">
+          <small>Total Transactions</small>
+          <h2 id="totalTransactions">0</h2>
+        </div>
+      </div>
+
       <div class="grid">
         <div class="card">
           <h2 style="margin-top:0;">Fund wallet</h2>
@@ -222,9 +301,9 @@
       </div>
 
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="top-row">
           <h2 style="margin:0;">Users</h2>
-          <button class="btn btn-secondary" onclick="loadUsers()">Refresh Users</button>
+          <button class="btn btn-secondary" onclick="refreshAdminData()">Refresh All</button>
         </div>
 
         <div id="usersMsg" class="msg"></div>
@@ -263,6 +342,13 @@
       el.className = ok ? "msg success" : "msg error";
     }
 
+    function formatMoney(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD"
+      }).format(Number(value || 0));
+    }
+
     async function adminLogin() {
       const identifier = document.getElementById("adminIdentifier").value.trim();
       const password = document.getElementById("adminPassword").value;
@@ -283,9 +369,18 @@
       const data = JSON.parse(text);
       saveAdminToken(data.token || "");
 
+      if (typeof smartsupp === "function") {
+        smartsupp("name", data.user?.username || "Admin");
+        smartsupp("email", data.user?.email || "");
+        smartsupp("variables", {
+          Role: data.user?.role || "admin",
+          Page: "Admin Panel"
+        });
+      }
+
       document.getElementById("loginCard").classList.add("hidden");
       document.getElementById("adminPanel").classList.remove("hidden");
-      loadUsers();
+      refreshAdminData();
     }
 
     async function adminPost(path, body, msgId, successText) {
@@ -306,7 +401,7 @@
       }
 
       showMsg(msgId, successText, true);
-      loadUsers();
+      refreshAdminData();
     }
 
     function fundWallet() {
@@ -338,6 +433,28 @@
       }, "deactivateMsg", "Card deactivated successfully.");
     }
 
+    async function loadStats() {
+      const r = await fetch(`${API}/admin/stats`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${getAdminToken()}`
+        }
+      });
+
+      const text = await r.text();
+
+      if (!r.ok) {
+        showMsg("usersMsg", text);
+        return;
+      }
+
+      const data = JSON.parse(text);
+
+      document.getElementById("totalUsers").textContent = Number(data.totalUsers || 0);
+      document.getElementById("totalBalance").textContent = formatMoney(data.totalBalance || 0);
+      document.getElementById("totalTransactions").textContent = Number(data.totalTransactions || 0);
+    }
+
     async function loadUsers() {
       const r = await fetch(`${API}/admin/users`, {
         headers: {
@@ -361,11 +478,15 @@
           <td>${u.username || ""}</td>
           <td>${u.email || ""}</td>
           <td>${u.role || ""}</td>
-          <td>$${Number(u.balance || 0).toFixed(2)}</td>
+          <td>${formatMoney(u.balance || 0)}</td>
           <td>${u.cardActivated ? "Active" : "Inactive"}</td>
-          <td>$${Number(u.cardBalance || 0).toFixed(2)}</td>
+          <td>${formatMoney(u.cardBalance || 0)}</td>
         </tr>
       `).join("");
+    }
+
+    async function refreshAdminData() {
+      await Promise.all([loadStats(), loadUsers()]);
     }
   </script>
 </body>
