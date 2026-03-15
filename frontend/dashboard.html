@@ -31,6 +31,9 @@
       --muted: #64748b;
       --blue: #1652f0;
       --blue-2: #2f6bff;
+      --green: #16a34a;
+      --red: #dc2626;
+      --amber: #d97706;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
@@ -51,6 +54,8 @@
       width: min(1220px, calc(100% - 32px));
       margin: 0 auto;
     }
+
+    .hidden { display: none !important; }
 
     .nav {
       position: sticky;
@@ -111,6 +116,11 @@
       background: white;
       color: var(--text);
       border: 1px solid var(--line);
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: white;
     }
 
     .hero {
@@ -254,6 +264,16 @@
       white-space: nowrap;
     }
 
+    .badge-neutral {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(22,82,240,.08);
+      color: #1652f0;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
     .msg {
       display: none;
       margin-top: 14px;
@@ -267,6 +287,13 @@
       color: #991b1b;
       background: rgba(220,38,38,.08);
       border: 1px solid rgba(220,38,38,.18);
+    }
+
+    .msg.success {
+      display: block;
+      color: #166534;
+      background: rgba(22,163,74,.08);
+      border: 1px solid rgba(22,163,74,.18);
     }
 
     .modal-backdrop {
@@ -285,7 +312,7 @@
     }
 
     .modal {
-      width: min(560px, 100%);
+      width: min(620px, 100%);
       background: white;
       border-radius: 24px;
       border: 1px solid var(--line);
@@ -373,12 +400,31 @@
       color: white;
     }
 
-    .kyc-item {
+    .kyc-item,
+    .market-item,
+    .news-item,
+    .settings-row {
       background: var(--panel-2);
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 14px;
       margin-top: 12px;
+    }
+
+    .profile-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .profile-pic {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #e2e8f0;
+      background: #f1f5f9;
     }
 
     @media (max-width: 980px) {
@@ -406,92 +452,110 @@
   </nav>
 
   <main class="container">
-    <section class="hero">
-      <div class="balance-card">
-        <div>
-          <small>Total Wallet Value</small>
-          <h1 id="walletBalance">$0.00</h1>
-          <p>Your professional multi-network wallet experience for receiving, storing, and managing crypto-linked value.</p>
+    <section id="homeSection">
+      <div class="hero">
+        <div class="balance-card">
+          <div>
+            <small>Total Wallet Value</small>
+            <h1 id="walletBalance">$0.00</h1>
+            <p>Your professional multi-network wallet experience for receiving, storing, and managing crypto-linked value.</p>
+          </div>
+
+          <div class="mini-grid">
+            <div class="mini-panel">
+              <small>Primary account</small>
+              <strong id="currentUser">User</strong>
+            </div>
+            <div class="mini-panel">
+              <small>Card status</small>
+              <strong id="cardStatusMain">Not activated</strong>
+            </div>
+          </div>
         </div>
 
-        <div class="mini-grid">
-          <div class="mini-panel">
-            <small>Primary account</small>
-            <strong id="currentUser">User</strong>
+        <div class="card">
+          <h2 class="section-title">Portfolio overview</h2>
+          <p class="muted">A premium wallet dashboard built for clarity, balance visibility, and smoother account access.</p>
+
+          <div style="margin-top:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;">
+            <strong>User profile</strong>
+            <p class="muted" id="userMeta" style="margin:8px 0 0;">Profile ready</p>
+            <p class="muted" id="cardStatus" style="margin:8px 0 0;">Card status ready</p>
           </div>
-          <div class="mini-panel">
-            <small>Card status</small>
-            <strong id="cardStatusMain">Not activated</strong>
-          </div>
+
+          <div id="dashboardMsg" class="msg"></div>
         </div>
       </div>
 
-      <div class="card">
-        <h2 class="section-title">Portfolio overview</h2>
-        <p class="muted">A more unique, premium Coinbase-style dashboard built for clarity, balance visibility, and smoother wallet actions.</p>
+      <section>
+        <h2 class="section-title">Quick actions</h2>
+        <div class="action-grid">
+          <div class="action-card" onclick="handleAction('send')">
+            <div class="action-icon">↑</div>
+            <h3>Send</h3>
+            <p>Send crypto or local currency once access is unlocked for your account.</p>
+          </div>
 
-        <div style="margin-top:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;">
-          <strong>User profile</strong>
-          <p class="muted" id="userMeta" style="margin:8px 0 0;">Profile ready</p>
-          <p class="muted" id="cardStatus" style="margin:8px 0 0;">Card status ready</p>
+          <div class="action-card" onclick="openReceiveModal()">
+            <div class="action-icon">↓</div>
+            <h3>Receive</h3>
+            <p>View wallet deposit addresses for supported crypto assets.</p>
+          </div>
+
+          <div class="action-card" onclick="openConvertModal()">
+            <div class="action-icon">⇄</div>
+            <h3>Convert</h3>
+            <p>Preview supported crypto-to-local currency conversion routes.</p>
+          </div>
+
+          <div class="action-card" onclick="openCardPage()">
+            <div class="action-icon">VC</div>
+            <h3>Virtual Card</h3>
+            <p>Review your virtual card status, details, and card balance.</p>
+          </div>
+
+          <div class="action-card" onclick="window.location.href='/history.html'">
+            <div class="action-icon">H</div>
+            <h3>History</h3>
+            <p>Open your full wallet transaction history and recent activity.</p>
+          </div>
+
+          <div class="action-card" onclick="handleAction('withdraw')">
+            <div class="action-icon">⇣</div>
+            <h3>Withdraw</h3>
+            <p>Withdraw crypto or local currency once access is unlocked for your account.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="bottom-grid">
+        <div class="card">
+          <h2 class="section-title">Recent activity</h2>
+          <div class="list" id="activityList"></div>
         </div>
 
-        <div id="dashboardMsg" class="msg"></div>
+        <div class="card">
+          <h2 class="section-title">Platform notes</h2>
+          <p class="muted">
+            MNBase is structured as a premium wallet environment for receiving assets, tracking balance events, and preparing users for smoother crypto operations.
+          </p>
+        </div>
+      </section>
+    </section>
+
+    <section id="marketSection" class="hidden">
+      <div class="card" style="margin-top:34px;">
+        <h2 class="section-title">Market</h2>
+        <p class="muted">Track selected assets and current market insights.</p>
+        <div id="marketList"></div>
       </div>
     </section>
 
-    <section>
-      <h2 class="section-title">Quick actions</h2>
-      <div class="action-grid">
-        <div class="action-card" onclick="handleAction('send')">
-          <div class="action-icon">↑</div>
-          <h3>Send</h3>
-          <p>Send crypto or local currency once access is unlocked for your account.</p>
-        </div>
-
-        <div class="action-card" onclick="openReceiveModal()">
-          <div class="action-icon">↓</div>
-          <h3>Receive</h3>
-          <p>View wallet deposit addresses for supported crypto assets.</p>
-        </div>
-
-        <div class="action-card" onclick="openConvertModal()">
-          <div class="action-icon">⇄</div>
-          <h3>Convert</h3>
-          <p>Preview supported crypto-to-local currency conversion routes.</p>
-        </div>
-
-        <div class="action-card" onclick="openCardPage()">
-          <div class="action-icon">VC</div>
-          <h3>Virtual Card</h3>
-          <p>Review your virtual card status, details, and card balance.</p>
-        </div>
-
-        <div class="action-card" onclick="window.location.href='/history.html'">
-          <div class="action-icon">H</div>
-          <h3>History</h3>
-          <p>Open your full wallet transaction history and recent activity.</p>
-        </div>
-
-        <div class="action-card" onclick="handleAction('withdraw')">
-          <div class="action-icon">⇣</div>
-          <h3>Withdraw</h3>
-          <p>Withdraw crypto or local currency once access is unlocked for your account.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="bottom-grid">
-      <div class="card">
-        <h2 class="section-title">Recent activity</h2>
-        <div class="list" id="activityList"></div>
-      </div>
-
-      <div class="card">
-        <h2 class="section-title">Platform notes</h2>
-        <p class="muted">
-          MNBase is structured as a premium wallet environment for receiving assets, tracking balance events, and preparing users for smoother crypto operations.
-        </p>
+    <section id="newsSection" class="hidden">
+      <div class="card" style="margin-top:34px;">
+        <h2 class="section-title">News</h2>
+        <p class="muted">Industry updates, compliance developments, and digital asset highlights.</p>
+        <div id="newsList"></div>
       </div>
     </section>
   </main>
@@ -628,40 +692,101 @@
 
       <div class="kyc-item">
         <strong>KYC Status</strong>
-        <p class="muted" style="margin:8px 0 0;">Pending standard verification</p>
+        <p class="muted" id="kycStatusText" style="margin:8px 0 0;">Not started</p>
       </div>
 
-      <div class="kyc-item">
-        <strong>Required Documents</strong>
-        <p class="muted" style="margin:8px 0 0;">
-          • Government-issued ID<br>
-          • Selfie / facial verification<br>
-          • Proof of address
-        </p>
+      <div class="field">
+        <label for="kycFullName">Full Name</label>
+        <input id="kycFullName" type="text" />
       </div>
 
-      <div class="kyc-item">
-        <strong>Compliance Note</strong>
-        <p class="muted" style="margin:8px 0 0;">
-          Standard KYC helps protect account integrity and supports secure processing across supported networks.
-        </p>
+      <div class="field">
+        <label for="kycCountry">Country</label>
+        <input id="kycCountry" type="text" />
       </div>
 
-      <div style="margin-top:16px;">
-        <button class="btn btn-primary" onclick="closeModal('kycModal')">Close</button>
+      <div class="field">
+        <label for="kycDocumentType">Document Type</label>
+        <select id="kycDocumentType">
+          <option value="">Select document type</option>
+          <option value="Passport">Passport</option>
+          <option value="Driver License">Driver License</option>
+          <option value="National ID">National ID</option>
+        </select>
       </div>
+
+      <div class="field">
+        <label for="kycDocumentNumber">Document Number</label>
+        <input id="kycDocumentNumber" type="text" />
+      </div>
+
+      <div class="field">
+        <label for="kycAddressLine">Address</label>
+        <input id="kycAddressLine" type="text" />
+      </div>
+
+      <div class="field">
+        <label for="kycCity">City</label>
+        <input id="kycCity" type="text" />
+      </div>
+
+      <div class="field">
+        <label for="kycStateRegion">State / Region</label>
+        <input id="kycStateRegion" type="text" />
+      </div>
+
+      <div class="field">
+        <label for="kycPostalCode">Postal Code</label>
+        <input id="kycPostalCode" type="text" />
+      </div>
+
+      <button class="btn btn-primary" onclick="submitKyc()">Submit KYC</button>
+      <div id="kycMsg" class="msg"></div>
     </div>
   </div>
 
   <div class="modal-backdrop" id="settingsModal">
     <div class="modal">
       <h3>Account Settings</h3>
-      <div class="settings-box">
-        Username and email are linked to your active wallet session. Additional settings can be extended here as needed.
+
+      <div class="profile-wrap">
+        <img id="profilePicturePreview" class="profile-pic" src="" alt="Profile Picture" />
+        <div>
+          <strong id="settingsSignedInEmail">Signed in as</strong>
+          <p class="muted" style="margin:6px 0 0;">Manage account appearance and account actions.</p>
+        </div>
       </div>
-      <div style="margin-top:16px;">
-        <button class="btn btn-primary" onclick="closeModal('settingsModal')">Close</button>
+
+      <div class="settings-row">
+        <strong>Profile Picture</strong>
+        <p class="muted" style="margin:8px 0;">Add a profile picture URL.</p>
+        <div class="field" style="margin-bottom:0;">
+          <input id="profilePictureUrl" type="text" placeholder="https://example.com/profile.jpg" />
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn btn-primary" onclick="saveProfilePicture()">Save Profile Picture</button>
+        </div>
       </div>
+
+      <div class="settings-row">
+        <strong>Invite Friends Program</strong>
+        <p class="muted" id="inviteCodeText" style="margin:8px 0 0;">Invite code loading...</p>
+        <p class="muted" id="inviteStatsText" style="margin:8px 0 0;"></p>
+      </div>
+
+      <div class="settings-row">
+        <strong>Log Out</strong>
+        <p class="muted" style="margin:8px 0 12px;">End your current wallet session securely.</p>
+        <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+      </div>
+
+      <div class="settings-row">
+        <strong>Delete Account</strong>
+        <p class="muted" style="margin:8px 0 12px;">Permanently delete your wallet account and profile records.</p>
+        <button class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+      </div>
+
+      <div id="settingsMsg" class="msg"></div>
     </div>
   </div>
 
@@ -680,25 +805,18 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="comingSoonModal">
-    <div class="modal">
-      <h3>Coming Soon</h3>
-      <p id="comingSoonText">This section will be available in a future update.</p>
-      <button class="btn btn-primary" onclick="closeModal('comingSoonModal')">Close</button>
-    </div>
-  </div>
-
   <div class="bottom-nav">
-    <button class="nav-btn active" onclick="showHome()">Home</button>
-    <button class="nav-btn" onclick="showComingSoon('Market data and asset insights are coming soon.')">Market</button>
-    <button class="nav-btn" onclick="showComingSoon('New services and wallet features are coming soon.')">New</button>
-    <button class="nav-btn" onclick="openMore()">More</button>
+    <button id="homeNavBtn" class="nav-btn active" onclick="showSection('home')">Home</button>
+    <button id="marketNavBtn" class="nav-btn" onclick="showSection('market')">Market</button>
+    <button id="newsNavBtn" class="nav-btn" onclick="showSection('news')">News</button>
+    <button id="moreNavBtn" class="nav-btn" onclick="openMore()">More</button>
   </div>
 
   <script>
     const API = "https://api.mnbase.app/api";
     let receiveAssets = [];
     let actionControls = [];
+    let currentUserData = null;
 
     function getToken() {
       return localStorage.getItem("mnbase_token");
@@ -708,10 +826,10 @@
       localStorage.removeItem("mnbase_token");
     }
 
-    function showMsg(id, text) {
+    function showMsg(id, text, ok = false) {
       const el = document.getElementById(id);
       el.textContent = text;
-      el.className = "msg error";
+      el.className = ok ? "msg success" : "msg error";
     }
 
     function clearMsg(id) {
@@ -781,6 +899,14 @@
 
     function openSettings() {
       closeModal("moreModal");
+      if (currentUserData) {
+        document.getElementById("settingsSignedInEmail").textContent = `Signed in as ${currentUserData.email || ""}`;
+        document.getElementById("profilePicturePreview").src = currentUserData.profilePictureUrl || "https://via.placeholder.com/72?text=MN";
+        document.getElementById("profilePictureUrl").value = currentUserData.profilePictureUrl || "";
+        document.getElementById("inviteCodeText").textContent = `Invite Code: ${currentUserData.inviteCode || "-"}`;
+        document.getElementById("inviteStatsText").textContent =
+          `Invites: ${Number(currentUserData.inviteCount || 0)} • Reward Balance: ${formatMoney(currentUserData.inviteRewardBalance || 0)}`;
+      }
       openModal("settingsModal");
     }
 
@@ -795,13 +921,25 @@
       }
     }
 
-    function showComingSoon(text) {
-      document.getElementById("comingSoonText").textContent = text;
-      openModal("comingSoonModal");
-    }
+    function showSection(section) {
+      document.getElementById("homeSection").classList.add("hidden");
+      document.getElementById("marketSection").classList.add("hidden");
+      document.getElementById("newsSection").classList.add("hidden");
 
-    function showHome() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      document.getElementById("homeNavBtn").classList.remove("active");
+      document.getElementById("marketNavBtn").classList.remove("active");
+      document.getElementById("newsNavBtn").classList.remove("active");
+
+      if (section === "home") {
+        document.getElementById("homeSection").classList.remove("hidden");
+        document.getElementById("homeNavBtn").classList.add("active");
+      } else if (section === "market") {
+        document.getElementById("marketSection").classList.remove("hidden");
+        document.getElementById("marketNavBtn").classList.add("active");
+      } else if (section === "news") {
+        document.getElementById("newsSection").classList.remove("hidden");
+        document.getElementById("newsNavBtn").classList.add("active");
+      }
     }
 
     async function loadWallet() {
@@ -813,7 +951,7 @@
       }
 
       try {
-        const [walletRes, historyRes, controlsRes] = await Promise.all([
+        const [walletRes, historyRes, controlsRes, marketRes, newsRes] = await Promise.all([
           fetch(`${API}/wallet/me`, {
             method: "GET",
             headers: {
@@ -834,12 +972,28 @@
               "Content-Type": "application/json",
               "Authorization": `Bearer ${token}`
             }
+          }),
+          fetch(`${API}/wallet/market-data`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }),
+          fetch(`${API}/wallet/news`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
           })
         ]);
 
         const walletText = await walletRes.text();
         const historyText = await historyRes.text();
         const controlsText = await controlsRes.text();
+        const marketText = await marketRes.text();
+        const newsText = await newsRes.text();
 
         if (!walletRes.ok) {
           showMsg("dashboardMsg", `Session error: ${walletText}`);
@@ -849,7 +1003,10 @@
         const data = JSON.parse(walletText);
         const historyData = historyRes.ok ? JSON.parse(historyText) : { transactions: [] };
         const controlsData = controlsRes.ok ? JSON.parse(controlsText) : { controls: [] };
+        const marketData = marketRes.ok ? JSON.parse(marketText) : { assets: [] };
+        const newsData = newsRes.ok ? JSON.parse(newsText) : { news: [] };
 
+        currentUserData = data;
         actionControls = Array.isArray(controlsData.controls) ? controlsData.controls : [];
 
         document.getElementById("currentUser").textContent = data.username || data.email || "User";
@@ -863,6 +1020,19 @@
 
         document.getElementById("cardStatus").textContent = cardStatusText;
         document.getElementById("cardStatusMain").textContent = data.cardActivated ? "Active" : "Not activated";
+
+        document.getElementById("kycStatusText").textContent =
+          data.kyc?.status === "verified" ? "Verified" :
+          data.kyc?.status === "submitted" ? "Submitted" : "Not started";
+
+        document.getElementById("kycFullName").value = data.kyc?.fullName || "";
+        document.getElementById("kycCountry").value = data.kyc?.country || "";
+        document.getElementById("kycDocumentType").value = data.kyc?.documentType || "";
+        document.getElementById("kycDocumentNumber").value = data.kyc?.documentNumber || "";
+        document.getElementById("kycAddressLine").value = data.kyc?.addressLine || "";
+        document.getElementById("kycCity").value = data.kyc?.city || "";
+        document.getElementById("kycStateRegion").value = data.kyc?.stateRegion || "";
+        document.getElementById("kycPostalCode").value = data.kyc?.postalCode || "";
 
         if (typeof smartsupp === "function") {
           smartsupp("name", data.username || "MNBase User");
@@ -899,6 +1069,30 @@
             </div>
           `).join("");
         }
+
+        const marketList = document.getElementById("marketList");
+        const assets = Array.isArray(marketData.assets) ? marketData.assets : [];
+        marketList.innerHTML = assets.map((asset) => `
+          <div class="market-item">
+            <strong>${asset.name} (${asset.symbol})</strong>
+            <p class="muted" style="margin:8px 0 0;">
+              Price: ${formatMoney(asset.price || 0)}<br>
+              24H Change: ${Number(asset.change24h || 0).toFixed(2)}%
+            </p>
+          </div>
+        `).join("");
+
+        const newsList = document.getElementById("newsList");
+        const newsItems = Array.isArray(newsData.news) ? newsData.news : [];
+        newsList.innerHTML = newsItems.map((item) => `
+          <div class="news-item">
+            <strong>${item.title || ""}</strong>
+            <p class="muted" style="margin:8px 0 0;">${item.summary || ""}</p>
+            <div style="margin-top:10px;">
+              <span class="badge-neutral">${item.category || "Update"}</span>
+            </div>
+          </div>
+        `).join("");
 
         clearMsg("dashboardMsg");
       } catch (err) {
@@ -980,6 +1174,103 @@
         openModal("convertModal");
       } catch (err) {
         showMsg("dashboardMsg", `Failed to fetch convert options: ${err.message}`);
+      }
+    }
+
+    async function submitKyc() {
+      const token = getToken();
+
+      try {
+        const r = await fetch(`${API}/wallet/kyc`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            fullName: document.getElementById("kycFullName").value.trim(),
+            country: document.getElementById("kycCountry").value.trim(),
+            documentType: document.getElementById("kycDocumentType").value.trim(),
+            documentNumber: document.getElementById("kycDocumentNumber").value.trim(),
+            addressLine: document.getElementById("kycAddressLine").value.trim(),
+            city: document.getElementById("kycCity").value.trim(),
+            stateRegion: document.getElementById("kycStateRegion").value.trim(),
+            postalCode: document.getElementById("kycPostalCode").value.trim()
+          })
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("kycMsg", text);
+          return;
+        }
+
+        showMsg("kycMsg", "KYC submitted successfully. Status updated to verified.", true);
+        document.getElementById("kycStatusText").textContent = "Verified";
+        loadWallet();
+      } catch (err) {
+        showMsg("kycMsg", `Failed to submit KYC: ${err.message}`);
+      }
+    }
+
+    async function saveProfilePicture() {
+      const token = getToken();
+
+      try {
+        const r = await fetch(`${API}/wallet/profile-picture`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            profilePictureUrl: document.getElementById("profilePictureUrl").value.trim()
+          })
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("settingsMsg", text);
+          return;
+        }
+
+        showMsg("settingsMsg", "Profile picture updated successfully.", true);
+        loadWallet();
+        document.getElementById("profilePicturePreview").src =
+          document.getElementById("profilePictureUrl").value.trim() || "https://via.placeholder.com/72?text=MN";
+      } catch (err) {
+        showMsg("settingsMsg", `Failed to update profile picture: ${err.message}`);
+      }
+    }
+
+    async function deleteAccount() {
+      const confirmed = confirm("Are you sure you want to permanently delete your account?");
+      if (!confirmed) return;
+
+      const token = getToken();
+
+      try {
+        const r = await fetch(`${API}/wallet/delete-account`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const text = await r.text();
+
+        if (!r.ok) {
+          showMsg("settingsMsg", text);
+          return;
+        }
+
+        clearToken();
+        window.location.href = "/wallet.html";
+      } catch (err) {
+        showMsg("settingsMsg", `Failed to delete account: ${err.message}`);
       }
     }
 
