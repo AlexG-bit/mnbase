@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Dashboard</title>
 
+  <!-- Smartsupp Live Chat -->
   <script type="text/javascript">
     var _smartsupp = _smartsupp || {};
     _smartsupp.key = '744b225ede38a77e818e4ee93d85091e657ecafc';
@@ -33,7 +34,9 @@
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, Arial, sans-serif;
@@ -41,37 +44,82 @@
         radial-gradient(circle at top left, rgba(22,82,240,.08), transparent 30%),
         linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
       color: var(--text);
+      padding-bottom: 96px;
     }
-    .container { width: min(1220px, calc(100% - 32px)); margin: 0 auto; }
+
+    .container {
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
     .nav {
-      position: sticky; top: 0; z-index: 50;
+      position: sticky;
+      top: 0;
+      z-index: 50;
       background: rgba(255,255,255,.88);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(15,23,42,.05);
     }
+
     .nav-inner {
-      display: flex; justify-content: space-between; align-items: center; padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
     }
+
     .brand {
-      display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
     }
+
     .brand-box {
-      width: 40px; height: 40px; border-radius: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
     }
-    .nav-actions { display: flex; gap: 10px; }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+    }
+
     .btn {
-      border: 0; border-radius: 14px; padding: 12px 16px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
     }
-    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: white; }
-    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
     .hero {
       padding: 34px 0 22px;
-      display: grid; grid-template-columns: 1.18fr .82fr; gap: 22px;
+      display: grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap: 22px;
     }
+
     .card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -79,6 +127,7 @@
       box-shadow: var(--shadow);
       padding: 24px;
     }
+
     .balance-card {
       background:
         radial-gradient(circle at top right, rgba(255,255,255,.18), transparent 20%),
@@ -86,29 +135,50 @@
       color: white;
       border-radius: 26px;
       padding: 28px;
-      min-height: 250px;
+      min-height: 260px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: 0 28px 60px rgba(22,82,240,.22);
     }
-    .balance-card h1 { margin: 0; font-size: 48px; }
+
+    .balance-card h1 {
+      margin: 0;
+      font-size: 48px;
+      letter-spacing: -1px;
+    }
+
     .mini-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
       margin-top: 16px;
     }
+
     .mini-panel {
       background: rgba(255,255,255,.14);
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 18px;
       padding: 14px;
     }
-    .section-title { margin: 0 0 12px; font-size: 24px; }
-    .muted { color: var(--muted); line-height: 1.7; }
-    .action-grid {
-      display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; padding: 8px 0 26px;
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 24px;
     }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      padding: 8px 0 26px;
+    }
+
     .action-card {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -117,45 +187,103 @@
       padding: 22px;
       cursor: pointer;
       min-height: 160px;
+      transition: transform .18s ease;
     }
+
+    .action-card:hover {
+      transform: translateY(-3px);
+    }
+
     .action-icon {
-      width: 50px; height: 50px; border-radius: 16px;
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
       background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      color: white; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 18px; margin-bottom: 12px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      margin-bottom: 12px;
     }
-    .action-card h3 { margin: 0 0 8px; font-size: 18px; }
-    .action-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+
+    .action-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .action-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
     .bottom-grid {
-      display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; padding-bottom: 40px;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+      padding-bottom: 18px;
     }
-    .list { display: grid; gap: 12px; margin-top: 16px; }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
     .list-item {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--panel-2); border: 1px solid var(--line);
-      border-radius: 18px; padding: 14px 16px; gap: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+      gap: 14px;
     }
+
     .badge {
-      padding: 8px 12px; border-radius: 999px;
-      background: rgba(22,163,74,.08); color: #166534;
-      font-size: 12px; font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(22,163,74,.08);
+      color: #166534;
+      font-size: 12px;
+      font-weight: 700;
       white-space: nowrap;
     }
+
     .msg {
-      display: none; margin-top: 14px; padding: 12px 14px;
-      border-radius: 14px; font-size: 14px;
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 14px;
     }
+
     .msg.error {
-      display: block; color: #991b1b;
+      display: block;
+      color: #991b1b;
       background: rgba(220,38,38,.08);
       border: 1px solid rgba(220,38,38,.18);
     }
+
     .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(15,23,42,.45);
-      display: none; align-items: center; justify-content: center;
-      z-index: 100; padding: 16px;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
     }
-    .modal-backdrop.active { display: flex; }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
     .modal {
       width: min(560px, 100%);
       background: white;
@@ -163,30 +291,103 @@
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
       padding: 24px;
+      max-height: 88vh;
+      overflow: auto;
     }
-    .modal h3 { margin: 0 0 10px; font-size: 24px; }
-    .modal p { margin: 0 0 16px; color: var(--muted); line-height: 1.7; }
-    .field { margin-bottom: 14px; }
+
+    .modal h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .modal p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
     .field label {
-      display: block; margin-bottom: 8px; color: #334155;
-      font-size: 13px; font-weight: 500;
+      display: block;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 500;
     }
-    .field select, .field input {
-      width: 100%; padding: 14px 15px; border-radius: 14px;
-      border: 1px solid var(--line); background: white;
-      color: var(--text); font-size: 15px;
+
+    .field select,
+    .field input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      font-size: 15px;
     }
-    .address-box {
+
+    .address-box,
+    .settings-box {
       background: var(--panel-2);
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 14px;
-      word-break: break-all;
       font-size: 14px;
       color: #0f172a;
+      line-height: 1.7;
     }
+
+    .bottom-nav {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(15,23,42,.08);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(15,23,42,.12);
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      z-index: 60;
+    }
+
+    .nav-btn {
+      border: 0;
+      background: transparent;
+      border-radius: 16px;
+      padding: 12px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      color: white;
+    }
+
+    .kyc-item {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
     @media (max-width: 980px) {
-      .hero, .bottom-grid, .action-grid, .mini-grid { grid-template-columns: 1fr; }
+      .hero,
+      .bottom-grid,
+      .action-grid,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -227,7 +428,7 @@
 
       <div class="card">
         <h2 class="section-title">Portfolio overview</h2>
-        <p class="muted">A cleaner, more premium Coinbase-style dashboard built for clarity, balance visibility, and smoother wallet actions.</p>
+        <p class="muted">A more unique, premium Coinbase-style dashboard built for clarity, balance visibility, and smoother wallet actions.</p>
 
         <div style="margin-top:18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:18px;padding:16px;">
           <strong>User profile</strong>
@@ -289,7 +490,7 @@
       <div class="card">
         <h2 class="section-title">Platform notes</h2>
         <p class="muted">
-          MNBase is structured as a more premium wallet environment for receiving assets, tracking balance events, and preparing users for smoother crypto operations.
+          MNBase is structured as a premium wallet environment for receiving assets, tracking balance events, and preparing users for smoother crypto operations.
         </p>
       </div>
     </section>
@@ -409,6 +610,91 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="moreModal">
+    <div class="modal">
+      <h3>More</h3>
+      <p>Additional account services and support options.</p>
+
+      <button class="btn btn-secondary" style="width:100%;margin-bottom:10px;" onclick="openKyc()">KYC</button>
+      <button class="btn btn-secondary" style="width:100%;margin-bottom:10px;" onclick="openSettings()">Account Settings</button>
+      <button class="btn btn-secondary" style="width:100%;" onclick="openSupport()">Help & Support</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="kycModal">
+    <div class="modal">
+      <h3>Standard KYC</h3>
+      <p>Complete standard identity verification to keep your account aligned with platform security requirements.</p>
+
+      <div class="kyc-item">
+        <strong>KYC Status</strong>
+        <p class="muted" style="margin:8px 0 0;">Pending standard verification</p>
+      </div>
+
+      <div class="kyc-item">
+        <strong>Required Documents</strong>
+        <p class="muted" style="margin:8px 0 0;">
+          • Government-issued ID<br>
+          • Selfie / facial verification<br>
+          • Proof of address
+        </p>
+      </div>
+
+      <div class="kyc-item">
+        <strong>Compliance Note</strong>
+        <p class="muted" style="margin:8px 0 0;">
+          Standard KYC helps protect account integrity and supports secure processing across supported networks.
+        </p>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="closeModal('kycModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <h3>Account Settings</h3>
+      <div class="settings-box">
+        Username and email are linked to your active wallet session. Additional settings can be extended here as needed.
+      </div>
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" onclick="closeModal('settingsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="supportModal">
+    <div class="modal">
+      <h3>Help & Support</h3>
+      <p>For activation, KYC, and transaction-related assistance, contact MNBase support.</p>
+      <div class="settings-box">
+        Support Email: <strong>support@mnbase.app</strong><br><br>
+        Live Support: Available through the website chat widget.
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="openSupportChat()">Open Live Chat</button>
+        <button class="btn btn-primary" onclick="closeModal('supportModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="comingSoonModal">
+    <div class="modal">
+      <h3>Coming Soon</h3>
+      <p id="comingSoonText">This section will be available in a future update.</p>
+      <button class="btn btn-primary" onclick="closeModal('comingSoonModal')">Close</button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="showHome()">Home</button>
+    <button class="nav-btn" onclick="showComingSoon('Market data and asset insights are coming soon.')">Market</button>
+    <button class="nav-btn" onclick="showComingSoon('New services and wallet features are coming soon.')">New</button>
+    <button class="nav-btn" onclick="openMore()">More</button>
+  </div>
+
   <script>
     const API = "https://api.mnbase.app/api";
     let receiveAssets = [];
@@ -484,6 +770,40 @@
       }
     }
 
+    function openMore() {
+      openModal("moreModal");
+    }
+
+    function openKyc() {
+      closeModal("moreModal");
+      openModal("kycModal");
+    }
+
+    function openSettings() {
+      closeModal("moreModal");
+      openModal("settingsModal");
+    }
+
+    function openSupport() {
+      closeModal("moreModal");
+      openModal("supportModal");
+    }
+
+    function openSupportChat() {
+      if (typeof smartsupp === "function") {
+        smartsupp("chat:open");
+      }
+    }
+
+    function showComingSoon(text) {
+      document.getElementById("comingSoonText").textContent = text;
+      openModal("comingSoonModal");
+    }
+
+    function showHome() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     async function loadWallet() {
       const token = getToken();
 
@@ -543,6 +863,17 @@
 
         document.getElementById("cardStatus").textContent = cardStatusText;
         document.getElementById("cardStatusMain").textContent = data.cardActivated ? "Active" : "Not activated";
+
+        if (typeof smartsupp === "function") {
+          smartsupp("name", data.username || "MNBase User");
+          smartsupp("email", data.email || "");
+          smartsupp("variables", {
+            Role: data.role || "user",
+            Page: "Dashboard",
+            Wallet_Balance: String(data.balance || 0),
+            Card_Activated: data.cardActivated ? "Yes" : "No"
+          });
+        }
 
         const txs = Array.isArray(historyData.transactions) ? historyData.transactions : [];
         const activity = document.getElementById("activityList");
