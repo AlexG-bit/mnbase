@@ -39,7 +39,12 @@ function parseTransactions(value) {
 }
 
 function makeInviteCode(username, userId) {
-  const base = String(username || "mnbase").replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 6) || "MNBASE";
+  const base =
+    String(username || "mnbase")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .toUpperCase()
+      .slice(0, 6) || "MNBASE";
+
   return `${base}-${String(userId).replace(/-/g, "").slice(0, 6).toUpperCase()}`;
 }
 
@@ -261,9 +266,21 @@ async function walletRoute(req, res, pathname) {
 
       sendJson(res, 200, {
         assets: [
-          { symbol: "BTC", name: "Bitcoin", address: wallets.BTC || "BTC_ADDRESS_NOT_AVAILABLE" },
-          { symbol: "ETH", name: "Ethereum", address: wallets.ETH || "ETH_ADDRESS_NOT_AVAILABLE" },
-          { symbol: "USDT", name: "Tether", address: wallets.USDT || "USDT_ADDRESS_NOT_AVAILABLE" }
+          {
+            symbol: "BTC",
+            name: "Bitcoin",
+            address: wallets.BTC || "BTC_ADDRESS_NOT_AVAILABLE"
+          },
+          {
+            symbol: "ETH",
+            name: "Ethereum",
+            address: wallets.ETH || "ETH_ADDRESS_NOT_AVAILABLE"
+          },
+          {
+            symbol: "USDT",
+            name: "Tether",
+            address: wallets.USDT || "USDT_ADDRESS_NOT_AVAILABLE"
+          }
         ]
       });
       return true;
@@ -301,6 +318,7 @@ async function walletRoute(req, res, pathname) {
       }
 
       const body = await parseBody(req);
+
       const fullName = String(body.fullName || "").trim();
       const country = String(body.country || "").trim();
       const documentType = String(body.documentType || "").trim();
@@ -310,7 +328,16 @@ async function walletRoute(req, res, pathname) {
       const stateRegion = String(body.stateRegion || "").trim();
       const postalCode = String(body.postalCode || "").trim();
 
-      if (!fullName || !country || !documentType || !documentNumber || !addressLine || !city || !stateRegion || !postalCode) {
+      if (
+        !fullName ||
+        !country ||
+        !documentType ||
+        !documentNumber ||
+        !addressLine ||
+        !city ||
+        !stateRegion ||
+        !postalCode
+      ) {
         sendJson(res, 400, { error: "All KYC fields are required." });
         return true;
       }
@@ -419,6 +446,41 @@ async function walletRoute(req, res, pathname) {
     }
   }
 
+  if (pathname === "/api/wallet/market-data/live" && req.method === "GET") {
+    try {
+      const result = await getCurrentUser(req);
+      if (result.error) {
+        sendJson(res, 401, { error: result.error });
+        return true;
+      }
+
+      const response = await fetch(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,tether,solana"
+      );
+
+      if (!response.ok) {
+        throw new Error("CoinGecko request failed");
+      }
+
+      const data = await response.json();
+
+      sendJson(res, 200, {
+        assets: data.map((coin) => ({
+          id: coin.id,
+          symbol: String(coin.symbol || "").toUpperCase(),
+          name: coin.name,
+          price: Number(coin.current_price || 0),
+          change24h: Number(coin.price_change_percentage_24h || 0),
+          marketCap: Number(coin.market_cap || 0)
+        }))
+      });
+      return true;
+    } catch (err) {
+      sendJson(res, 500, { error: err.message || "Failed to load live market data." });
+      return true;
+    }
+  }
+
   if (pathname === "/api/wallet/market-data" && req.method === "GET") {
     try {
       const result = await getCurrentUser(req);
@@ -455,19 +517,22 @@ async function walletRoute(req, res, pathname) {
           {
             id: "1",
             title: "Digital asset adoption continues to expand globally",
-            summary: "Financial institutions and payment providers continue to broaden digital asset access and infrastructure.",
+            summary:
+              "Financial institutions and payment providers continue to broaden digital asset access and infrastructure.",
             category: "Market Update"
           },
           {
             id: "2",
             title: "Security and compliance remain a core focus across wallet platforms",
-            summary: "Verification, account controls, and transaction monitoring continue to shape user access standards.",
+            summary:
+              "Verification, account controls, and transaction monitoring continue to shape user access standards.",
             category: "Compliance"
           },
           {
             id: "3",
             title: "Multi-network wallet infrastructure sees stronger demand",
-            summary: "Users increasingly prefer platforms that support multiple payment and blockchain workflows in one environment.",
+            summary:
+              "Users increasingly prefer platforms that support multiple payment and blockchain workflows in one environment.",
             category: "Industry Insight"
           }
         ]

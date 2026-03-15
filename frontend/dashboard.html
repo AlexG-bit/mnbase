@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MNBase Dashboard</title>
+
   <link rel="manifest" href="/manifest.json" />
-<meta name="theme-color" content="#1652f0" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#1652f0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
   <!-- Smartsupp Live Chat -->
   <script type="text/javascript">
@@ -37,7 +38,6 @@
       --blue-2: #2f6bff;
       --green: #16a34a;
       --red: #dc2626;
-      --amber: #d97706;
       --shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
       --radius: 22px;
     }
@@ -75,6 +75,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 18px 0;
+      gap: 12px;
     }
 
     .brand {
@@ -100,6 +101,8 @@
     .nav-actions {
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .btn {
@@ -284,6 +287,7 @@
       padding: 12px 14px;
       border-radius: 14px;
       font-size: 14px;
+      line-height: 1.5;
     }
 
     .msg.error {
@@ -448,8 +452,10 @@
         <div class="brand-box">MN</div>
         <span>MNBase Dashboard</span>
       </div>
+
       <div class="nav-actions">
         <button class="btn btn-secondary" onclick="loadWallet()">Refresh</button>
+        <button class="btn btn-secondary" onclick="mnbasePromptInstall()">Install App</button>
         <button class="btn btn-primary" onclick="logout()">Logout</button>
       </div>
     </div>
@@ -583,6 +589,7 @@
       </div>
 
       <div class="address-box" id="receiveAddress">Loading address...</div>
+
       <div style="margin-top:16px;">
         <button class="btn btn-primary" onclick="closeModal('receiveModal')">Close</button>
       </div>
@@ -903,14 +910,24 @@
 
     function openSettings() {
       closeModal("moreModal");
+
       if (currentUserData) {
-        document.getElementById("settingsSignedInEmail").textContent = `Signed in as ${currentUserData.email || ""}`;
-        document.getElementById("profilePicturePreview").src = currentUserData.profilePictureUrl || "https://via.placeholder.com/72?text=MN";
-        document.getElementById("profilePictureUrl").value = currentUserData.profilePictureUrl || "";
-        document.getElementById("inviteCodeText").textContent = `Invite Code: ${currentUserData.inviteCode || "-"}`;
+        document.getElementById("settingsSignedInEmail").textContent =
+          `Signed in as ${currentUserData.email || ""}`;
+
+        document.getElementById("profilePicturePreview").src =
+          currentUserData.profilePictureUrl || "https://via.placeholder.com/72?text=MN";
+
+        document.getElementById("profilePictureUrl").value =
+          currentUserData.profilePictureUrl || "";
+
+        document.getElementById("inviteCodeText").textContent =
+          `Invite Code: ${currentUserData.inviteCode || "-"}`;
+
         document.getElementById("inviteStatsText").textContent =
           `Invites: ${Number(currentUserData.inviteCount || 0)} • Reward Balance: ${formatMoney(currentUserData.inviteRewardBalance || 0)}`;
       }
+
       openModal("settingsModal");
     }
 
@@ -977,7 +994,7 @@
               "Authorization": `Bearer ${token}`
             }
           }),
-          fetch(`${API}/wallet/market-data`, {
+          fetch(`${API}/wallet/market-data/live`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
@@ -1023,11 +1040,15 @@
           : "Virtual card status: Not activated";
 
         document.getElementById("cardStatus").textContent = cardStatusText;
-        document.getElementById("cardStatusMain").textContent = data.cardActivated ? "Active" : "Not activated";
+        document.getElementById("cardStatusMain").textContent =
+          data.cardActivated ? "Active" : "Not activated";
 
         document.getElementById("kycStatusText").textContent =
-          data.kyc?.status === "verified" ? "Verified" :
-          data.kyc?.status === "submitted" ? "Submitted" : "Not started";
+          data.kyc?.status === "verified"
+            ? "Verified"
+            : data.kyc?.status === "submitted"
+            ? "Submitted"
+            : "Not started";
 
         document.getElementById("kycFullName").value = data.kyc?.fullName || "";
         document.getElementById("kycCountry").value = data.kyc?.country || "";
@@ -1080,8 +1101,10 @@
           <div class="market-item">
             <strong>${asset.name} (${asset.symbol})</strong>
             <p class="muted" style="margin:8px 0 0;">
-              Price: ${formatMoney(asset.price || 0)}<br>
-              24H Change: ${Number(asset.change24h || 0).toFixed(2)}%
+              Price: $${Number(asset.price || 0).toLocaleString()}
+            </p>
+            <p style="margin:6px 0 0; color:${Number(asset.change24h || 0) >= 0 ? '#16a34a' : '#dc2626'};">
+              ${Number(asset.change24h || 0).toFixed(2)}% (24h)
             </p>
           </div>
         `).join("");
@@ -1242,8 +1265,6 @@
 
         showMsg("settingsMsg", "Profile picture updated successfully.", true);
         loadWallet();
-        document.getElementById("profilePicturePreview").src =
-          document.getElementById("profilePictureUrl").value.trim() || "https://via.placeholder.com/72?text=MN";
       } catch (err) {
         showMsg("settingsMsg", `Failed to update profile picture: ${err.message}`);
       }
@@ -1280,6 +1301,7 @@
 
     window.addEventListener("load", loadWallet);
   </script>
+
   <script src="/pwa-init.js"></script>
 </body>
 </html>
