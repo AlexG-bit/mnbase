@@ -1,0 +1,19 @@
+{
+  "name": "MNBase Wallet",
+  "short_name": "MNBase",
+  "description": "MNBase multi-network wallet application",
+  "start_url": "/wallet.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fbff",
+  "theme_color": "#1652f0",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
