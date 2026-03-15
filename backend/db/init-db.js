@@ -60,6 +60,39 @@ async function initDatabase() {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS kyc_profiles (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL UNIQUE,
+        status TEXT NOT NULL DEFAULT 'not_started',
+        full_name TEXT,
+        country TEXT,
+        document_type TEXT,
+        document_number TEXT,
+        address_line TEXT,
+        city TEXT,
+        state_region TEXT,
+        postal_code TEXT,
+        submitted_at TIMESTAMP,
+        verified_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_profiles (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL UNIQUE,
+        profile_picture_url TEXT,
+        invite_code TEXT,
+        invite_count INTEGER NOT NULL DEFAULT 0,
+        invite_reward_balance NUMERIC NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_transactions_user_id
       ON transactions(user_id);
     `);
@@ -72,6 +105,16 @@ async function initDatabase() {
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_user_action_controls_user_id
       ON user_action_controls(user_id);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_kyc_profiles_user_id
+      ON kyc_profiles(user_id);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_profiles_user_id
+      ON user_profiles(user_id);
     `);
 
     console.log("PostgreSQL tables ready");
