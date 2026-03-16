@@ -10,10 +10,11 @@ const crypto = require("crypto");
 const PORT = process.env.PORT || 8080;
 const HOST = "0.0.0.0";
 
-const allowedOrigins = [
+ const allowedOrigins = [
   "https://mnbase.app",
   "https://www.mnbase.app",
   "https://admin.mnbase.app",
+  "https://mnbase.pages.dev",
   "http://127.0.0.1:5500",
   "http://localhost:5500",
   "http://localhost:3000"
